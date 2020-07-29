@@ -188,7 +188,7 @@ def get_news_corpus(urls):
     print("Starting to pull the news corpus...")
     news_corpus = []
     for url in urls:
-        driver.implicitly_wait(3)
+        print("Pulling corpus from - " + url)
         driver.get(url)
         news_html = driver.page_source
         tree = html.fromstring(news_html)
