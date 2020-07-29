@@ -150,7 +150,7 @@ def get_news_corpus(urls):
     path_to_extension = r'C:\Users\diogo\Documents\API-NEWS_EXTRACTOR\4.17.0_0'
 
     chrome_options = Options()
-    chrome_options.add_extension('adblocker.crx')
+    # chrome_options.add_extension('adblocker.crx')
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
