@@ -36,6 +36,8 @@ def token_required(f):
         return f(*args, **kwargs)
     return decorated
 
+# test
+
 
 @app.route('/api/login')
 def login():
