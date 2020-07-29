@@ -20,7 +20,6 @@ import json
 from typing import Optional, Any, List, TypeVar, Type, cast, Callable
 from datetime import datetime
 import dateutil.parser
-from bs4 import BeautifulSoup
 
 T = TypeVar("T")
 
@@ -151,14 +150,14 @@ def get_news_corpus(urls):
     path_to_extension = r'C:\Users\diogo\Documents\API-NEWS_EXTRACTOR\4.17.0_0'
 
     chrome_options = Options()
+    chrome_options.add_extension('adblocker.crx')
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(executable_path=os.environ.get(
         "CHROME_DRIVER_PATH"), chrome_options=chrome_options)
-    # chrome_options.add_argument('load-extension=' + path_to_extension)
-    # print("Opening chrome and installing adblocker!")
+    print("Opening chrome and installing adblocker!")
     # driver = webdriver.Chrome(
     #     r"C:\Users\diogo\Downloads\chromedriver.exe", chrome_options=chrome_options)
     print("Opening publico's website...")
