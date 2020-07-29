@@ -150,23 +150,25 @@ def get_news_corpus(urls):
     path_to_extension = r'C:\Users\diogo\Documents\API-NEWS_EXTRACTOR\4.17.0_0'
 
     chrome_options = Options()
-    # chrome_options.add_extension('adblocker.crx')
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(executable_path=os.environ.get(
         "CHROME_DRIVER_PATH"), chrome_options=chrome_options)
-    print("Opening chrome and installing adblocker!")
+    print("Opening chrome!")
     # driver = webdriver.Chrome(
     #     r"C:\Users\diogo\Downloads\chromedriver.exe", chrome_options=chrome_options)
     print("Opening publico's website...")
     driver.get("https://www.publico.pt")
     driver.switch_to.window(window_name=driver.window_handles[0])
     # driver.close()
-    driver.implicitly_wait(5)
+    driver.implicitly_wait(3)
     print("Accepting cookies...")
     driver.find_element_by_xpath('//*[@id="qcCmpButtons"]/button[2]').click()
+    driver.implicitly_wait(5)
+    # Refresh to skip the ad the fills all the screen
+    driver.refresh()
     print("Starting the login process...")
     driver.find_element_by_xpath(
         '//*[@id="masthead-container"]/div[2]/ul/li[2]/button').click()
