@@ -11,17 +11,17 @@ class Database():
     def create_table(self):
         try:
             self.c.execute('''CREATE TABLE NEWS
-                        ([generated_id] INTEGER PRIMARY KEY, [JobId] integer , [Data] text)''')
+                        ([generated_id] INTEGER PRIMARY KEY , [Data] text)''')
         except:
             pass
 
-    def AddToDb(self, job_id, news_data):
+    def AddToDb(self, news_data):
         self.c.execute("INSERT INTO NEWS VALUES (" +
-                       job_id + ","+news_data+")")
+                       news_data + ")")
         self.conn.commit()
 
-    def GetOne_By_JobId(self, job_id):
-        self.c.execute("SELECT Data from NEWS where JobId ="+job_id)
+    def GetOne_By_Data(self, Data):
+        self.c.execute("SELECT Data from NEWS where Data ="+Data)
         rows = self.c.fetchall()
         return rows
 
