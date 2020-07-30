@@ -8,6 +8,11 @@ from datetime import timedelta
 from flask import Flask, jsonify, request, make_response, abort, url_for
 import jwt
 import requests
+from db import Database
+
+from rq import Queue
+from rq.job import Job
+from worker import conn
 
 import Publico
 
@@ -16,6 +21,8 @@ app = Flask(__name__)
 app.config["JSON_SORT_KEYS"] = False
 app.config['SECRET_KEY'] = 'did you knows unicorns eat their cereals at full moon?'
 app.config['APPLICATION_ROOT'] = '/api/'
+db = Database()
+q = Queue(connection=conn)
 
 
 def token_required(f):
@@ -63,13 +70,30 @@ def get_news():
         abort(400)
 
     if jornal_name == "publico":
-        data = get_news_from_publico(search_word, start_date, end_date)
+        from app import get_news_from_publico
+        job = q.enqueue_call(
+            func=get_news_from_publico, args=(
+                search_word, start_date, end_date,), result_ttl=5000
+        )
+        return jsonify({"status": "ok", "message": "Your job has been added to the queue!", "job id": job.get_id(), "Content URL": url_for('get_result', job_key=job.get_id(), _external=True)})
     # elif jornal_name == "cm":
         # data = get_news_from_cm()
     else:
         abort(404)
 
-    return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "total_news": len(data), "data": json.loads(json.dumps(data, default=serialize_list))})
+    # return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "total_news": len(data), "data": json.loads(json.dumps(data, default=serialize_list))})
+
+
+@app.route("/results/<job_key>", methods=['GET'])
+def get_result(job_key):
+
+    job = Job.fetch(job_key, connection=conn)
+
+    if job.is_finished:
+        result = db.GetOne_By_JobId(job_key)
+        return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "data": json.loads(result)})
+    else:
+        return make_response(jsonify({'message': "This job has not been processed yet, try again later!"}), 202)
 
 
 """
@@ -132,7 +156,12 @@ def get_news_from_publico(search_word, start_date=None, end_date=None):
     # Complete the news with corpus
     get_corpus(news_objects)
 
-    return news_objects
+    # Persist the results
+    try:
+        db.AddToDb(json.dumps(news_objects, default=serialize_list))
+    except:
+        print("Unable to add item to database!")
+        abort(500)
 
 
 def process_data(data, news_objects, start_date, search_word):
