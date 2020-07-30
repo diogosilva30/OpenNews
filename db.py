@@ -16,8 +16,13 @@ class Database():
             pass
 
     def AddToDb(self, news_data):
-        self.c.execute("INSERT INTO NEWS VALUES (" +
-                       news_data + ")")
+        print("Inserting element into db, type: " + type(news_data))
+        if not isinstance(news_data, str):
+            raise ValueError('Inappropriate type: {} for news_dta whereas a str \
+            is expected'.format(type(news_data)))
+
+        q = "INSERT INTO NEWS (Data) VALUES (?)"
+        self.c.execute(q, (news_data,))
         self.conn.commit()
 
     def GetOne_By_Data(self, Data):

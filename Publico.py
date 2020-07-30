@@ -9,9 +9,6 @@
 # and then, to convert JSON from a string, do
 #
 #     result = jn_from_dict(json.loads(json_string))
-from selenium.webdriver.chrome.options import Options
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
 import urllib
 import requests
 from lxml import html
@@ -147,59 +144,31 @@ def toJSON(self):
 
 def get_news_corpus(urls):
 
-    path_to_extension = r'C:\Users\diogo\Documents\API-NEWS_EXTRACTOR\4.17.0_0'
-
-    chrome_options = Options()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(executable_path=os.environ.get(
-        "CHROME_DRIVER_PATH"), chrome_options=chrome_options)
-    print("Opening chrome!")
-    # driver = webdriver.Chrome(
-    #     r"C:\Users\diogo\Downloads\chromedriver.exe", chrome_options=chrome_options)
-    print("Opening publico's website...")
-    driver.get("https://www.publico.pt")
-    driver.switch_to.window(window_name=driver.window_handles[0])
-    # driver.close()
-    driver.implicitly_wait(3)
-    print("Accepting cookies...")
-    driver.find_element_by_xpath('//*[@id="qcCmpButtons"]/button[2]').click()
-    driver.implicitly_wait(5)
-    # Refresh to skip the ad the fills all the screen
-    driver.refresh()
-    print("Starting the login process...")
-    driver.find_element_by_xpath(
-        '//*[@id="masthead-container"]/div[2]/ul/li[2]/button').click()
-    print("Entering email...")
-    driver.find_element_by_xpath(
-        '//*[@id="login-email-input"]').send_keys("al62176@utad.eu")
-    driver.find_element_by_xpath(
-        '//*[@id="login-form-email"]/div/div[4]/input').click()
-    print("Entering password...")
-    driver.find_element_by_xpath(
-        '//*[@id="login-password-input"]').send_keys("tnt5&@X21qX*")
-    driver.find_element_by_xpath(
-        '//*[@id="login-form-password"]/div/div[4]/input').click()
-    print("Login completed!")
-    driver.implicitly_wait(10)
-    driver.refresh()
-    print("Starting to pull the news corpus...")
     news_corpus = []
-    for url in urls:
-        print("Pulling corpus from - " + url)
-        driver.get(url)
-        news_html = driver.page_source
-        tree = html.fromstring(news_html)
-        news_text = ' '.join(tree.xpath(
-            "//div[@class='story__body']//p//text() | //div[@class='story__body']//h2//text()"))
-        # Remove in-text ads
-        news_text.replace(
-            "Subscreva gratuitamente as newsletters e receba o melhor da actualidade e os trabalhos mais profundos do Público.", "")
-        news_corpus.append(news_text)
+
+    print("Now extracting news corpus!")
+    payload = {"username": "al62176@utad.eu",
+               "password": "tnt5&@X21qX*"}
+    with requests.Session() as s:
+        # set the user agent header, required for the jornal api to work
+        s.headers.update(
+            {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1'})
+        # send POST request to login
+        res = s.post("https://www.publico.pt/api/user/login", data=payload)
+        # Now we can extract the corpus from the news
+        for url in urls:
+            # GET request to read the html page
+            res = s.get(url)
+            # Load html page into a tree
+            tree = html.fromstring(res.text)
+            # Find the news text by XPATH
+            news_text = ' '.join(tree.xpath(
+                "//div[@class='story__body']//p//text() | //div[@class='story__body']//h2//text()"))
+            # Remove in-text ads
+            news_text.replace(
+                "Subscreva gratuitamente as newsletters e receba o melhor da actualidade e os trabalhos mais profundos do Público.", "")
+            news_corpus.append(news_text)
 
     print("Sucessuly pulled corpus from " + str(len(urls)) + " news!")
-    print("Closing Chrome!")
-    driver.quit()
+
     return news_corpus
