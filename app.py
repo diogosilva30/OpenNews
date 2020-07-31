@@ -89,7 +89,7 @@ def get_news():
     # return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "total_news": len(data), "data": json.loads(json.dumps(data, default=serialize_list))})
 
 
-@app.route("/api/results/<string:job_key>", methods=['GET'])
+@app.route('/api/results/<string:job_key>', methods=['GET'])
 def get_result(job_key):
 
     print("Searching for job " + job_key)
