@@ -49,10 +49,10 @@ def home():
     return 'hello world!'
 
 
-@app.route('/api/check')
-def check():
-    job_key = request.args.get('job_key')
-    return "you entered the job key" + job_key
+@app.route('/api/news/results/<job>')
+def check(job):
+
+    return "you entered the job key" + str(job)
 
 
 @app.route('/api/login')
