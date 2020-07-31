@@ -57,8 +57,9 @@ def job_result(job_key):
         abort(404)  # unexistent job
 
     if job.is_finished:
-        result = db.GetOne_By_Data(job.result)
-        return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "data": json.loads(result)})
+        return str(job.result), 200
+        # result = db.GetOne_By_Data(job.result)
+        # return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "data": json.loads(result)})
     else:
         return make_response(jsonify({'message': "Job " + job_key+"has not been processed yet, try again later!"}), 202)
 
