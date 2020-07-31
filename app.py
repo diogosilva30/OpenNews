@@ -57,7 +57,7 @@ def job_result(job_key):
         abort(404)  # unexistent job
 
     if job.is_finished:
-        return str(job.result), 200
+        return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "data": json.loads(result)})
         # result = db.GetOne_By_Data(job.result)
         # return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "data": json.loads(result)})
     else:
