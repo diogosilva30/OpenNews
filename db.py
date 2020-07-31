@@ -27,8 +27,11 @@ class Database():
         print("New row sucessfuly added to the database!")
 
     def GetOne_By_Data(self, Data):
+        print("Getting one item from database...")
+        print(Data)
         self.c.execute("SELECT Data from NEWS where Data ="+Data)
         rows = self.c.fetchall()
+        print("retrived from db:" + rows)
         return rows
 
     def close(self):
