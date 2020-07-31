@@ -50,7 +50,7 @@ def home():
 
 
 @app.route('/api/news/results/<job>')
-def check(job):
+def job_result(job):
     job = Job.fetch(job, connection=conn)
     if job.is_finished:
         result = db.GetOne_By_Data(json.dumps(
@@ -91,7 +91,7 @@ def get_news():
             func=get_news_from_publico, args=(
                 search_word, start_date, end_date,), result_ttl=5000
         )
-        return jsonify({"status": "ok", "message": "Your job has been added to the queue!", "job id": job.get_id(), "Content URL": url_for('get_result', job_key=job.get_id(), _external=True)})
+        return jsonify({"status": "ok", "message": "Your job has been added to the queue!", "job id": job.get_id(), "Content URL": url_for('job_result', job=job.get_id(), _external=True)})
     # elif jornal_name == "cm":
         # data = get_news_from_cm()
     else:
@@ -129,9 +129,9 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.errorhandler(500)
-def server_error(error):
-    return make_response(jsonify({'error': error}), 500)
+# @app.errorhandler(500)
+# def server_error(error):
+#     return make_response(jsonify({'error': error}), 500)
 
 
 """
