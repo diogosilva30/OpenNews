@@ -49,6 +49,12 @@ def home():
     return 'hello world!'
 
 
+@app.route('/api/check')
+def check():
+    job_key = request.args.get('job_key')
+    print("you entered the job key" + job_key)
+
+
 @app.route('/api/login')
 def login():
     auth = request.authorization
@@ -101,12 +107,6 @@ def get_news():
 #         return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "data": json.loads(result)})
 #     else:
 #         return make_response(jsonify({'message': "This job has not been processed yet, try again later!"}), 202)
-
-
-@app.route('/api/news/results')
-def result():
-    job_key = request.args.get('job_key')
-    print("you entered the job key" + job_key)
 
 
 """
