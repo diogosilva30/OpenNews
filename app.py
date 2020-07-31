@@ -48,6 +48,8 @@ def token_required(f):
 def home():
     return 'hello world!'
 
+# TODO: Retrieve info from database instead of job queue
+
 
 @app.route('/api/news/results/<job_key>')
 def job_result(job_key):
