@@ -16,7 +16,7 @@ class Database():
             pass
 
     def AddToDb(self, news_data):
-        print("Inserting element into db, type: " + type(news_data))
+        print("Inserting element into db, type: " + str(type(news_data)))
         if not isinstance(news_data, str):
             raise ValueError('Inappropriate type: {} for news_dta whereas a str \
             is expected'.format(type(news_data)))
