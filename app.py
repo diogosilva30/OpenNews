@@ -103,7 +103,7 @@ def get_result(job_key):
         return make_response(jsonify({'message': "This job has not been processed yet, try again later!"}), 202)
 
 
-@app.route('/api/news/results/<string:job_key>')
+@app.route('/api/news/results/<job_key>')
 def result(job_key):
     print("you entered the job key" + job_key)
 
