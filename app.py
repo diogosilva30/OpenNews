@@ -117,6 +117,11 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
+@app.errorhandler(500)
+def server_error(error):
+    return make_response(jsonify({'error': error}), 500)
+
+
 """
 Functions
 """

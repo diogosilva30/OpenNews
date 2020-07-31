@@ -24,6 +24,7 @@ class Database():
         q = "INSERT INTO NEWS (Data) VALUES (?)"
         self.c.execute(q, (news_data,))
         self.conn.commit()
+        print("New row sucessfuly added to the database!")
 
     def GetOne_By_Data(self, Data):
         self.c.execute("SELECT Data from NEWS where Data ="+Data)
