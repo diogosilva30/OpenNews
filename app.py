@@ -51,7 +51,10 @@ def home():
 
 @app.route('/api/news/results/<job>')
 def job_result(job):
-    job = Job.fetch(job, connection=conn)
+    try:
+        job = Job.fetch(job, connection=conn)
+    except:
+        return "cant find job"+job
     if job.is_finished:
         result = db.GetOne_By_Data(json.dumps(
             job.result, default=serialize_list))
