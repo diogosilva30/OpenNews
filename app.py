@@ -52,7 +52,7 @@ def home():
 @app.route('/api/check')
 def check():
     job_key = request.args.get('job_key')
-    print("you entered the job key" + job_key)
+    return "you entered the job key" + job_key
 
 
 @app.route('/api/login')
