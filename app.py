@@ -49,18 +49,18 @@ def home():
     return 'hello world!'
 
 
-@app.route('/api/news/results/<job>')
-def job_result(job):
+@app.route('/api/news/results/<job_key>')
+def job_result(job_key):
     try:
-        job = Job.fetch(job, connection=conn)
+        job = Job.fetch(job_key, connection=conn)
     except:
-        return "cant find job"+job
+        abort(404)  # unexistent job
+
     if job.is_finished:
-        result = db.GetOne_By_Data(json.dumps(
-            job.result, default=serialize_list))
+        result = db.GetOne_By_Data(job.result)
         return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "data": json.loads(result)})
     else:
-        return make_response(jsonify({'message': "This job has not been processed yet, try again later!"}), 202)
+        return make_response(jsonify({'message': "Job " + job_key+"has not been processed yet, try again later!"}), 202)
 
 
 @app.route('/api/login')
@@ -94,7 +94,7 @@ def get_news():
             func=get_news_from_publico, args=(
                 search_word, start_date, end_date,), result_ttl=5000
         )
-        return jsonify({"status": "ok", "message": "Your job has been added to the queue!", "job id": job.get_id(), "Content URL": url_for('job_result', job=job.get_id(), _external=True)})
+        return jsonify({"status": "ok", "message": "Your job has been added to the queue!", "job id": job.get_id(), "Content URL": url_for('job_result', job_key=job.get_id(), _external=True)})
     # elif jornal_name == "cm":
         # data = get_news_from_cm()
     else:
@@ -189,6 +189,8 @@ def get_news_from_publico(search_word, start_date=None, end_date=None):
     except:
         print("Unable to add item to database!")
         abort(500)
+
+    return result_str
 
 
 def process_data(data, news_objects, start_date, search_word):
