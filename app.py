@@ -20,7 +20,7 @@ app = Flask(__name__)
 # Following line decides if json keys get ordered or not (Default is True)
 app.config["JSON_SORT_KEYS"] = False
 app.config['SECRET_KEY'] = 'did you knows unicorns eat their cereals at full moon?'
-app.config['APPLICATION_ROOT'] = '/api/'
+#app.config['APPLICATION_ROOT'] = '/api/'
 db = Database()
 q = Queue(connection=conn)
 
@@ -89,18 +89,18 @@ def get_news():
     # return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "total_news": len(data), "data": json.loads(json.dumps(data, default=serialize_list))})
 
 
-@app.route('/api/results/<string:job_key>', methods=['GET'])
-def get_result(job_key):
+# @app.route('/api/results/<string:job_key>', methods=['GET'])
+# def get_result(job_key):
 
-    print("Searching for job " + job_key)
-    job = Job.fetch(job_key, connection=conn)
+#     print("Searching for job " + job_key)
+#     job = Job.fetch(job_key, connection=conn)
 
-    if job.is_finished:
-        result = db.GetOne_By_Data(json.loads(
-            json.dumps(job.result, default=serialize_list)))
-        return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "data": json.loads(result)})
-    else:
-        return make_response(jsonify({'message': "This job has not been processed yet, try again later!"}), 202)
+#     if job.is_finished:
+#         result = db.GetOne_By_Data(json.loads(
+#             json.dumps(job.result, default=serialize_list)))
+#         return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "data": json.loads(result)})
+#     else:
+#         return make_response(jsonify({'message': "This job has not been processed yet, try again later!"}), 202)
 
 
 @app.route('/api/news/results/<job_key>')
