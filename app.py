@@ -51,8 +51,13 @@ def home():
 
 @app.route('/api/news/results/<job>')
 def check(job):
-
-    return "you entered the job key" + str(job)
+    job = Job.fetch(job, connection=conn)
+    if job.is_finished:
+        result = db.GetOne_By_Data(json.dumps(
+            job.result, default=serialize_list))
+        return jsonify({"status": "ok", "URI": url_for('get_news', _external=True), "data": json.loads(result)})
+    else:
+        return make_response(jsonify({'message': "This job has not been processed yet, try again later!"}), 202)
 
 
 @app.route('/api/login')
