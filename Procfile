@@ -1,1 +1,2 @@
-web: sh heroku.sh
+web: gunicorn manage:app
+worker: python worker.py
