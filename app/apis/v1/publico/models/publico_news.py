@@ -126,9 +126,13 @@ class PublicoNews(News):
     # TODO: Add support for more "subjornals" from Publico
     @staticmethod
     def validate_url(url):
-        if (requests.get(url).status_code == 200 and "www.publico.pt" in url and ("noticia" in url or "opiniao" in url) and "ipsilon" not in url):
-            return True
-        else:
+        try:
+            if (requests.get(url).status_code == 200 and "www.publico.pt" in url and ("noticia" in url or "opiniao" in url) and "ipsilon" not in url):
+                return True
+            else:
+                raise RequestError(
+                    "URL '{}' is invalid or unsupported!".format(url))
+        except:
             raise RequestError(
                 "URL '{}' is invalid or unsupported!".format(url))
 
