@@ -164,7 +164,7 @@ class PublicoTopicSearch(PublicoAPISearch):
 
     def build_api_url(self):
         return self.base_api_url + self.search_topic.replace(
-            " ", "-").lower() + "?page=" + str(self.page_number)
+            " ", "-").lower() + "&page=" + str(self.page_number)
 
 
 # ________________________________________________________________________________________________________________________________

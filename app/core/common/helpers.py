@@ -47,8 +47,6 @@ def custom_json_serializer(obj):
 
 def send_post_then_get_html_string(post_url, post_payload, get_url):
     """Sends an HTTP Post to a certain URL, then sends a HTTP Get to another URL, and returns the obtained HTML string"""
-    # TODO Remove this
-    print(get_url)
     with requests.Session() as s:
         s.headers.update(
             {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1'})
