@@ -20,7 +20,7 @@ def validate_urls(f):
     return decorated
 
 
-def validate_topic_search(f):
+def validate_dates(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         try:

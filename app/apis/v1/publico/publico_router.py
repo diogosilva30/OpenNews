@@ -5,7 +5,7 @@ from app.core import redis_queue
 from app.core.common.decorator import prevent_duplicate_jobs
 
 from .services import publico_news_service
-from .decorators import validate_urls, validate_topic_search
+from .decorators import validate_urls, validate_dates
 
 ####################################################################################################################################
 # NAMESPACE DECLARATION
@@ -44,7 +44,7 @@ class TopicSearch(Resource):
     parser.add_argument('search_topic', type=str,
                         location='json', required=True)
 
-    @validate_topic_search
+    @validate_dates
     @prevent_duplicate_jobs
     @api.expect(parser)
     @api.response(200, description="News successfully fetched by topic.")
@@ -62,9 +62,9 @@ class TopicSearch(Resource):
         <strong>Usage examples (POST JSON body)</strong>:\n
         Searching for the topic "luanda leaks" between 01/01/2020 and 05/03/2020:
         {
-            "start_date": "1/1/2020",
-            "end_date": "5/3/2020",
-            "search_topic": "luanda leaks"
+            "start_date" : "1/1/2020",
+            "end_date" : "5/3/2020",
+            "search_topic" : "luanda leaks"
         }
         """
         # Add job to redis queue
@@ -98,12 +98,12 @@ class NewsbyURL(Resource):
         <strong>Usage examples (POST JSON body)</strong>:\n
         Searching for only <strong>one</strong> URL:
         {
-            "url": "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416",
+            "url" : "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416",
         }
 
         Searching for <strong>two</strong> URLs:
         {
-            "url": [ "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416", "https://www.publico.pt/2020/08/10/sociedade/noticia/ordem-medicos-recomenda-mascaras-rua-testes-contactos-risco-1927613" ]
+            "url" : [ "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416", "https://www.publico.pt/2020/08/10/sociedade/noticia/ordem-medicos-recomenda-mascaras-rua-testes-contactos-risco-1927613" ]
         }
         """
         redis_job = redis_queue.enqueue(
@@ -126,7 +126,7 @@ class NewsbyKeywords(Resource):
     parser.add_argument('keywords', type=str,
                         location='json', required=True)
 
-    @validate_urls
+    @validate_dates
     @prevent_duplicate_jobs
     @api.expect(parser)
     @api.response(200, description="News successfully fetched by keywords.")
@@ -137,22 +137,22 @@ class NewsbyKeywords(Resource):
         <em><strong>Important: </strong>Due to the high ammount of required computations for this resource, the date range is limited to 3 months</em>
 
         About the parameters:
-         <strong>'start_date'   : Required parameter</strong>. Indicates the starting date for topic search (format: dd/mm/AAAA).
-         <strong>'end_date'     : Required parameter</strong>. Indicates the ending date for topic search (format: dd/mm/AAAA).
+         <strong>'start_date' : Required parameter</strong>. Indicates the starting date for topic search (format: dd/mm/AAAA).
+         <strong>'end_date' : Required parameter</strong>. Indicates the ending date for topic search (format: dd/mm/AAAA).
          <strong>'search_topic' : Required parameter</strong>. Indicates the topic to search news for. Consult https://www.publico.pt/topicos for a list of valid topics.
 
         <strong>Usage examples (POST JSON body)</strong>:\n
         Searching for the keyword "covid" between 01/01/2020 and 05/03/2020:
         {
-            "start_date": "1/1/2020",
-            "end_date": "5/3/2020",
-            "keywords": "covid"
+            "start_date" : "1/1/2020",
+            "end_date" : "5/3/2020",
+            "keywords" : "covid"
         }
         Searching for the keywords "corona virus" between 01/01/2020 and 05/03/2020:
         {
-            "start_date": "1/1/2020",
-            "end_date": "5/3/2020",
-            "keywords": "corona virus"
+            "start_date" : "1/1/2020",
+            "end_date" : "5/3/2020",
+            "keywords" : "corona virus"
         }
 
         """
