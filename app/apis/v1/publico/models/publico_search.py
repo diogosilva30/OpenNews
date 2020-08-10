@@ -119,7 +119,7 @@ class PublicoAPISearch(PublicoSearch, ABC):
                 break
             self.page_number = self.page_number+1
 
-        print("Found {} news!".format(str(len(results.found_news))))
+        print("Found {} news!".format(str(len(self.found_news))))
 
     @abstractmethod
     def build_api_url(self) -> str:
