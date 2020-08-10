@@ -107,9 +107,9 @@ class PublicoAPISearch(PublicoSearch, ABC):
             print(len(data))
             stop_entire_search = False
             for item in data:
-                print("start date: " + self.start_date)
-                print("end date: " + self.end_date)
-                print("noticia date: " + PublicoNews.parse_date(item.get("data")))
+                print(self.start_date)
+                print(self.end_date)
+                print(PublicoNews.parse_date(item.get("data")))
                 print(".........")
                 # Found news out of lower bound date, STOP THE SEARCH!
                 if PublicoNews.parse_date(item.get("data")) < self.start_date:
