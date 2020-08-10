@@ -95,7 +95,7 @@ class PublicoAPISearch(PublicoSearch, ABC):
     login_url = "https://www.publico.pt/api/user/login"
     base_api_url: str
 
-    def consume_api(self) -> str:
+    def consume_api(self) -> None:
         # Flag to stop search
         stop_entire_search = False
 
@@ -105,16 +105,24 @@ class PublicoAPISearch(PublicoSearch, ABC):
             data = json.loads(r)
             # iterate over each news dict and create a News object from it
             print(len(data))
+            stop_entire_search = False
             for item in data:
+                print("start date: " + self.start_date)
+                print("end date: " + self.end_date)
+                print("noticia date: " + PublicoNews.parse_date(item.get("data")))
+                print(".........")
                 # Found news out of lower bound date, STOP THE SEARCH!
                 if PublicoNews.parse_date(item.get("data")) < self.start_date:
+                    print("Found news out of lower bound date, STOP THE SEARCH!")
                     stop_entire_search = True
                     break  # stop the local search
                 # Found news more recent that end date, SKIP AHEAD
                 elif PublicoNews.parse_date(item.get("data")) > self.end_date:
+                    print("Found news more recent that end date, SKIP AHEAD")
                     continue
                 # Found news inside the date rage, add to list
                 else:
+                    print("adding")
                     self.add_news(item)
             if stop_entire_search:
                 break
