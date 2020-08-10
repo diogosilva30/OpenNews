@@ -53,4 +53,10 @@ def search_by_keywords(data: dict):
     # Create KeywordsSearch object
     results = PublicoKeywordsSearch(keywords, start_date, end_date)
 
+    # Log topic search start
+    print("Starting to search news from Público with keywords '{}' beetween dates {}<-->{}".format(
+        keywords, results.start_date, results.end_date))
+
+    results.consume_api()
+
     return results

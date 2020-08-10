@@ -170,7 +170,7 @@ class PublicoTopicSearch(PublicoAPISearch):
 # ________________________________________________________________________________________________________________________________
 
 
-class PublicoKeywordsSearch(PublicoSearch):
+class PublicoKeywordsSearch(PublicoAPISearch):
     """ Model to store news from Publico's keywords search """
 
     keywords: str
