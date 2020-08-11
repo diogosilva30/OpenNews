@@ -134,12 +134,13 @@ class NewsbyKeywords(Resource):
     def post(self):
         """ Creates job to retrieve Publico's news by keywords
 
-        <em><strong>Important: </strong>Due to the high ammount of required computations for this resource, the date range is limited to 3 months</em>
+        <em><strong>Important: </strong>Due to the high ammount of required computations for this resource, the date range is limited to 3 months.
+        This resource may seem equal to <strong>topic search</strong>. However, this resource gives broader results, as it <strong>includes every news that contains any of the keywords</strong></em>
 
         About the parameters:
-         <strong>'start_date' : Required parameter</strong>. Indicates the starting date for topic search (format: dd/mm/AAAA).
-         <strong>'end_date' : Required parameter</strong>. Indicates the ending date for topic search (format: dd/mm/AAAA).
-         <strong>'search_topic' : Required parameter</strong>. Indicates the topic to search news for. Consult https://www.publico.pt/topicos for a list of valid topics.
+         <strong>'start_date' : Required parameter</strong>. Indicates the starting date for keywords search (format: dd/mm/AAAA).
+         <strong>'end_date' : Required parameter</strong>. Indicates the ending date for keywords search (format: dd/mm/AAAA).
+         <strong>'keywords' : Required parameter</strong>. Indicates the keywords to search news for.
 
         <strong>Usage examples (POST JSON body)</strong>:\n
         Searching for the keyword "covid" between 01/01/2020 and 05/03/2020:

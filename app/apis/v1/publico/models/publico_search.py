@@ -1,3 +1,7 @@
+"""
+This module defines all the needed classes for storing the
+information for all the different Publico's searches.
+"""
 import os
 import json
 from abc import ABC, abstractmethod
@@ -50,7 +54,7 @@ class PublicoSearch(ABC):
     # __________________________________________________________________________________________________________________________
 
     @abstractmethod
-    def add_news(self, obj: any):
+    def add_news(self, obj: any) -> None:
         raise NotImplementedError
 
     # __________________________________________________________________________________________________________________________
@@ -86,7 +90,7 @@ class PublicoURLSearch(PublicoSearch):
 
 
 class PublicoAPISearch(PublicoSearch, ABC):
-    """Model to store news from Publico's API """
+    """Base model to store news from Publico's API."""
     start_date: date
     end_date: date
     page_number: int

@@ -1,16 +1,26 @@
-import os
+"""
+This module contains all the functions needed to route the requests under the Publico's namespace.
+"""
+
 import json
-from typing import List
 
-from flask import request
-
-from app.core.common.helpers import send_post_then_get_html_string, date_from_string, to_list
-from ..models.publico_search import *
-from ..models.publico_news import PublicoNews
+from app.core.common.helpers import to_list
+from ..models.publico_search import PublicoTopicSearch, PublicoURLSearch, PublicoKeywordsSearch
 
 
-def search_by_topic(data):
-    """ Searhes Publico's website by a certain topic within a range of dates"""
+def search_by_topic(data: dict) -> PublicoTopicSearch:
+    """ Searhes news in Publico's website by a certain topic within a range of dates.
+
+    Parameters
+    ----------
+    data
+        Dictionary containing the POST request payload for the topic search.
+
+    Returns
+    -------
+    results
+        'PublicoTopicSearch' object containing the request information and it's results.
+    """
     # Load API payload into JSON doc
     json_doc = json.loads(json.dumps(data))
     # Extract search topic from JSON
@@ -24,24 +34,25 @@ def search_by_topic(data):
     # Log topic search start
     print("Starting to topic search news from Público with topic '{}' beetween dates {}<-->{}".format(
         search_topic, results.start_date, results.end_date))
-
+    # Consume the Publico's API
     results.consume_api()
 
     return results
 
 
-def search_by_urls(data: dict):
-    """Extracts news from Publico's website by urls"""
-    data = to_list(data.get(
-        "url"))  # passed in query string args
-    results = PublicoURLSearch()
-    for url in data:
-        results.add_news(url)
-    return results
+def search_by_keywords(data: dict) -> PublicoKeywordsSearch:
+    """ Searhes news in Publico's website by keywords within a range of dates.
 
+    Parameters
+    ----------
+    data
+        Dictionary containing the POST request payload for the URL(s) search.
 
-def search_by_keywords(data: dict):
-    """ Searhes Publico's website with keywords within a range of dates"""
+    Returns
+    -------
+    results
+        'PublicoURLSearch' object containing the request information and it's results.
+    """
     # Load API payload into JSON doc
     json_doc = json.loads(json.dumps(data))
     # Extract keywords
@@ -57,6 +68,32 @@ def search_by_keywords(data: dict):
     print("Starting to search news from Público with keywords '{}' beetween dates {}<-->{}".format(
         keywords, results.start_date, results.end_date))
 
+    # Consume Publico's API
     results.consume_api()
+
+    return results
+
+
+def search_by_urls(data: dict) -> PublicoURLSearch:
+    """ Searhes news in Publico's website by URL(s).
+
+    Parameters
+    ----------
+    data
+        Dictionary containing the POST request payload for the URL(s) search.
+
+    Returns
+    -------
+    results
+        'PublicoURLSearch' object containing the request information and it's results.
+    """
+    # Transform dict object into a list of URL(s)
+    data = to_list(data.get(
+        "url"))
+    # Create URLSearch object
+    results = PublicoURLSearch()
+    # For each URL add the news
+    for url in data:
+        results.add_news(url)
 
     return results
