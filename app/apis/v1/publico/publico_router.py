@@ -154,7 +154,7 @@ class NewsbyURL(Resource):
         <strong>Usage examples (POST JSON body)</strong>:\n
         Searching for only <strong>one</strong> URL:
         {
-            "url" : "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416",
+            "url" : "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416"
         }
 
         Searching for <strong>two</strong> URLs:
