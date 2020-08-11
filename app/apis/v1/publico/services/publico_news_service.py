@@ -1,61 +1,99 @@
-import os
+"""
+This module contains all the functions needed to route the requests under the Publico's namespace.
+"""
+
 import json
-from typing import List
 
-from flask import request
-
-from app.apis.v1.publico.models.publico_news import PublicoNews
-from app.core.common.helpers import send_post_then_get_html_string, date_from_string, to_list
-from ..models.publico_search import PublicoTopicSearch, PublicoURLSearch
-
-payload = {'username': os.getenv('PUBLICO_USER'),
-           "password": os.getenv('PUBLICO_PW')}
+from app.core.common.helpers import to_list
+from ..models.publico_search import PublicoTopicSearch, PublicoURLSearch, PublicoKeywordsSearch
 
 
-def search_by_topic(data):
-    """ Searhes Publico's website by a certain topic within a range of dates"""
+def search_by_topic(data: dict) -> PublicoTopicSearch:
+    """ Searhes news in Publico's website by a certain topic within a range of dates.
+
+    Parameters
+    ----------
+    data
+        Dictionary containing the POST request payload for the topic search.
+
+    Returns
+    -------
+    results
+        'PublicoTopicSearch' object containing the request information and it's results.
+    """
+    # Load API payload into JSON doc
     json_doc = json.loads(json.dumps(data))
-    # Extract variables from data
+    # Extract search topic from JSON
     search_topic = json_doc.get("search_topic").replace("\n", "")
+    # Extract start date from JSON
     start_date = json_doc.get("start_date")
+    # Extract end date from JSON
     end_date = json_doc.get("end_date")
+    # Create TopicSearch object
     results = PublicoTopicSearch(search_topic, start_date, end_date)
     # Log topic search start
     print("Starting to topic search news from Público with topic '{}' beetween dates {}<-->{}".format(
         search_topic, results.start_date, results.end_date))
-    page_number = 1
-    # Flag used to stop the search
-    stop_entire_search = False
-    while (r := send_post_then_get_html_string(post_url="https://www.publico.pt/api/user/login", post_payload=payload, get_url=("https://www.publico.pt/api/list/" +
-                                                                                                                                search_topic.replace(" ", "-").lower() + "?page=" + str(page_number)))
-           ) != "[]":
-        print("Now reading page number {}...".format(page_number))
-        # Read the json data
-        data = json.loads(r)
-        # iterate over each news dict and create a News object from it
-        for item in data:
-            # Found news out of lower bound date, STOP THE SEARCH!
-            if PublicoNews.parse_date(item.get("data")) < results.start_date:
-                stop_entire_search = True
-                break  # stop the local search
-            # Found news more recent that end date, SKIP AHEAD
-            elif PublicoNews.parse_date(item.get("data")) > results.end_date:
-                continue
-            # Found news inside the date rage, add to list
-            else:
-                results.add_news(item)
-        if stop_entire_search:
-            break
-        page_number = page_number+1
-    print("Found {} news!".format(str(len(results.found_news))))
+    # Consume the Publico's API
+    results.consume_api()
+
     return results
 
 
-def search_by_urls(data: str):
-    """Extracts news from Publico's website by urls"""
+def search_by_keywords(data: dict) -> PublicoKeywordsSearch:
+    """ Searhes news in Publico's website by keywords within a range of dates.
+
+    Parameters
+    ----------
+    data
+        Dictionary containing the POST request payload for the URL(s) search.
+
+    Returns
+    -------
+    results
+        'PublicoURLSearch' object containing the request information and it's results.
+    """
+    # Load API payload into JSON doc
+    json_doc = json.loads(json.dumps(data))
+    # Extract keywords
+    keywords = json_doc.get("keywords").replace("\n", "")
+    # Extract start date
+    start_date = json_doc.get("start_date")
+    # Extract end date
+    end_date = json_doc.get("end_date")
+    # Create KeywordsSearch object
+    results = PublicoKeywordsSearch(keywords, start_date, end_date)
+
+    # Log topic search start
+    print("Starting to search news from Público with keywords '{}' beetween dates {}<-->{}".format(
+        keywords, results.start_date, results.end_date))
+
+    # Consume Publico's API
+    results.consume_api()
+
+    return results
+
+
+def search_by_urls(data: dict) -> PublicoURLSearch:
+    """ Searhes news in Publico's website by URL(s).
+
+    Parameters
+    ----------
+    data
+        Dictionary containing the POST request payload for the URL(s) search.
+
+    Returns
+    -------
+    results
+        'PublicoURLSearch' object containing the request information and it's results.
+    """
+    # Transform dict object into a list of URL(s)
     data = to_list(data.get(
-        "url"))  # passed in query string args
+        "url"))
+    # Create URLSearch object
     results = PublicoURLSearch()
+    # For each URL add the news
     for url in data:
         results.add_news(url)
+
     return results
