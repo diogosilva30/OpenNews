@@ -95,40 +95,9 @@ class PublicoAPISearch(PublicoSearch, ABC):
     login_url = "https://www.publico.pt/api/user/login"
     base_api_url: str
 
+    @abstractmethod
     def consume_api(self) -> None:
-        # Flag to stop search
-        stop_entire_search = False
-
-        while(r := send_post_then_get_html_string(post_url=self.login_url, post_payload=self.login_payload, get_url=self.build_api_url())) != "[]":
-            print("Now reading page number {}...".format(self.page_number))
-            # Read the json data
-            data = json.loads(r)
-            # iterate over each news dict and create a News object from it
-            print(len(data))
-            stop_entire_search = False
-            for item in data:
-                print(self.start_date)
-                print(self.end_date)
-                print(PublicoNews.parse_date(item.get("data")))
-                print(".........")
-                # Found news out of lower bound date, STOP THE SEARCH!
-                if PublicoNews.parse_date(item.get("data")) < self.start_date:
-                    print("Found news out of lower bound date, STOP THE SEARCH!")
-                    stop_entire_search = True
-                    break  # stop the local search
-                # Found news more recent that end date, SKIP AHEAD
-                elif PublicoNews.parse_date(item.get("data")) > self.end_date:
-                    print("Found news more recent that end date, SKIP AHEAD")
-                    continue
-                # Found news inside the date rage, add to list
-                else:
-                    print("adding")
-                    self.add_news(item)
-            if stop_entire_search:
-                break
-            self.page_number = self.page_number+1
-
-        print("Found {} news!".format(str(len(self.found_news))))
+        raise NotImplementedError
 
     @abstractmethod
     def build_api_url(self) -> str:
@@ -175,7 +144,34 @@ class PublicoTopicSearch(PublicoAPISearch):
         return self.base_api_url + self.search_topic.replace(
             " ", "-").lower() + "?page=" + str(self.page_number)
 
+    # __________________________________________________________________________________________________________________________
 
+    def consume_api(self):
+        # Flag to stop search
+        stop_entire_search = False
+
+        while(r := send_post_then_get_html_string(post_url=self.login_url, post_payload=self.login_payload, get_url=self.build_api_url())) != "[]":
+            print("Now reading page number {}...".format(self.page_number))
+            # Read the json data
+            data = json.loads(r)
+            # iterate over each news dict and create a News object from it
+            for item in data:
+                # Found news out of lower bound date, STOP THE SEARCH!
+                if PublicoNews.parse_date(item.get("data")) < self.start_date:
+                    stop_entire_search = True
+                    break  # stop the local search
+                # Found news more recent that end date, SKIP AHEAD
+                elif PublicoNews.parse_date(item.get("data")) > self.end_date:
+                    continue
+                # Found news inside the date rage, add to list
+                else:
+                    self.add_news(item)
+            if stop_entire_search:
+                break
+            # Increment page
+            self.page_number = self.page_number+1
+
+        print("Found {} news!".format(str(len(self.found_news))))
 # ________________________________________________________________________________________________________________________________
 
 
@@ -216,6 +212,23 @@ class PublicoKeywordsSearch(PublicoAPISearch):
         if isinstance(news_object, PublicoNews) and news_object not in self.found_news:
             self.found_news.append(news_object)
 
+    # __________________________________________________________________________________________________________________________
+
     def build_api_url(self):
         return self.base_api_url + self.keywords.replace(
-            " ", "-").lower() + "&page=" + str(self.page_number)
+            " ", "%20").lower() + "&start=" + self.start_date.strftime("%d-%m-%Y") + "&end=" + self.end_date.strftime("%d-%m-%Y") + "&page=" + str(self.page_number)
+
+    # __________________________________________________________________________________________________________________________
+
+    def consume_api(self):
+        while(r := send_post_then_get_html_string(post_url=self.login_url, post_payload=self.login_payload, get_url=self.build_api_url())) != "[]":
+            print("Now reading page number {}...".format(self.page_number))
+            # Read the json data
+            data = json.loads(r)
+            # iterate over each news dict and create a News object from it
+            for item in data:
+                self.add_news(item)
+            # Increment page
+            self.page_number = self.page_number+1
+
+        print("Found {} news!".format(str(len(self.found_news))))
