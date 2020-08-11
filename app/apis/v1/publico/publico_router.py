@@ -55,7 +55,7 @@ class TopicSearch(Resource):
         """Creates job to retrieve Publico's news by topic
 
         <em><strong>Important: </strong>Due to the high ammount of required computations for this resource, the date range is limited to 3 months.
-        This resource may seem equal to <strong>keywords search</strong>. However, this resource gives narrower results, as it <strong>only</strong> includes news related to the topic.</em>
+        This resource may seem equal to <strong>keywords search</strong>. However, this resource gives narrower (more accurate) results, as it <strong>only</strong> includes news related to the topic.</em>
 
          About the parameters:
          <strong>'start_date' : Required parameter</strong>. Indicates the starting date for topic search (format: dd/mm/AAAA).
