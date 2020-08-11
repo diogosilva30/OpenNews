@@ -32,6 +32,8 @@ topic_search = api.model('TopicSearch', {
 
 ####################################################################################################################################
 # POST /topic_search -> Endpoint for searching news by topic
+
+
 @api.doc(description="Searches news in Publico's website by <strong>topic</strong>.")
 @api.route('/topic_search')
 class TopicSearch(Resource):
@@ -52,7 +54,8 @@ class TopicSearch(Resource):
     def post(self):
         """Creates job to retrieve Publico's news by topic
 
-        <em><strong>Important: </strong>Due to the high ammount of required computations for this resource, the date range is limited to 3 months</em>
+        <em><strong>Important: </strong>Due to the high ammount of required computations for this resource, the date range is limited to 3 months.
+        This resource may seem equal to <strong>keywords search</strong>. However, this resource gives narrower results, as it <strong>only</strong> includes news related to the topic.</em>
 
          About the parameters:
          <strong>'start_date' : Required parameter</strong>. Indicates the starting date for topic search (format: dd/mm/AAAA).
@@ -72,6 +75,59 @@ class TopicSearch(Resource):
             publico_news_service.search_by_topic, api.payload, result_ttl=10800, job_timeout=3*3600)  # kills job after 3 hours
         return jsonify({'status': 'ok', 'job_id': redis_job.get_id(), 'Results URL':  url_for(
             'api_v1.results', job_id=redis_job.get_id(), _external=True)})
+
+####################################################################################################################################
+# POST / -> Endpoint for searching news by Keywords
+
+
+@api.doc(description="Searches news in Publico's website by <strong>keywords</strong>.")
+@api.route('/keywords_search')
+class NewsbyKeywords(Resource):
+    # Parser to control expected input
+    parser = api.parser()
+    parser.add_argument('start_date', type=inputs.date_from_iso8601, required=True,
+                        help='Starting date for topic search. (Expected string format: dd/mm/AAAA)', location='json')
+    parser.add_argument('end_date', type=inputs.date_from_iso8601, required=True,
+                        help='Ending date for topic search. (Expected string format: dd/mm/AAAA)', location='json')
+    parser.add_argument('keywords', type=str,
+                        location='json', required=True)
+
+    @validate_dates
+    @prevent_duplicate_jobs
+    @api.expect(parser)
+    @api.response(200, description="News successfully fetched by keywords.")
+    @api.response(400, description="Bad request, selected dates are invalid or range is too high.")
+    def post(self):
+        """ Creates job to retrieve Publico's news by keywords
+
+        <em><strong>Important: </strong>Due to the high ammount of required computations for this resource, the date range is limited to 3 months.
+        This resource may seem equal to <strong>topic search</strong>. However, this resource gives broader results, as it includes <strong>every</strong> news that contains <strong>any</strong> of the keywords.</em>
+
+        About the parameters:
+         <strong>'start_date' : Required parameter</strong>. Indicates the starting date for keywords search (format: dd/mm/AAAA).
+         <strong>'end_date' : Required parameter</strong>. Indicates the ending date for keywords search (format: dd/mm/AAAA).
+         <strong>'keywords' : Required parameter</strong>. Indicates the keywords to search news for.
+
+        <strong>Usage examples (POST JSON body)</strong>:\n
+        Searching for the keyword "covid" between 01/01/2020 and 05/03/2020:
+        {
+            "start_date" : "1/1/2020",
+            "end_date" : "5/3/2020",
+            "keywords" : "covid"
+        }
+        Searching for the keywords "corona virus" between 01/01/2020 and 05/03/2020:
+        {
+            "start_date" : "1/1/2020",
+            "end_date" : "5/3/2020",
+            "keywords" : "corona virus"
+        }
+
+        """
+        redis_job = redis_queue.enqueue(
+            publico_news_service.search_by_keywords, api.payload, result_ttl=10800, job_timeout=3*3600)  # kills job after 3 hours running
+        return jsonify({'status': 'ok', 'job_id': redis_job.get_id(), 'Results URL':  url_for(
+            'api_v1.results', job_id=redis_job.get_id(), _external=True)})
+
 ####################################################################################################################################
 # POST / -> Endpoint for searching news by URLs
 
@@ -108,56 +164,5 @@ class NewsbyURL(Resource):
         """
         redis_job = redis_queue.enqueue(
             publico_news_service.search_by_urls, api.payload, result_ttl=10800, job_timeout=3*3600)  # kills job after 3 hours running
-        return jsonify({'status': 'ok', 'job_id': redis_job.get_id(), 'Results URL':  url_for(
-            'api_v1.results', job_id=redis_job.get_id(), _external=True)})
-
-
-####################################################################################################################################
-# POST / -> Endpoint for searching news by Keywords
-@api.doc(description="Searches news in Publico's website by <strong>keywords</strong>.")
-@api.route('/keywords_search')
-class NewsbyKeywords(Resource):
-    # Parser to control expected input
-    parser = api.parser()
-    parser.add_argument('start_date', type=inputs.date_from_iso8601, required=True,
-                        help='Starting date for topic search. (Expected string format: dd/mm/AAAA)', location='json')
-    parser.add_argument('end_date', type=inputs.date_from_iso8601, required=True,
-                        help='Ending date for topic search. (Expected string format: dd/mm/AAAA)', location='json')
-    parser.add_argument('keywords', type=str,
-                        location='json', required=True)
-
-    @validate_dates
-    @prevent_duplicate_jobs
-    @api.expect(parser)
-    @api.response(200, description="News successfully fetched by keywords.")
-    @api.response(400, description="Bad request, selected dates are invalid or range is too high.")
-    def post(self):
-        """ Creates job to retrieve Publico's news by keywords
-
-        <em><strong>Important: </strong>Due to the high ammount of required computations for this resource, the date range is limited to 3 months.
-        This resource may seem equal to <strong>topic search</strong>. However, this resource gives broader results, as it <strong>includes every news that contains any of the keywords</strong></em>
-
-        About the parameters:
-         <strong>'start_date' : Required parameter</strong>. Indicates the starting date for keywords search (format: dd/mm/AAAA).
-         <strong>'end_date' : Required parameter</strong>. Indicates the ending date for keywords search (format: dd/mm/AAAA).
-         <strong>'keywords' : Required parameter</strong>. Indicates the keywords to search news for.
-
-        <strong>Usage examples (POST JSON body)</strong>:\n
-        Searching for the keyword "covid" between 01/01/2020 and 05/03/2020:
-        {
-            "start_date" : "1/1/2020",
-            "end_date" : "5/3/2020",
-            "keywords" : "covid"
-        }
-        Searching for the keywords "corona virus" between 01/01/2020 and 05/03/2020:
-        {
-            "start_date" : "1/1/2020",
-            "end_date" : "5/3/2020",
-            "keywords" : "corona virus"
-        }
-
-        """
-        redis_job = redis_queue.enqueue(
-            publico_news_service.search_by_keywords, api.payload, result_ttl=10800, job_timeout=3*3600)  # kills job after 3 hours running
         return jsonify({'status': 'ok', 'job_id': redis_job.get_id(), 'Results URL':  url_for(
             'api_v1.results', job_id=redis_job.get_id(), _external=True)})
