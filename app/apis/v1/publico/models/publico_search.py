@@ -61,7 +61,7 @@ class PublicoSearch(ABC):
 
 
 class PublicoURLSearch(PublicoSearch):
-    """ Model to store news from Publico's topic search """
+    """ Model to store news from Publico's URL search """
 
     def __init__(self, found_news=[], *args, **kwargs) -> None:
         super(PublicoURLSearch, self).__init__(*args, **kwargs)
@@ -78,7 +78,7 @@ class PublicoURLSearch(PublicoSearch):
     # __________________________________________________________________________________________________________________________
 
     def serialize_to_json(self) -> None:
-        """ Serializes URL Search object to json"""
+        """ Serializes URL Search object to JSON"""
         return jsonify({"number of found news": str(len(self.found_news)),
                         "news": list(map(lambda x: x.serialize_to_json(), self.found_news))})
 
