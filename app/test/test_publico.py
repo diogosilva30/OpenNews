@@ -7,6 +7,7 @@ from app.test.base import BaseTestCase
 def get_results(client, job_id):
     while(True):
         response = client.get(f"/api/v1/news/results/{job_id}")
+        print(response)
         if response.status_code == 200:
             break
     return response
