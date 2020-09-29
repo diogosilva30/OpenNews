@@ -2,11 +2,11 @@ language: python
 python:
   - "3.8"
 # command to install dependencies
+services:
+  - redis-server
 install:
   - pip install -U -r requirements.txt
   - pip install -U -r requirements_dev.txt
-before_script:
-- sudo redis-server /etc/redis/redis.conf --port 6379
 # command to run tests
 script:
   - pytest
