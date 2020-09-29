@@ -4,6 +4,14 @@ import unittest
 from app.test.base import BaseTestCase
 
 
+def get_results(client, job_id):
+    while(True):
+        response = client.get(f"/api/v1/news/results/{job_id}")
+        if response.code == 200:
+            break
+    return response
+
+
 class TestPublico(BaseTestCase):
     def test_url_search_job(self):
         """ Test for Publico URL search job creation """
@@ -13,7 +21,7 @@ class TestPublico(BaseTestCase):
         response_json = response.json
         self.assertTrue(response_json["status"] == "ok")
         job_id = response_json["job_id"]
-        response_json = self.client.get(f"/api/v1/news/results/{job_id}").json
+        response_json = get_results(self.client, job_id).json
         print(response_json)
         self.assertTrue(int(response_json["number of found news"]) == 1)
         news = response_json["news"][0]
