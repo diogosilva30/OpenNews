@@ -3,7 +3,9 @@ python:
   - "3.8"
 # command to install dependencies
 install:
-  - pip install -r requirements.txt
+  - pip install -U -r requirements.txt
+  - pip install -U -r requirements_dev.txt
+
 # command to run tests
 script:
   - pytest
