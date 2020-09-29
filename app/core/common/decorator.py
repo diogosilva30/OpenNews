@@ -38,7 +38,7 @@ def prevent_duplicate_jobs(f):
             if function_args in queued_job.args:
                 print(
                     "Detected a request for already queued existing job '{}'! Redirecting...".format(queued_job.get_id()))
-                return jsonify({'job_id': queued_job.get_id(), 'Results URL': url_for(
+                return jsonify({'status': 'ok', 'job_id': queued_job.get_id(), 'Results URL': url_for(
                     'api_v1.results', job_id=str(queued_job.get_id()), _external=True)})
 
         # Get list of currently executing jobs in redis queue
@@ -51,7 +51,7 @@ def prevent_duplicate_jobs(f):
             if function_args in job.args:
                 print(
                     "Detected a request for already executing job '{}'! Redirecting...".format(job.get_id()))
-                return jsonify({'job_id': job.get_id(), 'Results URL': url_for(
+                return jsonify({'status': 'ok', 'job_id': job.get_id(), 'Results URL': url_for(
                     'api_v1.results', job_id=str(job.get_id()), _external=True)})
 
         return f(*args, **kwargs)
