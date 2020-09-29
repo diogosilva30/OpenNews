@@ -14,6 +14,7 @@ class TestPublico(BaseTestCase):
         self.assertTrue(response_json["status"] == "ok")
         job_id = response_json["job_id"]
         response_json = self.client.get(f"/api/v1/news/results/{job_id}").json
+        print(response_json)
         self.assertTrue(int(response_json["number of found news"]) == 1)
         news = response_json["news"][0]
         self.assertTrue(
