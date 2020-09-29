@@ -1,5 +1,6 @@
 # PT-NEWS-EXTRACTOR
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+[![Coverage Status](https://coveralls.io/repos/github/spamz23/PT-NEWS_EXTRACTOR/badge.svg?branch=master)](https://coveralls.io/github/spamz23/PT-NEWS_EXTRACTOR?branch=master)
 
 PT-NEWS-EXTRACTOR is a REST API made in Python to extract news from Portuguese journals. It is intended for academic use.
 
