@@ -227,6 +227,7 @@ class PublicoKeywordsSearch(PublicoAPISearch):
     def consume_api(self):
         while(r := send_post_then_get_html_string(post_url=self.login_url, post_payload=self.login_payload, get_url=self.build_api_url())) != "[]":
             print("Now reading page number {}...".format(self.page_number))
+            print("URL: ",  self.build_api_url())
             # Read the json data
             data = json.loads(r)
             # iterate over each news dict and create a News object from it

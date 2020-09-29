@@ -1,163 +1,60 @@
 import unittest
 
-from app.main import db
-from app.main.model.blacklist import BlacklistToken
-import json
+
 from app.test.base import BaseTestCase
 
 
-def register_user(self):
-    return self.client.post(
-        '/user/',
-        data=json.dumps(dict(
-            email='joe@gmail.com',
-            username='username',
-            password='123456'
-        )),
-        content_type='application/json'
-    )
+class TestPublico(BaseTestCase):
+    def test_url_search_job(self):
+        """ Test for Publico URL search job creation """
+        response = self.client.post("/api/v1/news/publico/",
+                                    json={"url": "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416"})
+        self.assert200(response)
+        response_json = response.json
+        self.assertTrue(response_json["status"] == "ok")
+        job_id = response_json["job_id"]
+        response_json = self.client.get(f"/api/v1/news/results/{job_id}").json
+        self.assertTrue(int(response_json["number of found news"]) == 1)
+        news = response_json["news"][0]
+        self.assertTrue(
+            news["title"] == "Estudo aponta para resíduos perigosos em novas obras no Parque das Nações", "Correct title missing")
+        self.assertTrue(
+            "Ou será que vamos viver novamente o drama da CUF Descobertas?" in news["text"], "Full news text missing. Check for Publico's credentials")
 
+    def test_more_than_50_url_search_job(self):
+        """ Test for Publico URL search job creation with more than 50 URLS """
+        response = self.client.post("/api/v1/news/publico/",
+                                    json={"url": ["https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416"]*51})
+        self.assert400(
+            response, "URL search with more than 50 URLS should trigger 'Bad Request'")
 
-def login_user(self):
-    return self.client.post(
-        '/auth/login',
-        data=json.dumps(dict(
-            email='joe@gmail.com',
-            password='123456'
-        )),
-        content_type='application/json'
-    )
+    def test_repeated_job_url_search(self):
+        """ Test for Publico URL search repeated jobs """
+        response = self.client.post("/api/v1/news/publico/",
+                                    json={"url": "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416"}).json
+        previous_job = response["job_id"]
+        response = self.client.post("/api/v1/news/publico/",
+                                    json={"url": "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416"}).json
+        new_job = response["job_id"]
 
+        self.assertEqual(previous_job, new_job,
+                         "A request should redirect to a previous matching job")
 
-class TestAuthBlueprint(BaseTestCase):
-    def test_registration(self):
-        """ Test for user registration """
-        with self.client:
-            response = register_user(self)
-            data = json.loads(response.data.decode())
-            self.assertTrue(data['status'] == 'success')
-            self.assertTrue(data['message'] == 'Successfully registered.')
-            self.assertTrue(data['Authorization'])
-            self.assertTrue(response.content_type == 'application/json')
-            self.assertEqual(response.status_code, 201)
+    def test_invalid_url_search_job(self):
+        """ Test for invalid Publico URL search jobs """
+        response = self.client.post("/api/v1/news/publico/",
+                                    json={"url": "https://www.pubo.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416"})
 
-    def test_registered_with_already_registered_user(self):
-        """ Test registration with already registered email"""
-        register_user(self)
-        with self.client:
-            response = register_user(self)
-            data = json.loads(response.data.decode())
-            self.assertTrue(data['status'] == 'fail')
-            self.assertTrue(
-                data['message'] == 'User already exists. Please Log in.')
-            self.assertTrue(response.content_type == 'application/json')
-            self.assertEqual(response.status_code, 409)
+        self.assert400(response)
 
-    def test_registered_user_login(self):
-        """ Test for login of registered-user login """
-        with self.client:
-            # user registration
-            resp_register = register_user(self)
-            data_register = json.loads(resp_register.data.decode())
-            self.assertTrue(data_register['status'] == 'success')
-            self.assertTrue(
-                data_register['message'] == 'Successfully registered.'
-            )
-            self.assertTrue(data_register['Authorization'])
-            self.assertTrue(resp_register.content_type == 'application/json')
-            self.assertEqual(resp_register.status_code, 201)
-            # registered user login
-            response = login_user(self)
-            data = json.loads(response.data.decode())
-            self.assertTrue(data['status'] == 'success')
-            self.assertTrue(data['message'] == 'Successfully logged in.')
-            self.assertTrue(data['Authorization'])
-            self.assertTrue(response.content_type == 'application/json')
-            self.assertEqual(response.status_code, 200)
-
-    def test_non_registered_user_login(self):
-        """ Test for login of non-registered user """
-        with self.client:
-            response = login_user(self)
-            data = json.loads(response.data.decode())
-            self.assertTrue(data['status'] == 'fail')
-            print(data['message'])
-            self.assertTrue(data['message'] == 'email or password does not match.')
-            self.assertTrue(response.content_type == 'application/json')
-            self.assertEqual(response.status_code, 401)
-
-    def test_valid_logout(self):
-        """ Test for logout before token expires """
-        with self.client:
-            # user registration
-            resp_register = register_user(self)
-            data_register = json.loads(resp_register.data.decode())
-            self.assertTrue(data_register['status'] == 'success')
-            self.assertTrue(
-                data_register['message'] == 'Successfully registered.')
-            self.assertTrue(data_register['Authorization'])
-            self.assertTrue(resp_register.content_type == 'application/json')
-            self.assertEqual(resp_register.status_code, 201)
-            # user login
-            resp_login = login_user(self)
-            data_login = json.loads(resp_login.data.decode())
-            self.assertTrue(data_login['status'] == 'success')
-            self.assertTrue(data_login['message'] == 'Successfully logged in.')
-            self.assertTrue(data_login['Authorization'])
-            self.assertTrue(resp_login.content_type == 'application/json')
-            self.assertEqual(resp_login.status_code, 200)
-            # valid token logout
-            response = self.client.post(
-                '/auth/logout',
-                headers=dict(
-                    Authorization='Bearer ' + json.loads(
-                        resp_login.data.decode()
-                    )['Authorization']
-                )
-            )
-            data = json.loads(response.data.decode())
-            self.assertTrue(data['status'] == 'success')
-            self.assertTrue(data['message'] == 'Successfully logged out.')
-            self.assertEqual(response.status_code, 200)
-
-    def test_valid_blacklisted_token_logout(self):
-        """ Test for logout after a valid token gets blacklisted """
-        with self.client:
-            # user registration
-            resp_register = register_user(self)
-            data_register = json.loads(resp_register.data.decode())
-            self.assertTrue(data_register['status'] == 'success')
-            self.assertTrue(
-                data_register['message'] == 'Successfully registered.')
-            self.assertTrue(data_register['Authorization'])
-            self.assertTrue(resp_register.content_type == 'application/json')
-            self.assertEqual(resp_register.status_code, 201)
-            # user login
-            resp_login = login_user(self)
-            data_login = json.loads(resp_login.data.decode())
-            self.assertTrue(data_login['status'] == 'success')
-            self.assertTrue(data_login['message'] == 'Successfully logged in.')
-            self.assertTrue(data_login['Authorization'])
-            self.assertTrue(resp_login.content_type == 'application/json')
-            self.assertEqual(resp_login.status_code, 200)
-            # blacklist a valid token
-            blacklist_token = BlacklistToken(
-                token=json.loads(resp_login.data.decode())['Authorization'])
-            db.session.add(blacklist_token)
-            db.session.commit()
-            # blacklisted valid token logout
-            response = self.client.post(
-                '/auth/logout',
-                headers=dict(
-                    Authorization='Bearer ' + json.loads(
-                        resp_login.data.decode()
-                    )['Authorization']
-                )
-            )
-            data = json.loads(response.data.decode())
-            self.assertTrue(data['status'] == 'fail')
-            self.assertTrue(data['message'] == 'Token blacklisted. Please log in again.')
-            self.assertEqual(response.status_code, 401)
+    def test_keywords_search_job(self):
+        """Test for Publico keywords search job"""
+        response = self.client.post("/api/v1/news/publico/keywords_search/",
+                                    json={
+                                        "start_date": "1/1/2020",
+                                        "end_date": "5/3/2020",
+                                        "keywords": "covid"
+                                    })
 
 
 if __name__ == '__main__':
