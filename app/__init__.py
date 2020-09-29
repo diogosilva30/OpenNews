@@ -1,10 +1,15 @@
+# Fix for flask-testing bug. See: https://github.com/jarus/flask-testing/issues/143
 from flask_restx import Api
 from flask import Blueprint, url_for
-# from .main.controller.auth_controller import api as auth_ns
 import app.core.common.custom_exceptions as custom_exceptions
-
-
 from .apis.v1 import api as api_v1
+import werkzeug
+werkzeug.cached_property = werkzeug.utils.cached_property
+############################
+
+
+# from .main.controller.auth_controller import api as auth_ns
+
 
 # from .apis.v1 import api as ns1
 
