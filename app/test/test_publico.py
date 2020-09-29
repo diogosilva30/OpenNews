@@ -56,14 +56,14 @@ class TestPublico(BaseTestCase):
 
         self.assert400(response)
 
-    def test_keywords_search_job(self):
-        """Test for Publico keywords search job"""
-        response = self.client.post("/api/v1/news/publico/keywords_search/",
-                                    json={
-                                        "start_date": "1/1/2020",
-                                        "end_date": "5/3/2020",
-                                        "keywords": "covid"
-                                    })
+    # def test_keywords_search_job(self):
+    #     """Test for Publico keywords search job"""
+    #     response = self.client.post("/api/v1/news/publico/keywords_search/",
+    #                                 json={
+    #                                     "start_date": "1/1/2020",
+    #                                     "end_date": "5/3/2020",
+    #                                     "keywords": "covid"
+    #                                 })
 
 
 if __name__ == '__main__':
