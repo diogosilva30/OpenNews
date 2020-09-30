@@ -28,18 +28,6 @@ def handle_value_error_exception(error):
     return {"status": "error", "message": str(error)}, 400  # bad request
 
 
-@api.errorhandler(custom_exceptions.InvalidToken)
-def handle_invalid_token_exception(error):
-    """Return a custom message and 401(unauthorize) status code"""
-    return {"status": "error", "message": str(error)}, 401  # unauthorize
-
-
-@api.errorhandler(custom_exceptions.MissingToken)
-def handle_missing_token_exception(error):
-    """Return a custom message and 401(unauthorize) status code"""
-    return {"status": "error", "message": str(error)}, 401  # unauthorize
-
-
 @api.errorhandler(custom_exceptions.ResourceNotFound)
 def handle_not_found_exception(error):
     """Return a custom message and 404(not found) status code"""
