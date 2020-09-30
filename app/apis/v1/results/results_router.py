@@ -23,12 +23,15 @@ class ResultsURLSearch(Resource):
         """ Retrieves results from a job
         <em><strong>Important:</strong> These results are only kept in registry for 3 hours. After this timespan they get deleted and a new request must be made.</em>
         """
+        print("JOB iD", job_id)
         try:
             fetched_job = rqjob.fetch(job_id, connection=conn)
+
         except:
             raise custom_exceptions.ResourceNotFound(
                 "Job {} does not exist!".format(job_id))
 
+        print(fetched_job)
         if fetched_job.is_finished:
             return fetched_job.result.serialize_to_json()
         else:
