@@ -11,51 +11,9 @@ from .decorators import validate_urls, validate_dates
 # NAMESPACE DECLARATION
 api = Namespace(
     "publico",
-    description="Retrieve news from Publico (" + r"https://www.publico.pt" + ")",
+    description="Retrieve news from Publico (" +
+    r"https://www.publico.pt" + ")",
 )
-####################################################################################################################################
-# MODELS DECLARATION
-news = api.model(
-    "News",
-    {
-        "title": fields.String(required=True, description="News title"),
-        "description": fields.String(required=True, description="News description"),
-        "text": fields.String(required=True, description="News corpus"),
-        "url": fields.String(required=True, description="News URL"),
-        "date": fields.DateTime(required=True, description="News date and time"),
-        "authors": fields.List(
-            fields.String(description="Author name", required=True),
-            description="List of authors",
-            required=True,
-        ),
-    },
-)
-topic_search = api.model(
-    "TopicSearch",
-    {
-        "searh topic": fields.String(
-            attribute="search_topic",
-            required=True,
-            description="The topic used to search Publico's news",
-        ),
-        "search start date": fields.Date(
-            attribute="start_date", description="Topic search start date"
-        ),
-        "search end date": fields.Date(
-            attribute="end_date", description="Topic search end date"
-        ),
-        "number of news": fields.Integer(
-            attribute="number_of_news",
-            description="Number of found news in topic search",
-        ),
-        "news": fields.List(
-            fields.Nested(news),
-            attribute="found_news",
-            description="List of found news",
-        ),
-    },
-)
-
 
 ####################################################################################################################################
 # POST /topic_search -> Endpoint for searching news by topic
@@ -80,7 +38,8 @@ class TopicSearch(Resource):
         help="Ending date for topic search. (Expected string format: dd/mm/AAAA)",
         location="json",
     )
-    parser.add_argument("search_topic", type=str, location="json", required=True)
+    parser.add_argument("search_topic", type=str,
+                        location="json", required=True)
 
     @validate_dates
     @prevent_duplicate_jobs
