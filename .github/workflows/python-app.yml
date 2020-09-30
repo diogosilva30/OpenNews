@@ -22,7 +22,8 @@ jobs:
         python-version: 3.8
     - name: Start Redis Server
       uses: supercharge/redis-github-action@1.1.0
-      
+    # Run redis worker
+    - run: python worker.py
     # install dependencis
     - name: Install dependencies
       run: |
