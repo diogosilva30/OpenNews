@@ -143,7 +143,8 @@ class PublicoTopicSearch(PublicoAPISearch):
 
     # __________________________________________________________________________________________________________________________
 
-    def build_api_url(self):
+    @property
+    def api_url(self):
         return self.base_api_url + self.search_topic.replace(
             " ", "-").lower() + "?page=" + str(self.page_number)
 
