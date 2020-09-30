@@ -1,6 +1,6 @@
 from app.core.common.custom_exceptions import RequestError
 
-supported_journals = ['publico']
+supported_journals = ["publico"]
 
 
 def check_if_journal_is_support(j: str) -> None:
@@ -8,8 +8,7 @@ def check_if_journal_is_support(j: str) -> None:
     if j in supported_journals:
         return True
     else:
-        raise RequestError(
-            "Jornal with name {} is not supported!".format(j))
+        raise RequestError("Jornal with name {} is not supported!".format(j))
 
 
 def get_supported_journals():

@@ -9,25 +9,52 @@ from .decorators import validate_urls, validate_dates
 
 ####################################################################################################################################
 # NAMESPACE DECLARATION
-api = Namespace('publico', description='Retrieve news from Publico (' +
-                r'https://www.publico.pt' + ')')
+api = Namespace(
+    "publico",
+    description="Retrieve news from Publico (" + r"https://www.publico.pt" + ")",
+)
 ####################################################################################################################################
 # MODELS DECLARATION
-news = api.model('News', {
-    'title': fields.String(required=True, description='News title'),
-    'description': fields.String(required=True, description='News description'),
-    'text': fields.String(required=True, description='News corpus'),
-    'url': fields.String(required=True, description='News URL'),
-    'date': fields.DateTime(required=True, description='News date and time'),
-    'authors': fields.List(fields.String(description='Author name', required=True), description='List of authors', required=True)
-})
-topic_search = api.model('TopicSearch', {
-    'searh topic': fields.String(attribute='search_topic', required=True, description="The topic used to search Publico's news"),
-    'search start date': fields.Date(attribute='start_date', description='Topic search start date'),
-    'search end date': fields.Date(attribute='end_date', description='Topic search end date'),
-    'number of news': fields.Integer(attribute='number_of_news', description='Number of found news in topic search'),
-    'news': fields.List(fields.Nested(news), attribute='found_news', description='List of found news')
-})
+news = api.model(
+    "News",
+    {
+        "title": fields.String(required=True, description="News title"),
+        "description": fields.String(required=True, description="News description"),
+        "text": fields.String(required=True, description="News corpus"),
+        "url": fields.String(required=True, description="News URL"),
+        "date": fields.DateTime(required=True, description="News date and time"),
+        "authors": fields.List(
+            fields.String(description="Author name", required=True),
+            description="List of authors",
+            required=True,
+        ),
+    },
+)
+topic_search = api.model(
+    "TopicSearch",
+    {
+        "searh topic": fields.String(
+            attribute="search_topic",
+            required=True,
+            description="The topic used to search Publico's news",
+        ),
+        "search start date": fields.Date(
+            attribute="start_date", description="Topic search start date"
+        ),
+        "search end date": fields.Date(
+            attribute="end_date", description="Topic search end date"
+        ),
+        "number of news": fields.Integer(
+            attribute="number_of_news",
+            description="Number of found news in topic search",
+        ),
+        "news": fields.List(
+            fields.Nested(news),
+            attribute="found_news",
+            description="List of found news",
+        ),
+    },
+)
 
 
 ####################################################################################################################################
@@ -35,22 +62,33 @@ topic_search = api.model('TopicSearch', {
 
 
 @api.doc(description="Searches news in Publico's website by <strong>topic</strong>.")
-@api.route('/topic_search')
+@api.route("/topic_search")
 class TopicSearch(Resource):
     # Parser to control expected input
     parser = api.parser()
-    parser.add_argument('start_date', type=inputs.date_from_iso8601, required=True,
-                        help='Starting date for topic search. (Expected string format: dd/mm/AAAA)', location='json')
-    parser.add_argument('end_date', type=inputs.date_from_iso8601, required=True,
-                        help='Ending date for topic search. (Expected string format: dd/mm/AAAA)', location='json')
-    parser.add_argument('search_topic', type=str,
-                        location='json', required=True)
+    parser.add_argument(
+        "start_date",
+        type=inputs.date_from_iso8601,
+        required=True,
+        help="Starting date for topic search. (Expected string format: dd/mm/AAAA)",
+        location="json",
+    )
+    parser.add_argument(
+        "end_date",
+        type=inputs.date_from_iso8601,
+        required=True,
+        help="Ending date for topic search. (Expected string format: dd/mm/AAAA)",
+        location="json",
+    )
+    parser.add_argument("search_topic", type=str, location="json", required=True)
 
     @validate_dates
     @prevent_duplicate_jobs
     @api.expect(parser)
     @api.response(200, description="News successfully fetched by topic.")
-    @api.response(400, description="Bad request, selected dates are invalid or range is too high.")
+    @api.response(
+        400, description="Bad request, selected dates are invalid or range is too high."
+    )
     def post(self):
         """Creates job to retrieve Publico's news by topic
 
@@ -72,31 +110,54 @@ class TopicSearch(Resource):
         """
         # Add job to redis queue
         redis_job = redis_queue.enqueue(
-            publico_news_service.search_by_topic, api.payload, result_ttl=10800, job_timeout=3*3600)  # kills job after 3 hours
-        return jsonify({'status': 'ok', 'job_id': redis_job.get_id(), 'Results URL':  url_for(
-            'api_v1.results', job_id=redis_job.get_id(), _external=True)})
+            publico_news_service.search_by_topic,
+            api.payload,
+            result_ttl=10800,
+            job_timeout=3 * 3600,
+        )  # kills job after 3 hours
+        return jsonify(
+            {
+                "status": "ok",
+                "job_id": redis_job.get_id(),
+                "Results URL": url_for(
+                    "api_v1.results", job_id=redis_job.get_id(), _external=True
+                ),
+            }
+        )
+
 
 ####################################################################################################################################
 # POST / -> Endpoint for searching news by Keywords
 
 
 @api.doc(description="Searches news in Publico's website by <strong>keywords</strong>.")
-@api.route('/keywords_search')
+@api.route("/keywords_search")
 class NewsbyKeywords(Resource):
     # Parser to control expected input
     parser = api.parser()
-    parser.add_argument('start_date', type=inputs.date_from_iso8601, required=True,
-                        help='Starting date for topic search. (Expected string format: dd/mm/AAAA)', location='json')
-    parser.add_argument('end_date', type=inputs.date_from_iso8601, required=True,
-                        help='Ending date for topic search. (Expected string format: dd/mm/AAAA)', location='json')
-    parser.add_argument('keywords', type=str,
-                        location='json', required=True)
+    parser.add_argument(
+        "start_date",
+        type=inputs.date_from_iso8601,
+        required=True,
+        help="Starting date for topic search. (Expected string format: dd/mm/AAAA)",
+        location="json",
+    )
+    parser.add_argument(
+        "end_date",
+        type=inputs.date_from_iso8601,
+        required=True,
+        help="Ending date for topic search. (Expected string format: dd/mm/AAAA)",
+        location="json",
+    )
+    parser.add_argument("keywords", type=str, location="json", required=True)
 
     @validate_dates
     @prevent_duplicate_jobs
     @api.expect(parser)
     @api.response(200, description="News successfully fetched by keywords.")
-    @api.response(400, description="Bad request, selected dates are invalid or range is too high.")
+    @api.response(
+        400, description="Bad request, selected dates are invalid or range is too high."
+    )
     def post(self):
         """ Creates job to retrieve Publico's news by keywords
 
@@ -124,22 +185,41 @@ class NewsbyKeywords(Resource):
 
         """
         redis_job = redis_queue.enqueue(
-            publico_news_service.search_by_keywords, api.payload, result_ttl=10800, job_timeout=3*3600)  # kills job after 3 hours running
-        return jsonify({'status': 'ok', 'job_id': redis_job.get_id(), 'Results URL':  url_for(
-            'api_v1.results', job_id=redis_job.get_id(), _external=True)})
+            publico_news_service.search_by_keywords,
+            api.payload,
+            result_ttl=10800,
+            job_timeout=3 * 3600,
+        )  # kills job after 3 hours running
+        return jsonify(
+            {
+                "status": "ok",
+                "job_id": redis_job.get_id(),
+                "Results URL": url_for(
+                    "api_v1.results", job_id=redis_job.get_id(), _external=True
+                ),
+            }
+        )
+
 
 ####################################################################################################################################
 # POST / -> Endpoint for searching news by URLs
 
 
-@api.doc(description="Searches news in Publico's website by specific URLs.\n <strong>Important :</strong> URL search is limited to 50 URLs for each job. ")
-@api.route('/')
+@api.doc(
+    description="Searches news in Publico's website by specific URLs.\n <strong>Important :</strong> URL search is limited to 50 URLs for each job. "
+)
+@api.route("/")
 class NewsbyURL(Resource):
     # Parser to control expected input
     parser = api.parser()
     # Add 'url' query param. Accepts multiple instances
-    parser.add_argument('url', type=list,
-                        help='News URL(s) to extract info.', location='json', required=True)
+    parser.add_argument(
+        "url",
+        type=list,
+        help="News URL(s) to extract info.",
+        location="json",
+        required=True,
+    )
 
     @validate_urls
     @prevent_duplicate_jobs
@@ -163,6 +243,17 @@ class NewsbyURL(Resource):
         }
         """
         redis_job = redis_queue.enqueue(
-            publico_news_service.search_by_urls, api.payload, result_ttl=10800, job_timeout=3*3600)  # kills job after 3 hours running
-        return jsonify({'status': 'ok', 'job_id': redis_job.get_id(), 'Results URL':  url_for(
-            'api_v1.results', job_id=redis_job.get_id(), _external=True)})
+            publico_news_service.search_by_urls,
+            api.payload,
+            result_ttl=10800,
+            job_timeout=3 * 3600,
+        )  # kills job after 3 hours running
+        return jsonify(
+            {
+                "status": "ok",
+                "job_id": redis_job.get_id(),
+                "Results URL": url_for(
+                    "api_v1.results", job_id=redis_job.get_id(), _external=True
+                ),
+            }
+        )

@@ -3,12 +3,17 @@ from typing import List
 from datetime import datetime, date
 from abc import ABC, abstractmethod, abstractstaticmethod
 
-from app.core.common.helpers import validate_url, datetime_from_string, custom_json_serializer
+from app.core.common.helpers import (
+    validate_url,
+    datetime_from_string,
+    custom_json_serializer,
+)
 from app.core.common.custom_exceptions import RequestError
 
 
 class News(ABC):
     """ News base model for storing details about a particular news. Derivated classes should implement some methods"""
+
     title: str
     description: str
     text: str
@@ -19,7 +24,15 @@ class News(ABC):
 
     # __________________________________________________________________________________________________________________________
 
-    def __init__(self, title: str, description: str, url: str, rubric: str, date: str, authors: List[str]) -> None:
+    def __init__(
+        self,
+        title: str,
+        description: str,
+        url: str,
+        rubric: str,
+        date: str,
+        authors: List[str],
+    ) -> None:
         self.title = title
         self.description = description
 
@@ -55,8 +68,7 @@ class News(ABC):
         processed_authors = []
         for author in authors:
             # '_authors' is a list of dicts. Keep only the name for each dict
-            author = {k: v for k, v in author.items()
-                      if k.startswith('nome')}
+            author = {k: v for k, v in author.items() if k.startswith("nome")}
             # Keep the authors name, unpack them, and add to list
             processed_authors.append(*author.values())
         return processed_authors
@@ -70,7 +82,7 @@ class News(ABC):
 
     # _______________________________________________________________________________________________________________________________________________________
     @abstractstaticmethod
-    def build_from_url(url) -> 'News':
+    def build_from_url(url) -> "News":
         """Builds a News object from a given URL"""
         raise NotImplementedError
 
