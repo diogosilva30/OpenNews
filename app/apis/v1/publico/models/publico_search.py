@@ -10,7 +10,7 @@ from typing import List
 from flask import jsonify
 import requests
 
-from app.core.common.helpers import date_from_string, send_post_then_get_html_string
+from app.core.common.helpers import date_from_string
 from .publico_news import PublicoNews
 
 
