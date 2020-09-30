@@ -3,12 +3,17 @@ import unittest
 
 from app.test.base import BaseTestCase
 from rq import Queue, Worker
+from rq.job import Job
+
 from app.core import redis_queue
+from worker import conn
 workers = Worker.all(queue=redis_queue)
 
 
 def get_results(client, job_id):
     w = workers[0]
+    job = Job.fetch(job_id, connection=conn)
+    print(job.get_status())
     print(w.name)
     print(w.queues)
     print(w.state)
