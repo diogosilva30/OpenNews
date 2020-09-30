@@ -20,4 +20,4 @@ jobs:
       - name: Black Formatter
         uses: lgeiger/black-action@master
         with:
-          args: ". --check"
+          args: "."

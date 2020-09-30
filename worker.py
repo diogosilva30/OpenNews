@@ -6,7 +6,7 @@ from rq import Worker, Queue, Connection
 
 listen = ['default']
 
-redis_url = os.getenv('REDISTOGO_URL', None)
+redis_url = os.getenv('REDISTOGO_URL', "redis://localhost:6379")
 
 # If no redis URL in system env, setup a fake redis server
 conn = redis.from_url(
