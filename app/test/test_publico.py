@@ -13,7 +13,7 @@ workers = Worker.all(queue=redis_queue)
 def get_results(client, job_id):
     w = workers[0]
     job = Job.fetch(job_id, connection=conn)
-    print(job.get_status())
+    print(job.get_position())
     print(w.name)
     print(w.queues)
     print(w.state)
