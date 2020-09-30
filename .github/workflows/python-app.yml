@@ -24,7 +24,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install flake8 pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          pip install requirements_dev.txt
+          pip install -r requirements_dev.txt
 
       - name: Start Redis Server
         uses: supercharge/redis-github-action@1.1.0
