@@ -2,9 +2,14 @@ import unittest
 
 
 from app.test.base import BaseTestCase
+from rq import Queue, Worker
+from app.core import redis_queue
+workers = Worker.all(queue=redis_queue)
 
 
 def get_results(client, job_id):
+    print(workers[0])
+    raise ValueError
     i = 0
     while(i < 50):
         response = client.get(f"/api/v1/news/results/{job_id}")
@@ -22,6 +27,7 @@ class TestPublico(BaseTestCase):
         response = self.client.post("/api/v1/news/publico/",
                                     json={"url": "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416"})
         self.assert200(response)
+
         response_json = response.json
         self.assertTrue(response_json["status"] == "ok")
         job_id = response_json["job_id"]
