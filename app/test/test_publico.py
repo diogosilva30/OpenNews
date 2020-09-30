@@ -135,6 +135,22 @@ class TestPublicoKeywordsSearch(BaseTestCase):
         self.assert400(
             response, "Keyword search should trigger 'Bad Request'! Date range is too big")
 
+    def test_invalid_dates__keywords_search_job(self):
+        """ Test for Publico keywords search with invalid date range (greater than 3 months) """
+        response = self.client.post("/api/v1/news/publico/keywords_search",
+                                    json={
+                                        "start_date": "not a valid date",
+                                        "end_date": "another invalid date",
+                                        "keywords": "covid"
+                                    })
+
+        self.assertEqual(response.json["status"], "error")
+        self.assertIn("Invalid date string format provided",
+                      response.json["message"])
+
+        self.assert400(
+            response, "Keyword search should trigger 'Bad Request'! Dates are invalid")
+
 
 class TestPublicoTopicSearch(BaseTestCase):
     """ Performs tests for Publico's Topic Search"""
