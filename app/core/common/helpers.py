@@ -1,25 +1,19 @@
 from datetime import time, datetime, date
-from typing import Any
 
 # needs pip install python-dateutil
 import dateutil.parser
 import requests
 
-from app.core.common.custom_exceptions import RequestError
 
-
-def validate_url(url, contains=None) -> bool:
-
-    if contains is None:
-        return requests.get(url).status_code == 200
-    else:
-        return requests.get(url).status_code == 200 and contains in url
+def validate_url(url) -> bool:
+    """ Send HTTP GET request to a certain a URL and checks for 200 status code"""
+    return requests.get(url).status_code == 200
 
 
 def datetime_from_string(x: str) -> datetime:
+    """Parses a str to datetime"""
     if isinstance(x, datetime):
         return x
-
     return dateutil.parser.parse(x)
 
 
@@ -27,11 +21,6 @@ def date_from_string(x: str) -> date:
     if isinstance(x, date):
         return x.date()
     return dateutil.parser.parse(x, dayfirst=True).date()
-
-
-def from_str(x: Any) -> str:
-    assert isinstance(x, str)
-    return x
 
 
 def custom_json_serializer(obj):

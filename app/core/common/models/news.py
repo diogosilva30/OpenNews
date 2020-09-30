@@ -1,14 +1,9 @@
 import json
 from typing import List
-from datetime import datetime, date
+from datetime import datetime
 from abc import ABC, abstractmethod, abstractstaticmethod
 
-from app.core.common.helpers import (
-    validate_url,
-    datetime_from_string,
-    custom_json_serializer,
-)
-from app.core.common.custom_exceptions import RequestError
+from app.core.common.helpers import datetime_from_string, custom_json_serializer
 
 
 class News(ABC):
