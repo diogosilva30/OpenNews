@@ -141,7 +141,7 @@ class PublicoNews(News):
     # _______________________________________________________________________________________________________________________________________________________
 
     @staticmethod
-    def deserialize_news(news_dict: dict) -> "News":
+    def deserialize_news(news_dict: dict) -> News:
         """Converts a dictionary (containing a particular news information) to a News object"""
         # Check is news is valid, if not return None. If it's valid proced to deserialize
         if not PublicoNews.is_news_valid(news_dict):

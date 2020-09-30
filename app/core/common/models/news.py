@@ -53,12 +53,13 @@ class News(ABC):
 
     @abstractmethod
     def extract_corpus(self) -> None:
-        raise NotImplementedError
+        """Child classes must implement method 'extract_corpus' to be able to get the news corpus
+        given it's URL (using webscrapping)"""
 
     # __________________________________________________________________________________________________________________________
     @abstractstaticmethod
     def deserialize_news(news_dict: dict):
-        raise NotImplementedError
+        """Child classes must implement method 'deserialize_news' to construct a 'News' object from a dictionary"""
 
     # __________________________________________________________________________________________________________________________
 
@@ -77,21 +78,17 @@ class News(ABC):
 
     @abstractstaticmethod
     def is_news_valid(obj: dict) -> bool:
-        """Validates if a particular news is valid given it's dict"""
-        raise NotImplementedError
+        """Child classes must implement 'is_news_valid' to check if a particular news is valid given it's dict"""
 
     # _______________________________________________________________________________________________________________________________________________________
     @abstractstaticmethod
     def build_from_url(url) -> "News":
-        """Builds a News object from a given URL"""
-        raise NotImplementedError
+        """Child classes must implement 'build_from_url' method to build a 'News' object from a given URL"""
 
     @abstractstaticmethod
     def validate_url(url):
-        """Validates a URL"""
-        raise NotImplementedError
+        """Child classes must implement 'validate_url' method check if a URL is valid"""
 
     @abstractstaticmethod
     def parse_date(date_string: str) -> datetime.date:
-        """Parses a date string into a date object"""
-        raise NotImplementedError
+        """Child classes must implement 'parse_date' method to parse a date string into a date object"""
