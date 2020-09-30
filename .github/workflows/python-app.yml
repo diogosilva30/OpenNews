@@ -39,7 +39,6 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v2
-      - run: ls
       - name: Run Redis Worker
         run: |
           python worker.py
