@@ -35,13 +35,12 @@ jobs:
     - name: Run redis worker
       run: |
         python worker.py
-  test:
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - name: Test with pytest
-        run: |
+      env: 
+        PORT: 4000
+    - name: Test with pytest
+      run: |
           pytest 
+      
         
 
         
