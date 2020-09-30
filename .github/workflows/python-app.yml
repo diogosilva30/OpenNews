@@ -35,8 +35,6 @@ jobs:
     - name: Run redis worker
       run: |
         python worker.py &
-      env: 
-        PORT: 4000
     - name: Test with pytest
       run: |
           pytest 
