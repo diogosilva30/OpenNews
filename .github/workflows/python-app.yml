@@ -21,12 +21,12 @@ jobs:
       - name: Start Redis Server
         uses: supercharge/redis-github-action@1.1.0
 
-      # install dependencis
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install flake8 pytest
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      # install dependencies
+      - name: Install Python dependencies
+        uses: py-actions/py-dependency-install@v2
+        
+      - name: Install flake, pytest
+        run: pip install flake8 pytest
 
       - name: Lint with flake8
         run: |
@@ -40,8 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run Redis Worker
-        run: |
-          python worker.py
+        run: python worker.py
 
         
      
