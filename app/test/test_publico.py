@@ -12,7 +12,7 @@ def get_results(client, job_id):
     print(w.name)
     print(w.queues)
     print(w.state)
-    print(w.current_job)
+    print(w.successful_job_count)
     raise ValueError
     i = 0
     while(i < 50):
