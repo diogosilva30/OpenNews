@@ -8,7 +8,11 @@ workers = Worker.all(queue=redis_queue)
 
 
 def get_results(client, job_id):
-    print(workers[0])
+    w = workers[0]
+    print(w.name)
+    print(w.queues)
+    print(w.state)
+    print(w.current_job)
     raise ValueError
     i = 0
     while(i < 50):
