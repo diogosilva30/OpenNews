@@ -4,7 +4,7 @@ import requests
 from datetime import date
 from dateutil import parser
 from app.core.common.models.news import News
-from app.core.common.helpers import datetime_from_string, send_post_then_get_html_string
+from app.core.common.helpers import datetime_from_string, send_post_then_get_html_string, validate_url
 from app.core.common.custom_exceptions import RequestError
 
 
@@ -30,6 +30,10 @@ class PublicoNews(News):
     def is_news_valid(obj: dict) -> bool:
         """Validates if a particular news is valid given it's dict"""
         # Check for 'interviews', and 'right to answer'
+
+        # Validate URL
+        if not validate_url(obj.get("url")):
+            return False
 
         rubric = str(obj.get("rubrica"))
         if "Entrevista" in rubric or "Direito de Resposta" in rubric:

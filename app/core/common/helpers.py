@@ -9,14 +9,11 @@ from app.core.common.custom_exceptions import RequestError
 
 
 def validate_url(url, contains=None) -> bool:
-    try:
-        if contains is None:
-            return requests.get(url).status_code == 200
-        else:
-            print(requests.get(url).status_code)
-            return requests.get(url).status_code == 200 and contains in url
-    except:
-        raise RequestError("URL '{}' is not valid!")
+
+    if contains is None:
+        return requests.get(url).status_code == 200
+    else:
+        return requests.get(url).status_code == 200 and contains in url
 
 
 def datetime_from_string(x: str) -> datetime:

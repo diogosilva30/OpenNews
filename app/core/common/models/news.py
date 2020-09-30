@@ -23,10 +23,8 @@ class News(ABC):
         self.title = title
         self.description = description
 
-        if(validate_url(url)):
-            self.url = url
-        else:
-            raise RequestError("URL '{}' is not valid!".format(url))
+        self.url = url
+
         # Fill in the text variable
         self.extract_corpus()
         self.rubric = rubric

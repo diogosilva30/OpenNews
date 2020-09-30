@@ -3,6 +3,7 @@ This module contains all the functions needed to route the requests under the Pu
 """
 
 import json
+import numpy as np
 
 from app.core.common.helpers import to_list
 from ..models.publico_search import PublicoTopicSearch, PublicoURLSearch, PublicoKeywordsSearch
@@ -88,8 +89,8 @@ def search_by_urls(data: dict) -> PublicoURLSearch:
         'PublicoURLSearch' object containing the request information and it's results.
     """
     # Transform dict object into a list of URL(s)
-    data = to_list(data.get(
-        "url"))
+    data = np.unique(to_list(data.get(
+        "url")))
     # Create URLSearch object
     results = PublicoURLSearch()
     # For each URL add the news

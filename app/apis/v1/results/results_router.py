@@ -1,8 +1,5 @@
 from flask_restx import Namespace, Resource
-from rq.job import Job as rqjob
-
-import app.core.common.custom_exceptions as custom_exceptions
-from worker import conn
+from .results_service import get_results
 
 
 ####################################################################################################################################
@@ -23,17 +20,4 @@ class ResultsURLSearch(Resource):
         """ Retrieves results from a job
         <em><strong>Important:</strong> These results are only kept in registry for 3 hours. After this timespan they get deleted and a new request must be made.</em>
         """
-        print("JOB iD", job_id)
-        try:
-            fetched_job = rqjob.fetch(job_id, connection=conn)
-
-        except:
-            raise custom_exceptions.ResourceNotFound(
-                "Job {} does not exist!".format(job_id))
-
-        print(fetched_job)
-        if fetched_job.is_finished:
-            return fetched_job.result.serialize_to_json()
-        else:
-            raise custom_exceptions.StillProcessing(
-                "Job {} has not been processed yet, try again later!".format(job_id))
+        return get_results(job_id)

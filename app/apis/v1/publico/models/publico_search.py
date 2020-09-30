@@ -18,6 +18,9 @@ class PublicoSearch(ABC):
 
     _found_news: List[PublicoNews]
 
+    def __init__(self):
+        self._found_news = []
+
     # __________________________________________________________________________________________________________________________
 
     @property
@@ -35,11 +38,6 @@ class PublicoSearch(ABC):
     @property
     def number_of_news(self) -> int:
         return len(self._found_news)
-
-    # __________________________________________________________________________________________________________________________
-
-    def __init__(self):
-        pass
 
     # __________________________________________________________________________________________________________________________
 
@@ -67,9 +65,8 @@ class PublicoSearch(ABC):
 class PublicoURLSearch(PublicoSearch):
     """ Model to store news from Publico's URL search """
 
-    def __init__(self, found_news=[], *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         super(PublicoURLSearch, self).__init__(*args, **kwargs)
-        self.found_news = found_news
 
     # __________________________________________________________________________________________________________________________
 
@@ -227,7 +224,6 @@ class PublicoKeywordsSearch(PublicoAPISearch):
     def consume_api(self):
         while(r := send_post_then_get_html_string(post_url=self.login_url, post_payload=self.login_payload, get_url=self.build_api_url())) != "[]":
             print("Now reading page number {}...".format(self.page_number))
-            print("URL: ",  self.build_api_url())
             # Read the json data
             data = json.loads(r)
             # iterate over each news dict and create a News object from it
