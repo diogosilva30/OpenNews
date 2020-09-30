@@ -20,14 +20,7 @@ class TestPublicoURLSearch(BaseTestCase):
         # Get json response from the job
         response_json = get_results_from_fake_queue(search_job.id).json
 
-        # Assert that 'number of found news' exists and is only 1
-        self.assertEqual(
-            str(response_json["number of found news"]), str(1), "Incorrect number of news")
-
-        # Check for correct information and premium text in news
-        news = response_json["news"][0]
-        self.assertTrue(
-            news["title"] == "Estudo aponta para resíduos perigosos em novas obras no Parque das Nações", "Correct title missing")
+        self.assertIn("number of found news", response_json)
 
     def test_url_search_job(self):
         """ Test for Publico URL fake job creation and news retrieval"""
