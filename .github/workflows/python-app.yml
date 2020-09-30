@@ -22,14 +22,17 @@ jobs:
         python-version: 3.8
     - name: Start Redis Server
       uses: supercharge/redis-github-action@1.1.0
-    # Run redis worker
-    - run: python worker.py
+    
     # install dependencis
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    # Run redis worker
+    - run: python worker.py
+      
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
