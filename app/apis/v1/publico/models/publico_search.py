@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 from datetime import date
 from typing import List
 from flask import jsonify
+import requests
 
 from app.core.common.helpers import date_from_string, send_post_then_get_html_string
 from .publico_news import PublicoNews
@@ -100,8 +101,9 @@ class PublicoAPISearch(PublicoSearch, ABC):
     def consume_api(self) -> None:
         raise NotImplementedError
 
+    @property
     @abstractmethod
-    def build_api_url(self) -> str:
+    def api_url(self):
         raise NotImplementedError
 
 
@@ -151,7 +153,7 @@ class PublicoTopicSearch(PublicoAPISearch):
         # Flag to stop search
         stop_entire_search = False
 
-        while(r := send_post_then_get_html_string(post_url=self.login_url, post_payload=self.login_payload, get_url=self.build_api_url())) != "[]":
+        while(r := requests.get(self.api_url).text) != "[]":
             print("Now reading page number {}...".format(self.page_number))
             # Read the json data
             data = json.loads(r)
@@ -215,14 +217,16 @@ class PublicoKeywordsSearch(PublicoAPISearch):
 
     # __________________________________________________________________________________________________________________________
 
-    def build_api_url(self):
+    @property
+    def api_url(self):
         return self.base_api_url + self.keywords.replace(
             " ", "%20").lower() + "&start=" + self.start_date.strftime("%d-%m-%Y") + "&end=" + self.end_date.strftime("%d-%m-%Y") + "&page=" + str(self.page_number)
 
     # __________________________________________________________________________________________________________________________
 
     def consume_api(self):
-        while(r := send_post_then_get_html_string(post_url=self.login_url, post_payload=self.login_payload, get_url=self.build_api_url())) != "[]":
+
+        while(r := requests.get(self.api_url).text) != "[]":
             print("Now reading page number {}...".format(self.page_number))
             # Read the json data
             data = json.loads(r)
