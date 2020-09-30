@@ -1,5 +1,5 @@
 # PT-NEWS-EXTRACTOR
-[![Coverage Status](https://coveralls.io/repos/github/spamz23/PT-NEWS_EXTRACTOR/badge.svg?branch=master)](https://coveralls.io/github/spamz23/PT-NEWS_EXTRACTOR?branch=master)
+[![codecov](https://codecov.io/gh/spamz23/PT-NEWS_EXTRACTOR/branch/master/graph/badge.svg?token=KxMeNY2V78)](undefined)
 ![Build app](https://github.com/spamz23/PT-NEWS_EXTRACTOR/workflows/Build%20app/badge.svg)
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
