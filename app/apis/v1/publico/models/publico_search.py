@@ -146,6 +146,10 @@ class PublicoTopicSearch(PublicoAPISearch):
             data = json.loads(r)
             # iterate over each news dict and create a News object from it
             for item in data:
+                print(type(self.start_date))
+                print(type(self.end_date))
+                print(self.start_date)
+                print(self.end_date)
                 # Found news out of lower bound date, STOP THE SEARCH!
                 if PublicoNews.parse_date(item.get("data")) < self.start_date:
                     stop_entire_search = True
