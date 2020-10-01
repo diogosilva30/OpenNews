@@ -9,7 +9,7 @@ click==6.7
 colorama==0.4.3
 coverage==4.4.2
 enum-compat==0.0.3
-eventlet==0.21.0
+eventlet==0.28.0
 Flask==1.1.2
 Flask-Cors==3.0.9
 flask-restx==0.2.0
