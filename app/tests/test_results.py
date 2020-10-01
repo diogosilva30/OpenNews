@@ -1,7 +1,7 @@
 import unittest
 
 
-from app.test.base import BaseTestCase
+from app.tests.base import BaseTestCase
 from .publico.test_publico_service import send_post_request
 
 

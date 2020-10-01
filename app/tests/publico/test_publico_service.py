@@ -6,7 +6,7 @@ from app.apis.v1.publico.services.publico_news_service import (
     search_by_topic,
     search_by_urls,
 )
-from app.test.base import BaseTestCase, get_results_from_fake_queue, fake_redis_queue
+from app.tests.base import BaseTestCase, get_results_from_fake_queue, fake_redis_queue
 
 
 def send_post_request(client, uri, json_payload):
