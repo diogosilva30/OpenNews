@@ -7,7 +7,15 @@
 
 PT-NEWS-EXTRACTOR is a REST API made in Python to extract news from Portuguese journals. It is intended for academic use.
 
-You can find this app [here](https://pt-news-extractor.herokuapp.com/api/v1/)
+## Supported Journals
+| Journal | URL Search | Keyword Search | Topic Search
+|:---:|:---:|:---:|:---:|
+| [Público](https://www.publico.pt/) | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| [Correio da Manhã](https://www.cmjornal.pt/) **SOON** | :x: | :x: | :x: |
+
+
+## Want to give it a try?
+Read and play with the swagger documentation [here](https://pt-news-extractor.herokuapp.com/api/v1/) :fire:
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Please make sure to update tests as appropriate.
