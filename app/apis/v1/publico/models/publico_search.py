@@ -33,23 +33,6 @@ class PublicoSearch(ABC):
     @found_news.setter
     def found_news(self, value):
         self._found_news = value
-
-    # __________________________________________________________________________________________________________________________
-
-    @property
-    def number_of_news(self) -> int:
-        return len(self._found_news)
-
-    # __________________________________________________________________________________________________________________________
-
-    @ staticmethod
-    def deserialize_search_result(search_results: List[dict]) -> List[PublicoNews]:
-        found_news = []
-        for item in search_results:
-            # Append to array
-            found_news.append(PublicoNews.deserialize_news(item))
-        return found_news
-
     # __________________________________________________________________________________________________________________________
 
     @abstractmethod
