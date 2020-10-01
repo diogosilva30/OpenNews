@@ -28,7 +28,7 @@ Mako==1.0.7
 MarkupSafe==1.1.1
 mccabe==0.6.1
 numpy==1.19.2
-psycopg2-binary==2.8.5
+psycopg2-binary==2.8.6
 pycodestyle==2.6.0
 pycparser==2.18
 PyJWT==1.7.1
