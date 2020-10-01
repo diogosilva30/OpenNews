@@ -1,6 +1,7 @@
 # PT-NEWS-EXTRACTOR
 [![codecov](https://codecov.io/gh/spamz23/PT-NEWS_EXTRACTOR/branch/master/graph/badge.svg?token=KxMeNY2V78)](undefined)
 ![Tests](https://github.com/spamz23/PT-NEWS_EXTRACTOR/workflows/Tests/badge.svg)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=spamz23/PT-NEWS_EXTRACTOR)](https://dependabot.com)
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
