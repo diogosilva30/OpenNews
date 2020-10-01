@@ -1,4 +1,4 @@
-from datetime import time, datetime, date
+from datetime import time, datetime
 
 # needs pip install python-dateutil
 import dateutil.parser

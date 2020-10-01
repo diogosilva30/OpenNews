@@ -76,8 +76,7 @@ class PublicoURLSearch(PublicoSearch):
 
 class PublicoAPISearch(PublicoSearch, ABC):
     """Base model to store news from Publico's API."""
-    start_date: date
-    end_date: date
+
     page_number: int
     login_payload = {'username': os.getenv('PUBLICO_USER'),
                      "password": os.getenv('PUBLICO_PW')}
