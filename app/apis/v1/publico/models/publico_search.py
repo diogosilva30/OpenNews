@@ -54,13 +54,13 @@ class PublicoSearch(ABC):
 
     @abstractmethod
     def add_news(self, obj: any) -> None:
-        raise NotImplementedError
+        "Child classes must implement 'add_news' method in order to implement their custom logic of adding news to the news list"
 
     # __________________________________________________________________________________________________________________________
 
     @abstractmethod
     def serialize_to_json(self) -> str:
-        raise NotImplementedError
+        "Child classes must implement 'serialize_to_json' method in order to implement their custom logic of serializing themselves to JSON format"
 
 
 class PublicoURLSearch(PublicoSearch):
@@ -72,7 +72,11 @@ class PublicoURLSearch(PublicoSearch):
     # __________________________________________________________________________________________________________________________
 
     def add_news(self, url: str) -> None:
-        """Adds a news to the found news list"""
+        """Adds a news to the found news list
+        Parameters
+        ----------
+        url : str
+            News URL to webscrape"""
         PublicoNews.validate_url(url)
         news_object = PublicoNews.build_from_url(url)
         if news_object not in self.found_news:
@@ -99,12 +103,12 @@ class PublicoAPISearch(PublicoSearch, ABC):
 
     @abstractmethod
     def consume_api(self) -> None:
-        raise NotImplementedError
+        """Child classes must implement 'consume_api' method in order to implement their custom use of the Publico's API"""
 
     @property
     @abstractmethod
     def api_url(self):
-        raise NotImplementedError
+        "Child classes must implement 'api_url' property in order to build their custom API URL"
 
 
 class PublicoTopicSearch(PublicoAPISearch):

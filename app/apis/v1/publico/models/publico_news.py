@@ -93,13 +93,16 @@ class PublicoNews(News):
         )
 
         if "opiniao" in url:
-            rubric_element = tree.xpath('//*[@id="story-header"]/div[2]//text()')
+            rubric_element = tree.xpath(
+                '//*[@id="story-header"]/div[2]//text()')
             _rubric = "".join(rubric_element)
 
             # get description
-            description_element = tree.xpath('//*[@id="story-header"]/div[3]/p/text()')
+            description_element = tree.xpath(
+                '//*[@id="story-header"]/div[3]/p/text()')
             _description = "".join(
-                [s for s in description_element if s != "\n" and s != " " and s != "t"]
+                [s for s in description_element if s !=
+                    "\n" and s != " " and s != "t"]
             )
             authors_element = tree.xpath(
                 '//*[@id="story-header"]/div[1]/address/a/span[2]/text()'
@@ -109,12 +112,15 @@ class PublicoNews(News):
             ]
 
         else:
-            rubric_element = tree.xpath('//*[@id="story-header"]/div[1]/a//text()')
+            rubric_element = tree.xpath(
+                '//*[@id="story-header"]/div[1]/a//text()')
             _rubric = "".join(rubric_element)
 
-            description_element = tree.xpath('//*[@id="story-header"]/div[2]//text()')
+            description_element = tree.xpath(
+                '//*[@id="story-header"]/div[2]//text()')
             _description = "".join(
-                [s for s in description_element if s != "\n" and s != " " and s != "\t"]
+                [s for s in description_element if s !=
+                    "\n" and s != " " and s != "\t"]
             )
 
             authors_element = tree.xpath(
@@ -127,7 +133,8 @@ class PublicoNews(News):
             ]
 
         date_element = "".join(
-            tree.xpath('//time[contains(@class, "dateline")]')[0].xpath("@datetime")
+            tree.xpath(
+                '//time[contains(@class, "dateline")]')[0].xpath("@datetime")
         )
         _date = datetime_from_string(date_element)
 
@@ -145,9 +152,7 @@ class PublicoNews(News):
         # Extract title
         _title = news_dict.get("titulo")
         # Extract description
-        _description = (
-            " " if news_dict.get("descricao") is None else news_dict.get("descricao")
-        )
+        _description = news_dict.get("descricao", " ")
         # Extract URL
         _url = news_dict.get("shareUrl")
         # Extract rubric
@@ -160,7 +165,16 @@ class PublicoNews(News):
 
     # TODO: Add support for more "subjornals" from Publico
     @staticmethod
-    def validate_url(url):
+    def validate_url(url: str) -> bool:
+        """ Validates if a Publico's news URL is supported
+        Currently supported news types are:
+            - news
+            - opinion
+
+        Parameters
+        ----------
+        url : str
+            The news URL"""
         try:
             if (
                 requests.get(url).status_code == 200
@@ -170,9 +184,11 @@ class PublicoNews(News):
             ):
                 return True
             else:
-                raise RequestError("URL '{}' is invalid or unsupported!".format(url))
+                raise RequestError(
+                    "URL '{}' is invalid or unsupported!".format(url))
         except:
-            raise RequestError("URL '{}' is invalid or unsupported!".format(url))
+            raise RequestError(
+                "URL '{}' is invalid or unsupported!".format(url))
 
     @staticmethod
     def parse_date(date_string: str) -> datetime.date:
