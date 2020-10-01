@@ -85,8 +85,8 @@ class PublicoAPISearch(PublicoSearch, ABC):
 
     def __init__(self, start_date: str, end_date: str, found_news: List[dict] = []) -> None:
         self.page_number = 1
-        self.start_date = datetime_from_string(start_date).date
-        self.end_date = datetime_from_string(end_date).date
+        self.start_date = datetime_from_string(start_date).date()
+        self.end_date = datetime_from_string(end_date).date()
         self.found_news = found_news
 
     @abstractmethod
@@ -146,10 +146,6 @@ class PublicoTopicSearch(PublicoAPISearch):
             data = json.loads(r)
             # iterate over each news dict and create a News object from it
             for item in data:
-                print(type(self.start_date))
-                print(type(self.end_date))
-                print(self.start_date)
-                print(self.end_date)
                 # Found news out of lower bound date, STOP THE SEARCH!
                 if PublicoNews.parse_date(item.get("data")) < self.start_date:
                     stop_entire_search = True
