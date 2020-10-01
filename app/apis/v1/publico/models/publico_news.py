@@ -184,11 +184,9 @@ class PublicoNews(News):
             ):
                 return True
             else:
-                raise RequestError(
-                    "URL '{}' is invalid or unsupported!".format(url))
-        except:
-            raise RequestError(
-                "URL '{}' is invalid or unsupported!".format(url))
+                return False
+        except requests.exceptions.RequestException:
+            return False
 
     @staticmethod
     def parse_date(date_string: str) -> datetime.date:

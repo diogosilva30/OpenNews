@@ -17,15 +17,20 @@ def validate_urls(f):
         if len(data) > 50:
             raise RequestError(
                 "Too many URLS to search. Please provide up to 50 URLS!")
-        for url in data:
-            PublicoNews.validate_url(url)
+
+        valid_url = [PublicoNews.validate_url(url) for url in data]
+        invalid_urls_index = [
+            i for i, value in enumerate(valid_url) if not value]
+        if len(invalid_urls_index) != 0:
+            raise RequestError(
+                f"Invalid URLs provided at position: {invalid_urls_index}")
         return f(*args, **kwargs)
 
     return decorated
 
 
 def validate_dates(f):
-    @wraps(f)
+    @ wraps(f)
     def decorated(*args, **kwargs):
         try:
             json_doc = request.get_json()
