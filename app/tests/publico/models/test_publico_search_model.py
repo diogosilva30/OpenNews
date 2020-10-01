@@ -1,6 +1,6 @@
 
 import unittest
-from app.test.base import BaseTestCase
+from app.tests.base import BaseTestCase
 from app.apis.v1.publico.models.publico_search import PublicoURLSearch
 
 
