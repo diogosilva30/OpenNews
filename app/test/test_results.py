@@ -2,7 +2,7 @@ import unittest
 
 
 from app.test.base import BaseTestCase
-from .test_publico import send_post_request
+from .publico.test_publico_service import send_post_request
 
 
 class TestResults(BaseTestCase):
