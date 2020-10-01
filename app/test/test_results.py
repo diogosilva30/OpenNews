@@ -10,7 +10,7 @@ class TestResults(BaseTestCase):
 
     def test_non_existing_job(self):
         """ Tests getting results with non existent job_id"""
-        response = self.client.get('/api/news/results/1')
+        response = self.client.get('/api/v1/news/results/1')
         self.assertIn("Job 1 does not exist", response.json["message"])
         self.assert404(response)
 
