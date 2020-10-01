@@ -17,12 +17,6 @@ def datetime_from_string(x: str) -> datetime:
     return dateutil.parser.parse(x)
 
 
-def date_from_string(x: str) -> date:
-    if isinstance(x, date):
-        return x.date()
-    return dateutil.parser.parse(x, dayfirst=True).date()
-
-
 def custom_json_serializer(obj):
     if isinstance(obj, (datetime, time)):
         return obj.isoformat()

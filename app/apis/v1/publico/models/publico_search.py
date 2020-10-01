@@ -10,7 +10,7 @@ from typing import List
 from flask import jsonify
 import requests
 
-from app.core.common.helpers import date_from_string
+from app.core.common.helpers import datetime_from_string
 from .publico_news import PublicoNews
 
 
@@ -84,6 +84,12 @@ class PublicoAPISearch(PublicoSearch, ABC):
     login_url = "https://www.publico.pt/api/user/login"
     base_api_url: str
 
+    def __init__(self, start_date: str, end_date: str, found_news: List[dict] = []) -> None:
+        self.page_number = 1
+        self.start_date = datetime_from_string(start_date).date
+        self.end_date = datetime_from_string(end_date).date
+        self.found_news = found_news
+
     @abstractmethod
     def consume_api(self) -> None:
         """Child classes must implement 'consume_api' method in order to implement their custom use of the Publico's API"""
@@ -97,17 +103,11 @@ class PublicoAPISearch(PublicoSearch, ABC):
 class PublicoTopicSearch(PublicoAPISearch):
     """Model to store news from Publico's topic search """
 
-    search_topic: str
-
     # __________________________________________________________________________________________________________________________
 
-    def __init__(self, search_topic, start_date, end_date, found_news=[]):
-        super().__init__()
+    def __init__(self, search_topic: str, start_date: str, end_date: str, found_news: List[dict] = []):
+        super().__init__(start_date, end_date, found_news)
         self.search_topic = search_topic
-        self.start_date = date_from_string(start_date)
-        self.end_date = date_from_string(end_date)
-        self.found_news = found_news
-        self.page_number = 1
         self.base_api_url = "https://www.publico.pt/api/list/"
     # __________________________________________________________________________________________________________________________
 
@@ -169,19 +169,11 @@ class PublicoTopicSearch(PublicoAPISearch):
 class PublicoKeywordsSearch(PublicoAPISearch):
     """ Model to store news from Publico's keywords search """
 
-    keywords: str
-    start_date: date
-    end_date: date
-
     # __________________________________________________________________________________________________________________________
 
-    def __init__(self, keywords, start_date, end_date, found_news=[]) -> None:
-        super().__init__()
+    def __init__(self, keywords: str, start_date: str, end_date: str, found_news: List[dict] = []) -> None:
+        super().__init__(start_date, end_date, found_news)
         self.keywords = keywords
-        self.start_date = date_from_string(start_date)
-        self.end_date = date_from_string(end_date)
-        self.found_news = found_news
-        self.page_number = 1
         self.base_api_url = "https://www.publico.pt/api/list/search/?query="
 
     # __________________________________________________________________________________________________________________________

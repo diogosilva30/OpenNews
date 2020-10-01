@@ -2,8 +2,7 @@ from functools import wraps
 from flask import request
 
 from app.core.common.helpers import (
-    to_list,
-    date_from_string,
+    datetime_from_string, to_list,
     number_of_months_between_2_dates,
 )
 from app.core.common.custom_exceptions import RequestError
@@ -34,8 +33,8 @@ def validate_dates(f):
     def decorated(*args, **kwargs):
         try:
             json_doc = request.get_json()
-            start_date = date_from_string(json_doc.get("start_date"))
-            end_date = date_from_string(json_doc.get("end_date"))
+            start_date = datetime_from_string(json_doc.get("start_date")).date
+            end_date = datetime_from_string(json_doc.get("end_date")).date
             months_diff = number_of_months_between_2_dates(
                 start_date, end_date)
             if months_diff < 0:
