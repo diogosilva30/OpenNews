@@ -1,6 +1,5 @@
 from functools import wraps
 from flask import request
-import json
 
 from app.core.common.helpers import (
     to_list,
@@ -16,7 +15,8 @@ def validate_urls(f):
     def decorated(*args, **kwargs):
         data = to_list(request.get_json().get("url"))
         if len(data) > 50:
-            raise RequestError("Too many URLS to search. Please provide up to 50 URLS!")
+            raise RequestError(
+                "Too many URLS to search. Please provide up to 50 URLS!")
         for url in data:
             PublicoNews.validate_url(url)
         return f(*args, **kwargs)
@@ -31,7 +31,8 @@ def validate_dates(f):
             json_doc = request.get_json()
             start_date = date_from_string(json_doc.get("start_date"))
             end_date = date_from_string(json_doc.get("end_date"))
-            months_diff = number_of_months_between_2_dates(start_date, end_date)
+            months_diff = number_of_months_between_2_dates(
+                start_date, end_date)
             if months_diff < 0:
                 raise RequestError(
                     "Invalid dates provided! Starting date cannot be greater than end date."
