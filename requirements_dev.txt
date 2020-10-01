@@ -1,5 +1,5 @@
 pytest==5.3.5
-black==19.3b0
+black==20.8b1
 pytest-cov
 coveralls
 redislite==5.0.165407
