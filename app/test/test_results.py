@@ -28,7 +28,7 @@ class TestResults(BaseTestCase):
         response = self.client.get(f'/api/v1/news/results/{job_id}')
         self.assertTrue(response.status_code == 202)
         self.assertIn(
-            f"Job {job_id} has not been processed yet, try again later", response["message"])
+            f"Job {job_id} has not been processed yet, try again later", response.json["message"])
 
 
 if __name__ == "__main__":
