@@ -22,9 +22,9 @@ class PublicoNews(News):
         """Validates if a particular news is valid given it's dict"""
         # Check for 'interviews', and 'right to answer'
 
-        # Validate URL
-        if not validate_url(obj.get("shareUrl")):
-            return False
+        # # Validate URL
+        # if not validate_url(obj.get("shareUrl")):
+        #     return False
 
         rubric = str(obj.get("rubrica"))
         if "Entrevista" in rubric or "Direito de Resposta" in rubric:
@@ -34,9 +34,9 @@ class PublicoNews(News):
         if bool(obj.get("aoMinuto")) is True:
             return False
 
-        # Skip Opinion articles
-        if bool(obj.get("isOpinion")) is True:
-            return False
+        # # Skip Opinion articles
+        # if bool(obj.get("isOpinion")) is True:
+        #     return False
 
         news_type = str(obj.get("tipo"))
         if "NOTICIA" not in news_type:
