@@ -22,10 +22,6 @@ class PublicoNews(News):
         """Validates if a particular news is valid given it's dict"""
         # Check for 'interviews', and 'right to answer'
 
-        # # Validate URL
-        # if not validate_url(obj.get("shareUrl")):
-        #     return False
-
         rubric = str(obj.get("rubrica"))
         if "Entrevista" in rubric or "Direito de Resposta" in rubric:
             return False

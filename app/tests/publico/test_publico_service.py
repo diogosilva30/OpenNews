@@ -30,6 +30,13 @@ class TestPublicoURLSearch(BaseTestCase):
         response_json = get_results_from_fake_queue(search_job.id).json
 
         self.assertIn("number of found news", response_json)
+        self.assertIn("title", response_json["news"][0])
+        self.assertIn("description", response_json["news"][0])
+        self.assertIn("text", response_json["news"][0])
+        self.assertIn("url", response_json["news"][0])
+        self.assertIn("rubric", response_json["news"][0])
+        self.assertIn("date", response_json["news"][0])
+        self.assertIn("authors", response_json["news"][0])
 
     def test_url_search_job(self):
         """ Test for Publico URL fake job creation and news retrieval"""

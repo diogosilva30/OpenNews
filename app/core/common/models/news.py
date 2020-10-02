@@ -27,10 +27,10 @@ class News(ABC):
         self.rubric = rubric
         self.date = datetime_from_string(date)
         self.authors = authors
+        self.text = self.get_text()
 
-    @property
-    def text(self) -> str:
-        """Property to extract """
+    def get_text(self) -> str:
+        """Extracts Publico's news corpus using webscrapping"""
         # sGET request to read the html page
         html_string = send_post_then_get_html_string(
             "https://www.publico.pt/api/user/login",
