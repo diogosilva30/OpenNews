@@ -1,23 +1,16 @@
 import json
+import os
 from typing import List
 from datetime import datetime
-from abc import ABC, abstractmethod, abstractstaticmethod
+from abc import ABC, abstractstaticmethod
 
-from app.core.common.helpers import datetime_from_string, custom_json_serializer
+from lxml import html
+
+from app.core.common.helpers import datetime_from_string, custom_json_serializer, send_post_then_get_html_string
 
 
 class News(ABC):
     """ News base model for storing details about a particular news. Derivated classes should implement some methods"""
-
-    title: str
-    description: str
-    text: str
-    url: str
-    rubric: str
-    date: datetime
-    authors: List[str]
-
-    # __________________________________________________________________________________________________________________________
 
     def __init__(
         self,
@@ -30,33 +23,42 @@ class News(ABC):
     ) -> None:
         self.title = title
         self.description = description
-
         self.url = url
-
-        # Fill in the text variable
-        self.extract_corpus()
         self.rubric = rubric
         self.date = datetime_from_string(date)
         self.authors = authors
 
-    # __________________________________________________________________________________________________________________________
+    @property
+    def text(self) -> str:
+        """Property to extract """
+        # sGET request to read the html page
+        html_string = send_post_then_get_html_string(
+            "https://www.publico.pt/api/user/login",
+            {
+                "username": os.getenv("PUBLICO_USER"),
+                "password": os.getenv("PUBLICO_PW"),
+            },
+            self.url,
+        )
+        # Load html page into a tree
+        tree = html.fromstring(html_string)
+        # Find the news text by XPATH, and remove in text ads
+        text = " ".join(
+            tree.xpath(
+                "//div[@class='story__body']//p//text() | //div[@class='story__body']//h2//text()"
+            )
+        ).replace(
+            "Subscreva gratuitamente as newsletters e receba o melhor da actualidade e os trabalhos mais profundos do Público.",
+            "",
+        )
+        return text
 
     def serialize_to_json(self):
         return json.loads(json.dumps(self, default=custom_json_serializer))
 
-    # __________________________________________________________________________________________________________________________
-
-    @abstractmethod
-    def extract_corpus(self) -> None:
-        """Child classes must implement method 'extract_corpus' to be able to get the news corpus
-        given it's URL (using webscrapping)"""
-
-    # __________________________________________________________________________________________________________________________
     @abstractstaticmethod
     def deserialize_news(news_dict: dict):
         """Child classes must implement method 'deserialize_news' to construct a 'News' object from a dictionary"""
-
-    # __________________________________________________________________________________________________________________________
 
     @staticmethod
     def extract_authors_names(authors: List[dict]) -> List[str]:
@@ -69,13 +71,10 @@ class News(ABC):
             processed_authors.append(*author.values())
         return processed_authors
 
-    # ___________________________________________________________________________________________________________________________________________________
-
     @abstractstaticmethod
     def is_news_valid(obj: dict) -> bool:
         """Child classes must implement 'is_news_valid' to check if a particular news is valid given it's dict"""
 
-    # _______________________________________________________________________________________________________________________________________________________
     @abstractstaticmethod
     def build_from_url(url) -> "News":
         """Child classes must implement 'build_from_url' method to build a 'News' object from a given URL"""

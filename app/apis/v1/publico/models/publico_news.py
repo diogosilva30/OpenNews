@@ -11,36 +11,11 @@ from app.core.common.helpers import (
     send_post_then_get_html_string,
     validate_url,
 )
-from app.core.common.custom_exceptions import RequestError
 
 
 class PublicoNews(News):
     def __init__(self, title, description, url, rubric, date, authors):
         super().__init__(title, description, url, rubric, date, authors)
-
-    def extract_corpus(self) -> None:
-        # GET request to read the html page
-        html_string = send_post_then_get_html_string(
-            "https://www.publico.pt/api/user/login",
-            {
-                "username": os.getenv("PUBLICO_USER"),
-                "password": os.getenv("PUBLICO_PW"),
-            },
-            self.url,
-        )
-        # Load html page into a tree
-        tree = html.fromstring(html_string)
-        # Find the news text by XPATH, and remove in text ads
-        self.text = " ".join(
-            tree.xpath(
-                "//div[@class='story__body']//p//text() | //div[@class='story__body']//h2//text()"
-            )
-        ).replace(
-            "Subscreva gratuitamente as newsletters e receba o melhor da actualidade e os trabalhos mais profundos do Público.",
-            "",
-        )
-
-    # _______________________________________________________________________________________________________________________________________________________
 
     @staticmethod
     def is_news_valid(obj: dict) -> bool:
@@ -69,10 +44,8 @@ class PublicoNews(News):
 
         return True
 
-    # _______________________________________________________________________________________________________________________________________________________
-
-    @classmethod
-    def build_from_url(cls, url):
+    @staticmethod
+    def build_from_url(url):
         """Builds a News object from a given URL"""
         html_string = send_post_then_get_html_string(
             "https://www.publico.pt/api/user/login",
@@ -139,8 +112,6 @@ class PublicoNews(News):
         _date = datetime_from_string(date_element)
 
         return PublicoNews(_title, _description, _url, _rubric, _date, _authors)
-
-    # _______________________________________________________________________________________________________________________________________________________
 
     @staticmethod
     def deserialize_news(news_dict: dict) -> News:
