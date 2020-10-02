@@ -33,8 +33,9 @@ def validate_dates(f):
     def decorated(*args, **kwargs):
         try:
             json_doc = request.get_json()
-            start_date = datetime_from_string(json_doc.get("start_date")).date
-            end_date = datetime_from_string(json_doc.get("end_date")).date
+            start_date = datetime_from_string(
+                json_doc.get("start_date")).date()
+            end_date = datetime_from_string(json_doc.get("end_date")).date()
             months_diff = number_of_months_between_2_dates(
                 start_date, end_date)
             if months_diff < 0:
