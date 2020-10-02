@@ -1,0 +1,4 @@
+ignore:
+  - "app/tests"   # ignore tests folder
+  - "manage.py"   # ignore manage.py file
+  - "worker.py"   # ignore worker.py file
