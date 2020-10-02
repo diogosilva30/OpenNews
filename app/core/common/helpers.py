@@ -14,7 +14,7 @@ def datetime_from_string(x: str) -> datetime:
     """Parses a str to datetime"""
     if isinstance(x, datetime):
         return x
-    return dateutil.parser.parse(x)
+    return dateutil.parser.parse(x, dayfirst=True)
 
 
 def custom_json_serializer(obj):
