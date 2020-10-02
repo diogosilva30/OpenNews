@@ -29,7 +29,7 @@ def validate_urls(f):
 
 
 def validate_dates(f):
-    @ wraps(f)
+    @wraps(f)
     def decorated(*args, **kwargs):
         try:
             json_doc = request.get_json()

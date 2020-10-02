@@ -48,13 +48,13 @@ class TestPublicoURLSearch(BaseTestCase):
             * 5
         })
 
-    # def test_invalid_urls_search_job(self):
-    #     """ Test for Publico URL fake job creation with invalid URLs. Should raise RequestError"""
-    #     # Send 2 invalid urls
-    #     response = send_post_request(self.client, self.uri, {
-    #                                  "url": ["notavalidurl", "www.goggle.pt"]})
-    #     self.assert400(
-    #         response, "Publico'sURL search job with invalid URLs should raise RequestError and return 400 status code")
+    def test_invalid_urls_search_job(self):
+        """ Test for Publico URL fake job creation with invalid URLs. Should raise RequestError"""
+        # Send 3 invalid urls (1 not url, 1 bad url, 1 unsupported URL (ipsilon))
+        response = send_post_request(self.client, self.uri, {
+                                     "url": ["notavalidurl", "www.goggle.pt", "https://www.publico.pt/2020/10/01/culturaipsilon/noticia/artistas-exigem-publico-possa-ja-pinturas-ku-klux-klan-philip-guston-1933604"]})
+        self.assert400(
+            response, "Publico'sURL search job with invalid URLs should raise RequestError and return 400 status code")
 
     def test_more_than_50_url_search_job(self):
         """ Test for Publico URL search job creation with more than 50 URLS """
