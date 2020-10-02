@@ -36,8 +36,12 @@ def validate_dates(f):
             start_date = datetime_from_string(
                 json_doc.get("start_date")).date()
             end_date = datetime_from_string(json_doc.get("end_date")).date()
+            print(start_date)
+            print(end_date)
+
             months_diff = number_of_months_between_2_dates(
                 start_date, end_date)
+            print(months_diff)
             if months_diff < 0:
                 raise RequestError(
                     "Invalid dates provided! Starting date cannot be greater than end date."
