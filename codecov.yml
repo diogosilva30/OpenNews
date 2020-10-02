@@ -1,0 +1,4 @@
+ignore:
+  - "app/tests"  # ignore folders and all its contents
+  - "manage.py"       # wildcards accepted
+  - "worker.py"         # glob accepted
