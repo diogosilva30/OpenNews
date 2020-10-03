@@ -1,6 +1,6 @@
 ﻿aniso8601==8.0.0
 astroid==2.4.2
-autopep8==1.5.3
+autopep8==1.5.4
 bcrypt==3.2.0
 certifi==2020.6.20
 cffi==1.14.3
