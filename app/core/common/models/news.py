@@ -26,10 +26,10 @@ class News(ABC):
         self.description = description
         self.url = url
         self.rubric = rubric
+        self.is_opinion = is_opinion
         self.date = datetime_from_string(date)
         self.authors = authors
         self.text = self.get_text()
-        self.is_opinion = is_opinion
 
     def get_text(self) -> str:
         """Extracts Publico's news corpus using webscrapping"""
