@@ -20,6 +20,7 @@ class News(ABC):
         rubric: str,
         date: str,
         authors: List[str],
+        is_opinion: bool
     ) -> None:
         self.title = title
         self.description = description
@@ -28,6 +29,7 @@ class News(ABC):
         self.date = datetime_from_string(date)
         self.authors = authors
         self.text = self.get_text()
+        self.is_opinion = is_opinion
 
     def get_text(self) -> str:
         """Extracts Publico's news corpus using webscrapping"""

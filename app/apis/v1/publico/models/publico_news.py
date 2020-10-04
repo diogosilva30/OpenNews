@@ -14,8 +14,8 @@ from app.core.common.helpers import (
 
 
 class PublicoNews(News):
-    def __init__(self, title, description, url, rubric, date, authors):
-        super().__init__(title, description, url, rubric, date, authors)
+    def __init__(self, title, description, url, rubric, date, authors, is_opinion):
+        super().__init__(title, description, url, rubric, date, authors, is_opinion)
 
     @staticmethod
     def is_news_valid(obj: dict) -> bool:
@@ -29,10 +29,6 @@ class PublicoNews(News):
         # Skip minute updated news
         if bool(obj.get("aoMinuto")) is True:
             return False
-
-        # # Skip Opinion articles
-        # if bool(obj.get("isOpinion")) is True:
-        #     return False
 
         news_type = str(obj.get("tipo"))
         if "NOTICIA" not in news_type:
@@ -107,7 +103,7 @@ class PublicoNews(News):
         )
         _date = datetime_from_string(date_element)
 
-        return PublicoNews(_title, _description, _url, _rubric, _date, _authors)
+        return PublicoNews(_title, _description, _url, _rubric, _date, _authors, False)
 
     @staticmethod
     def deserialize_news(news_dict: dict) -> News:
@@ -128,7 +124,10 @@ class PublicoNews(News):
         _date = news_dict.get("data")
         # Extract authors info
         _authors = PublicoNews.extract_authors_names(news_dict.get("autores"))
-        return PublicoNews(_title, _description, _url, _rubric, _date, _authors)
+        # Extract if news is opinion article
+        _is_opinion = news_dict.get("isOpinion")
+
+        return PublicoNews(_title, _description, _url, _rubric, _date, _authors, _is_opinion)
 
     # TODO: Add support for more "subjornals" from Publico
     @staticmethod
