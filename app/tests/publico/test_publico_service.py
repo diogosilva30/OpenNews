@@ -37,6 +37,7 @@ class TestPublicoURLSearch(BaseTestCase):
         self.assertIn("rubric", response_json["news"][0])
         self.assertIn("date", response_json["news"][0])
         self.assertIn("authors", response_json["news"][0])
+        self.assertIn("is_opinion", response_json["news"][0])
 
     def test_url_search_job(self):
         """ Test for Publico URL fake job creation and news retrieval"""
