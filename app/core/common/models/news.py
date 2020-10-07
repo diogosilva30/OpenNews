@@ -20,7 +20,8 @@ class News(ABC):
         rubric: str,
         date: str,
         authors: List[str],
-        is_opinion: bool
+        is_opinion: bool,
+        text: str
     ) -> None:
         self.title = title
         self.description = description
@@ -29,31 +30,7 @@ class News(ABC):
         self.is_opinion = is_opinion
         self.date = datetime_from_string(date)
         self.authors = authors
-        self.text = self.get_text()
-
-    def get_text(self) -> str:
-        """Extracts Publico's news corpus using webscrapping"""
-        # sGET request to read the html page
-        html_string = send_post_then_get_html_string(
-            "https://www.publico.pt/api/user/login",
-            {
-                "username": os.getenv("PUBLICO_USER"),
-                "password": os.getenv("PUBLICO_PW"),
-            },
-            self.url,
-        )
-        # Load html page into a tree
-        tree = html.fromstring(html_string)
-        # Find the news text by XPATH, and remove in text ads
-        text = " ".join(
-            tree.xpath(
-                "//div[@class='story__body']//p//text() | //div[@class='story__body']//h2//text()"
-            )
-        ).replace(
-            "Subscreva gratuitamente as newsletters e receba o melhor da actualidade e os trabalhos mais profundos do Público.",
-            "",
-        )
-        return text
+        self.text = text
 
     def serialize_to_json(self):
         return json.loads(json.dumps(self, default=custom_json_serializer))

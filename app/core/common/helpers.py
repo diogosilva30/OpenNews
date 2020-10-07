@@ -1,4 +1,4 @@
-from datetime import time, datetime
+from datetime import date, time, datetime
 
 # needs pip install python-dateutil
 import dateutil.parser
@@ -12,7 +12,7 @@ def validate_url(url) -> bool:
 
 def datetime_from_string(x: str) -> datetime:
     """Parses a str to datetime"""
-    if isinstance(x, datetime):
+    if isinstance(x, (datetime, date)):
         return x
     return dateutil.parser.parse(x, dayfirst=True)
 
@@ -35,7 +35,7 @@ def send_post_then_get_html_string(post_url, post_payload, get_url):
         )
         # send POST request to login
         s.post(post_url, data=post_payload)
-        return s.get(get_url).text
+        return s.get(get_url)
 
 
 def to_list(x):

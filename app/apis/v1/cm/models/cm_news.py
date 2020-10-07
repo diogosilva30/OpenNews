@@ -1,5 +1,6 @@
 import os
 import datetime
+from typing import List
 import requests
 
 from lxml import html
@@ -9,37 +10,13 @@ from app.core.common.models.news import News
 from app.core.common.helpers import (
     datetime_from_string,
     send_post_then_get_html_string,
+    validate_url,
 )
 
 
-class PublicoNews(News):
-    def __init__(self, title, description, url, rubric, date, authors, is_opinion):
-        super().__init__(title, description, url, rubric,
-                         date, authors, is_opinion, self.get_text())
-
-    def get_text(self) -> str:
-        """Extracts Publico's news corpus using webscrapping"""
-        # sGET request to read the html page
-        html_string = send_post_then_get_html_string(
-            "https://www.publico.pt/api/user/login",
-            {
-                "username": os.getenv("PUBLICO_USER"),
-                "password": os.getenv("PUBLICO_PW"),
-            },
-            self.url,
-        ).text
-        # Load html page into a tree
-        tree = html.fromstring(html_string)
-        # Find the news text by XPATH, and remove in text ads
-        text = " ".join(
-            tree.xpath(
-                "//div[@class='story__body']//p//text() | //div[@class='story__body']//h2//text()"
-            )
-        ).replace(
-            "Subscreva gratuitamente as newsletters e receba o melhor da actualidade e os trabalhos mais profundos do Público.",
-            "",
-        )
-        return text
+class CMNews(News):
+    def __init__(self, title: str, description: str, url: str, rubric: str, date: str, authors: List[str], is_opinion: bool, text: str):
+        super().__init__(title, description, url, rubric, date, authors, is_opinion, text)
 
     @staticmethod
     def is_news_valid(obj: dict) -> bool:
@@ -70,7 +47,7 @@ class PublicoNews(News):
                 "password": os.getenv("PUBLICO_PW"),
             },
             url,
-        ).text
+        )
         tree = html.fromstring(html_string)
 
         _url = url
