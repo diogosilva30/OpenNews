@@ -1,8 +1,8 @@
 from flask import url_for, jsonify
-from flask_restx import Resource, Namespace, fields, inputs
+from flask_restx import Resource, Namespace, inputs
 
 from app.core import redis_queue
-from app.core.common.decorator import prevent_duplicate_jobs
+from app.core.common.decorators import prevent_duplicate_jobs
 
 from .services import publico_news_service
 from .decorators import validate_urls, validate_dates

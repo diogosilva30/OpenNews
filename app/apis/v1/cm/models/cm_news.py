@@ -1,10 +1,5 @@
-import os
-import datetime
 from typing import List
-import requests
 
-from lxml import html
-from dateutil import parser
 
 from app.core.common.models.news import News
 from app.core.common.helpers import (
@@ -30,7 +25,6 @@ class CMNews(News):
     def deserialize_news(news_dict: dict) -> News:
         pass
 
-    # TODO: Add support for more "subjornals" from Publico
     @staticmethod
     def validate_url(url: str) -> bool:
         pass
