@@ -1,12 +1,10 @@
 import json
-import os
 from typing import List
 from datetime import datetime
 from abc import ABC, abstractstaticmethod
 
-from lxml import html
 
-from app.core.common.helpers import datetime_from_string, custom_json_serializer, send_post_then_get_html_string
+from app.core.common.helpers import datetime_from_string, custom_json_serializer
 
 
 class News(ABC):
