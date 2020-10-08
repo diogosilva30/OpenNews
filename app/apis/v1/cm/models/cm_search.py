@@ -82,7 +82,8 @@ class CMTopicSearch(CMSearch):
                 url = article.xpath('.//h2/a')[0].attrib['data-name']
                 # Make sure URL is correct. Check if it's not a href
                 url = "https://www.cmjornal.pt" + url if url[0] == '/' else url
-
+                # Discard url junk
+                url = url.split('?ref')[0]
                 # If news is of type 'interativa', 'multimedia' or 'perguntas' skip it
                 if any(x in url for x in ["interativa", "multimedia", "perguntas"]):
                     continue
