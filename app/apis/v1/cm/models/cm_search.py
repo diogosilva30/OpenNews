@@ -90,12 +90,6 @@ class CMTopicSearch(CMSearch):
                 news_date = datetime_from_string(article.xpath(
                     './/span[@class="dateTime"]')[0].text.replace("|", ""))
 
-                print(article.xpath(
-                    './/span[@class="dateTime"]')[0].text.replace("|", ""))
-                print(news_date)
-                print(self.start_date)
-                print(url)
-                print("-------------------")
                 if not (self.start_date < news_date < self.end_date):
                     continue
 
@@ -126,7 +120,6 @@ class CMTopicSearch(CMSearch):
                 news = CMNews(title, description, url,
                               rubric, news_date, [authors], is_opinion, text)
 
-                print("Adding news:", news)
                 self.found_news.append(news)
 
             # Check for full stop

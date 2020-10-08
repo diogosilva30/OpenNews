@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 
@@ -27,4 +28,8 @@ class CMNews(News):
 
     @staticmethod
     def validate_url(url: str) -> bool:
+        pass
+
+    @staticmethod
+    def parse_date(date_string: str) -> datetime.date:
         pass
