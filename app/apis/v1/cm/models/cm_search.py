@@ -120,6 +120,8 @@ class CMTopicSearch(CMSearch):
                     "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]")
                 # Remove '\n', '\r', and '\'
                 text = normalize_str(' '.join(text))
+                # Remove ads in case they exist
+                text = text.split("Para aceder a todos os Exclusivos CM")[0]
                 news = CMNews(title, description, url,
                               rubric, news_date, [authors], is_opinion, text)
 
