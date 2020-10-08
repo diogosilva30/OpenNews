@@ -49,6 +49,7 @@ class TestCMTopicSearch(BaseTestCase):
             "keywords": "covid",
         })
 
+        print(response)
         self.assertEqual(response.json["status"], "error")
         self.assertIn("Invalid date string format provided",
                       response.json["message"])
