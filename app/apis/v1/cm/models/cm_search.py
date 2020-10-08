@@ -7,6 +7,8 @@ from abc import ABC, abstractmethod
 from typing import List
 from flask import jsonify
 from lxml import html
+import html as h
+
 import requests
 
 from app.core.common.helpers import datetime_from_string, send_post_then_get_html_string, normalize_str
@@ -120,6 +122,7 @@ class CMTopicSearch(CMSearch):
                     "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]")
                 # Remove '\n', '\r', and '\'
                 text = normalize_str(' '.join(text))
+                text = h.unescape(text)
                 # Remove ads in case they exist
                 text = text.split("Para aceder a todos os Exclusivos CM")[0]
                 news = CMNews(title, description, url,
