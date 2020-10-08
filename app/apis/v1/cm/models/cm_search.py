@@ -94,11 +94,6 @@ class CMTopicSearch(CMSearch):
                 if not (self.start_date < news_date < self.end_date):
                     continue
 
-                title = article.xpath(
-                    './/h2/a')[0].text
-                # Normalize white space
-                title = normalize_str(title)
-
                 description = article.xpath(
                     './/span[@class="lead"]')[0].text
 
@@ -118,6 +113,9 @@ class CMTopicSearch(CMSearch):
                 authors = tree.xpath("//span[@class='autor']//span")
                 authors = authors[0].text if len(authors) != 0 else authors
                 # Get text
+                title = tree.xpath(
+                    "//div[@class='centro']//section//h1")[0].text
+                title = normalize_str(title)
                 text = tree.xpath(
                     "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]")
                 # Remove '\n', '\r', and '\'
