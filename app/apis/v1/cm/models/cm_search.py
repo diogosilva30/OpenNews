@@ -9,7 +9,7 @@ from flask import jsonify
 from lxml import html
 import requests
 
-from app.core.common.helpers import datetime_from_string, send_post_then_get_html_string
+from app.core.common.helpers import datetime_from_string, send_post_then_get_html_string, normalize_str
 from .cm_news import CMNews
 
 
@@ -96,9 +96,7 @@ class CMTopicSearch(CMSearch):
                 title = article.xpath(
                     './/h2/a')[0].text
                 # Normalize white space
-                title = " ".join(title.split()).replace(
-                    '\n', '').replace('\r', '')
-
+                title = normalize_str(title)
                 description = article.xpath(
                     './/span[@class="lead"]')[0].text
 
@@ -120,7 +118,7 @@ class CMTopicSearch(CMSearch):
                 # Get text
                 text = tree.xpath(
                     "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]")
-                text = ' '.join(text).replace('\n', '').replace('\r', '')
+                text = normalize_str(text)
                 news = CMNews(title, description, url,
                               rubric, news_date, [authors], is_opinion, text)
 

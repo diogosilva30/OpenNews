@@ -10,6 +10,12 @@ def validate_url(url) -> bool:
     return requests.get(url).status_code == 200
 
 
+def normalize_str(string):
+    """ Removes extra white space, removes backslash '\\' and removes '\\n' and '\\r'"""
+    return " ".join(string.split()).replace(
+        '\n', '').replace('\r', '').replace('\\', "")
+
+
 def datetime_from_string(x: str) -> datetime:
     """Parses a str to datetime"""
     if isinstance(x, (datetime, date)):
