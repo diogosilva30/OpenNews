@@ -97,6 +97,7 @@ class CMTopicSearch(CMSearch):
                     './/h2/a')[0].text
                 # Normalize white space
                 title = normalize_str(title)
+
                 description = article.xpath(
                     './/span[@class="lead"]')[0].text
 
@@ -118,7 +119,8 @@ class CMTopicSearch(CMSearch):
                 # Get text
                 text = tree.xpath(
                     "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]")
-                text = normalize_str(text)
+                # Remove '\n', '\r', and '\'
+                text = normalize_str(' '.join(text))
                 news = CMNews(title, description, url,
                               rubric, news_date, [authors], is_opinion, text)
 
