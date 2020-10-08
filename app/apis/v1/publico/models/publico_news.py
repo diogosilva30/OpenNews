@@ -15,9 +15,10 @@ from app.core.common.helpers import (
 class PublicoNews(News):
     def __init__(self, title, description, url, rubric, date, authors, is_opinion):
         super().__init__(title, description, url, rubric,
-                         date, authors, is_opinion, self.get_text())
+                         date, authors, is_opinion, self.get_text(url))
 
-    def get_text(self) -> str:
+    @staticmethod
+    def get_text(url) -> str:
         """Extracts Publico's news corpus using webscrapping"""
         # sGET request to read the html page
         html_string = send_post_then_get_html_string(
@@ -26,7 +27,7 @@ class PublicoNews(News):
                 "username": os.getenv("PUBLICO_USER"),
                 "password": os.getenv("PUBLICO_PW"),
             },
-            self.url,
+            url,
         ).text
         # Load html page into a tree
         tree = html.fromstring(html_string)
