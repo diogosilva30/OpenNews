@@ -1,1 +1,1 @@
-# from .publico_router import api as publico_api
+from .cm_router import api as cm_api

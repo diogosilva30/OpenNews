@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask_restx import Api
 
 import app.core.common.custom_exceptions as custom_exceptions
+from .cm import cm_api
 from .publico import publico_api
 from .results import results_api
 
@@ -20,6 +21,7 @@ api = Api(
 
 api.add_namespace(publico_api, path="/news/publico")
 api.add_namespace(results_api, path="/news/results")
+api.add_namespace(cm_api, path='/news/cm')
 
 
 @api.errorhandler(custom_exceptions.RequestError)
