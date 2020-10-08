@@ -16,20 +16,20 @@ class CMNews(News):
 
     @staticmethod
     def is_news_valid(obj: dict) -> bool:
-        pass
+        """this is temporary"""
 
     @staticmethod
     def build_from_url(url):
-        pass
+        """this is temporary"""
 
     @staticmethod
     def deserialize_news(news_dict: dict) -> News:
-        pass
+        """this is temporary"""
 
     @staticmethod
     def validate_url(url: str) -> bool:
-        pass
+        """this is temporary"""
 
     @staticmethod
     def parse_date(date_string: str) -> datetime.date:
-        pass
+        """this is temporary"""
