@@ -49,7 +49,7 @@ class TopicSearch(Resource):
         400, description="Bad request, selected dates are invalid or range is too high."
     )
     def post(self):
-        """Creates job to retrieve Publico's news by topic
+        """Creates job to retrieve CM's news by topic
 
         <em><strong>Important: </strong>Due to the high ammount of required computations for this resource, the date range is limited to 3 months.
         This resource may seem equal to <strong>keywords search</strong>. However, this resource gives <strong>narrower (more accurate) results</strong>, as it <strong>only</strong> includes news related to the topic.</em>
@@ -57,7 +57,7 @@ class TopicSearch(Resource):
          About the parameters:
          <strong>'start_date' : Required parameter</strong>. Indicates the starting date for topic search (format: dd/mm/AAAA).
          <strong>'end_date' : Required parameter</strong>. Indicates the ending date for topic search (format: dd/mm/AAAA).
-         <strong>'search_topic' : Required</strong>. Indicates the topic to search news for. Consult https://www.publico.pt/topicos for a list of valid topics.
+         <strong>'search_topic' : Required</strong>. Indicates the topic to search news for.
 
         <strong>Usage examples (POST JSON body)</strong>:\n
         Searching for the topic "luanda leaks" between 01/01/2020 and 05/03/2020:
