@@ -95,6 +95,10 @@ class CMTopicSearch(CMSearch):
 
                 title = article.xpath(
                     './/h2/a')[0].text
+                # Normalize white space
+                title = " ".join(title.split()).replace(
+                    '\n', '').replace('\r', '')
+
                 description = article.xpath(
                     './/span[@class="lead"]')[0].text
 
