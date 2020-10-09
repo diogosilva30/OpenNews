@@ -89,22 +89,14 @@ class CMTopicSearch(CMSearch):
 
             tree = html.fromstring(html_string)
             for article in tree.xpath("//article"):
-
                 url = article.xpath(".//h2/a")[0].attrib["data-name"]
                 # Make sure URL is correct. Check if it's not a href
                 url = "https://www.cmjornal.pt" + url if url[0] == "/" else url
+
                 # Discard url junk
                 url = url.split("?ref")[0]
                 # If news is of type 'interativa', 'multimedia' or 'perguntas' skip it
                 if any(x in url for x in ["interativa", "multimedia", "perguntas"]):
-                    continue
-
-                news_date = datetime_from_string(
-                    article.xpath(
-                        './/span[@class="dateTime"]')[0].text.replace("|", "")
-                )
-
-                if not (self.start_date < news_date < self.end_date):
                     continue
 
                 description = article.xpath('.//span[@class="lead"]')[0].text
@@ -113,17 +105,46 @@ class CMTopicSearch(CMSearch):
                 response = send_post_then_get_html_string(
                     self.login_url, self.login_payload, url
                 )
+                # Important- URL might redirect
+                url = response.url
+                # Find text, author and date location
+                author_location = ""
+                text_location = ""
+                date_location = ""
+                replace_on_data = ""
+                if "https://www.cmjornal.pt/" in url:
+
+                    author_location = "//span[@class='autor']//text()"
+                    text_location = "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]"
+                    date_location = "//span[@class='data']//text()"
+                    replace_on_data = "às"
+                elif "https://www.vidas.pt/" in url:
+
+                    author_location = "//div[@class='autor']//text()"
+                    text_location = "//div[@class='text_container']//text()"
+                    date_location = "//div[@class='data']//text()"
+                    replace_on_data = "•"
+
                 # Check if news still exists, if not skip it
                 if response.status_code != 200:
                     continue
                 # Build html tree
                 tree = html.fromstring(response.text)
+
+                news_date = datetime_from_string(
+                    article.xpath(
+                        date_location)[0].text.replace(replace_on_data, "")
+                )
+                # Check if inside date range
+                if not (self.start_date < news_date < self.end_date):
+                    continue
+
                 # Get if news is opinion article from url
-                is_opinion = "opiniao" in url
+                is_opinion = "opiniao" in url.lower()
                 # Get news section from url and capitalize it
                 rubric = url.split("/")[3].capitalize()
                 # Get authors info
-                authors = tree.xpath("//span[@class='autor']//span")
+                authors = tree.xpath(author_location)
                 authors = authors[0].text if len(authors) != 0 else authors
                 title = tree.xpath(
                     "//div[@class='centro']//section//h1")
@@ -131,9 +152,7 @@ class CMTopicSearch(CMSearch):
                 title = title[0].text if len(title) != 0 else ""
                 # Normalize title
                 title = normalize_str(title)
-                text = tree.xpath(
-                    "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]"
-                )
+                text = tree.xpath(text_location)
                 # Remove '\n', '\r', and '\'
                 text = normalize_str(" ".join(text))
                 text = h.unescape(text)
