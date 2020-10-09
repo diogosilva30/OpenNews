@@ -22,7 +22,8 @@ from .cm_news import CMNews
 class CMSearch(ABC):
     """Base model to store CM search news"""
 
-    login_payload = {"username": os.getenv("CM_USER"), "password": os.getenv("CM_PW")}
+    login_payload = {"username": os.getenv(
+        "CM_USER"), "password": os.getenv("CM_PW")}
     login_url = "https://aminhaconta.xl.pt/LoginNonio?returnUrl=https%3a%2f%2fwww.cmjornal.pt%2f&isLayer=1&siteHost=www.cmjornal.pt"
 
     _found_news: List[CMNews]
@@ -99,7 +100,8 @@ class CMTopicSearch(CMSearch):
                     continue
 
                 news_date = datetime_from_string(
-                    article.xpath('.//span[@class="dateTime"]')[0].text.replace("|", "")
+                    article.xpath(
+                        './/span[@class="dateTime"]')[0].text.replace("|", "")
                 )
 
                 if not (self.start_date < news_date < self.end_date):
@@ -124,7 +126,12 @@ class CMTopicSearch(CMSearch):
                 authors = tree.xpath("//span[@class='autor']//span")
                 authors = authors[0].text if len(authors) != 0 else authors
                 # Get text
-                title = tree.xpath("//div[@class='centro']//section//h1")[0].text
+                try:
+                    title = tree.xpath(
+                        "//div[@class='centro']//section//h1")[0].text
+                except:
+                    print(url)
+                    raise ValueError
                 title = normalize_str(title)
                 text = tree.xpath(
                     "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]"
