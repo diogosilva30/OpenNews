@@ -125,13 +125,11 @@ class CMTopicSearch(CMSearch):
                 # Get authors info
                 authors = tree.xpath("//span[@class='autor']//span")
                 authors = authors[0].text if len(authors) != 0 else authors
-                # Get text
-                try:
-                    title = tree.xpath(
-                        "//div[@class='centro']//section//h1")[0].text
-                except:
-                    print(url)
-                    raise ValueError
+                title = tree.xpath(
+                    "//div[@class='centro']//section//h1")
+                # Make sure title exists
+                title = title[0].text if len(title) != 0 else ""
+                # Normalize title
                 title = normalize_str(title)
                 text = tree.xpath(
                     "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]"
