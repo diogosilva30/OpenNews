@@ -19,7 +19,7 @@ class News(ABC):
         date: str,
         authors: List[str],
         is_opinion: bool,
-        text: str
+        text: str,
     ) -> None:
         self.title = title
         self.description = description

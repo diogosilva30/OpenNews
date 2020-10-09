@@ -5,7 +5,10 @@ from rq.job import Job
 from worker import conn
 
 from app.core.common.custom_exceptions import RequestError
-from app.core.common.helpers import datetime_from_string, number_of_months_between_2_dates
+from app.core.common.helpers import (
+    datetime_from_string,
+    number_of_months_between_2_dates,
+)
 from app.core import redis_queue
 
 
@@ -95,12 +98,10 @@ def validate_dates(f):
     def decorated(*args, **kwargs):
         try:
             json_doc = request.get_json()
-            start_date = datetime_from_string(
-                json_doc.get("start_date")).date()
+            start_date = datetime_from_string(json_doc.get("start_date")).date()
             end_date = datetime_from_string(json_doc.get("end_date")).date()
 
-            months_diff = number_of_months_between_2_dates(
-                start_date, end_date)
+            months_diff = number_of_months_between_2_dates(start_date, end_date)
             if months_diff < 0:
                 raise RequestError(
                     "Invalid dates provided! Starting date cannot be greater than end date."

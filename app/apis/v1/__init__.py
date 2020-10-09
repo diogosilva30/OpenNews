@@ -20,7 +20,7 @@ api = Api(
 )
 
 api.add_namespace(publico_api, path="/news/publico")
-api.add_namespace(cm_api, path='/news/cm')
+api.add_namespace(cm_api, path="/news/cm")
 api.add_namespace(results_api, path="/news/results")
 
 

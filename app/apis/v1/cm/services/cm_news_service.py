@@ -4,9 +4,7 @@ This module contains all the functions needed to route the requests under the CM
 
 import json
 
-from ..models.cm_search import (
-    CMTopicSearch
-)
+from ..models.cm_search import CMTopicSearch
 
 
 def search_by_topic(data: dict) -> CMTopicSearch:

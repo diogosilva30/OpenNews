@@ -11,8 +11,20 @@ from app.core.common.helpers import (
 
 
 class CMNews(News):
-    def __init__(self, title: str, description: str, url: str, rubric: str, date: str, authors: List[str], is_opinion: bool, text: str):
-        super().__init__(title, description, url, rubric, date, authors, is_opinion, text)
+    def __init__(
+        self,
+        title: str,
+        description: str,
+        url: str,
+        rubric: str,
+        date: str,
+        authors: List[str],
+        is_opinion: bool,
+        text: str,
+    ):
+        super().__init__(
+            title, description, url, rubric, date, authors, is_opinion, text
+        )
 
     @staticmethod
     def is_news_valid(obj: dict) -> bool:

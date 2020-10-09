@@ -11,8 +11,7 @@ from .decorators import validate_urls, validate_dates
 # NAMESPACE DECLARATION
 api = Namespace(
     "publico",
-    description="Retrieve news from Publico (" +
-    r"https://www.publico.pt" + ")",
+    description="Retrieve news from Publico (" + r"https://www.publico.pt" + ")",
 )
 
 ####################################################################################################################################
@@ -38,8 +37,7 @@ class TopicSearch(Resource):
         help="Ending date for topic search. (Expected string format: dd/mm/AAAA)",
         location="json",
     )
-    parser.add_argument("search_topic", type=str,
-                        location="json", required=True)
+    parser.add_argument("search_topic", type=str, location="json", required=True)
 
     @validate_dates
     @prevent_duplicate_jobs

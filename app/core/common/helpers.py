@@ -12,8 +12,9 @@ def validate_url(url) -> bool:
 
 def normalize_str(string):
     """ Removes extra white space, removes backslash '\\' and removes '\\n' and '\\r'"""
-    return " ".join(string.split()).replace(
-        '\n', '').replace('\r', '').replace('\\', "")
+    return (
+        " ".join(string.split()).replace("\n", "").replace("\r", "").replace("\\", "")
+    )
 
 
 def datetime_from_string(x: str) -> datetime:

@@ -6,16 +6,21 @@ from lxml import html
 from dateutil import parser
 
 from app.core.common.models.news import News
-from app.core.common.helpers import (
-    datetime_from_string,
-    send_post_then_get_html_string,
-)
+from app.core.common.helpers import datetime_from_string, send_post_then_get_html_string
 
 
 class PublicoNews(News):
     def __init__(self, title, description, url, rubric, date, authors, is_opinion):
-        super().__init__(title, description, url, rubric,
-                         date, authors, is_opinion, self.get_text(url))
+        super().__init__(
+            title,
+            description,
+            url,
+            rubric,
+            date,
+            authors,
+            is_opinion,
+            self.get_text(url),
+        )
 
     @staticmethod
     def get_text(url) -> str:
@@ -83,16 +88,13 @@ class PublicoNews(News):
         )
 
         if "opiniao" in url:
-            rubric_element = tree.xpath(
-                '//*[@id="story-header"]/div[2]//text()')
+            rubric_element = tree.xpath('//*[@id="story-header"]/div[2]//text()')
             _rubric = "".join(rubric_element)
 
             # get description
-            description_element = tree.xpath(
-                '//*[@id="story-header"]/div[3]/p/text()')
+            description_element = tree.xpath('//*[@id="story-header"]/div[3]/p/text()')
             _description = "".join(
-                [s for s in description_element if s !=
-                    "\n" and s != " " and s != "t"]
+                [s for s in description_element if s != "\n" and s != " " and s != "t"]
             )
             authors_element = tree.xpath(
                 '//*[@id="story-header"]/div[1]/address/a/span[2]/text()'
@@ -102,15 +104,12 @@ class PublicoNews(News):
             ]
 
         else:
-            rubric_element = tree.xpath(
-                '//*[@id="story-header"]/div[1]/a//text()')
+            rubric_element = tree.xpath('//*[@id="story-header"]/div[1]/a//text()')
             _rubric = "".join(rubric_element)
 
-            description_element = tree.xpath(
-                '//*[@id="story-header"]/div[2]//text()')
+            description_element = tree.xpath('//*[@id="story-header"]/div[2]//text()')
             _description = "".join(
-                [s for s in description_element if s !=
-                    "\n" and s != " " and s != "\t"]
+                [s for s in description_element if s != "\n" and s != " " and s != "\t"]
             )
 
             authors_element = tree.xpath(
@@ -123,8 +122,7 @@ class PublicoNews(News):
             ]
 
         date_element = "".join(
-            tree.xpath(
-                '//time[contains(@class, "dateline")]')[0].xpath("@datetime")
+            tree.xpath('//time[contains(@class, "dateline")]')[0].xpath("@datetime")
         )
         _date = datetime_from_string(date_element)
 
@@ -152,7 +150,9 @@ class PublicoNews(News):
         # Extract if news is opinion article
         _is_opinion = news_dict.get("isOpinion")
 
-        return PublicoNews(_title, _description, _url, _rubric, _date, _authors, _is_opinion)
+        return PublicoNews(
+            _title, _description, _url, _rubric, _date, _authors, _is_opinion
+        )
 
     # TODO: Add support for more "subjornals" from Publico
     @staticmethod

@@ -11,8 +11,9 @@ from .services import cm_news_service
 # NAMESPACE DECLARATION
 api = Namespace(
     "cm",
-    description="Retrieve news from Correio da Manhã (CM) (" +
-    r"https://www.cmjornal.pt" + ")",
+    description="Retrieve news from Correio da Manhã (CM) ("
+    + r"https://www.cmjornal.pt"
+    + ")",
 )
 
 ####################################################################################################################################
@@ -38,8 +39,7 @@ class TopicSearch(Resource):
         help="Ending date for topic search. (Expected string format: dd/mm/AAAA)",
         location="json",
     )
-    parser.add_argument("search_topic", type=str,
-                        location="json", required=True)
+    parser.add_argument("search_topic", type=str, location="json", required=True)
 
     @validate_dates
     @prevent_duplicate_jobs
