@@ -1,9 +1,9 @@
 from flask import url_for, jsonify
-from flask_restx import Resource, Namespace, inputs
+from flask_restx import Resource, Namespace
 
 from app.core import redis_queue
 from app.core.common.decorators import prevent_duplicate_jobs
-
+from app.core.common.parsers import url_search_parser, keywords_search_parser, topic_search_parser
 from .services import publico_news_service
 from .decorators import validate_urls, validate_dates
 
@@ -11,7 +11,8 @@ from .decorators import validate_urls, validate_dates
 # NAMESPACE DECLARATION
 api = Namespace(
     "publico",
-    description="Retrieve news from Publico (" + r"https://www.publico.pt" + ")",
+    description="Retrieve news from Publico (" +
+    r"https://www.publico.pt" + ")",
 )
 
 ####################################################################################################################################
@@ -22,26 +23,10 @@ api = Namespace(
 @api.route("/topic_search")
 class TopicSearch(Resource):
     # Parser to control expected input
-    parser = api.parser()
-    parser.add_argument(
-        "start_date",
-        type=inputs.date_from_iso8601,
-        required=True,
-        help="Starting date for topic search. (Expected string format: dd/mm/AAAA)",
-        location="json",
-    )
-    parser.add_argument(
-        "end_date",
-        type=inputs.date_from_iso8601,
-        required=True,
-        help="Ending date for topic search. (Expected string format: dd/mm/AAAA)",
-        location="json",
-    )
-    parser.add_argument("search_topic", type=str, location="json", required=True)
 
     @validate_dates
     @prevent_duplicate_jobs
-    @api.expect(parser)
+    @api.expect(topic_search_parser(api))
     @api.response(200, description="News successfully fetched by topic.")
     @api.response(
         400, description="Bad request, selected dates are invalid or range is too high."
@@ -91,26 +76,10 @@ class TopicSearch(Resource):
 @api.route("/keywords_search")
 class NewsbyKeywords(Resource):
     # Parser to control expected input
-    parser = api.parser()
-    parser.add_argument(
-        "start_date",
-        type=inputs.date_from_iso8601,
-        required=True,
-        help="Starting date for topic search. (Expected string format: dd/mm/AAAA)",
-        location="json",
-    )
-    parser.add_argument(
-        "end_date",
-        type=inputs.date_from_iso8601,
-        required=True,
-        help="Ending date for topic search. (Expected string format: dd/mm/AAAA)",
-        location="json",
-    )
-    parser.add_argument("keywords", type=str, location="json", required=True)
 
     @validate_dates
     @prevent_duplicate_jobs
-    @api.expect(parser)
+    @api.expect(keywords_search_parser(api))
     @api.response(200, description="News successfully fetched by keywords.")
     @api.response(
         400, description="Bad request, selected dates are invalid or range is too high."
@@ -168,19 +137,10 @@ class NewsbyKeywords(Resource):
 @api.route("/")
 class NewsbyURL(Resource):
     # Parser to control expected input
-    parser = api.parser()
-    # Add 'url' query param. Accepts multiple instances
-    parser.add_argument(
-        "url",
-        type=list,
-        help="News URL(s) to extract info.",
-        location="json",
-        required=True,
-    )
 
     @validate_urls
     @prevent_duplicate_jobs
-    @api.expect(parser)
+    @api.expect(url_search_parser(api))
     @api.response(200, description="News successfully fetched by URLs.")
     @api.response(400, description="Bad request, URLs are invalid or unsupported.")
     def post(self):
