@@ -96,23 +96,24 @@ def prevent_duplicate_jobs(f):
 def validate_dates(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        try:
-            json_doc = request.get_json()
-            start_date = datetime_from_string(json_doc.get("start_date")).date()
-            end_date = datetime_from_string(json_doc.get("end_date")).date()
 
-            months_diff = number_of_months_between_2_dates(start_date, end_date)
-            if months_diff < 0:
-                raise RequestError(
-                    "Invalid dates provided! Starting date cannot be greater than end date."
-                )
-            if months_diff > 3:
-                raise RequestError(
-                    "Date range is too big. Please limit your search up to 3 months."
-                )
-        except ValueError:
+        json_doc = request.get_json()
+        start_date = datetime_from_string(json_doc.get("start_date"))
+        end_date = datetime_from_string(json_doc.get("end_date"))
+        if start_date is None or end_date is None:
             raise RequestError(
                 "Invalid date string format provided! Please provide dates in the following format: dd/mm/AAAA"
+            )
+
+        months_diff = number_of_months_between_2_dates(
+            start_date, end_date)
+        if months_diff < 0:
+            raise RequestError(
+                "Invalid dates provided! Starting date cannot be greater than end date."
+            )
+        if months_diff > 3:
+            raise RequestError(
+                "Date range is too big. Please limit your search up to 3 months."
             )
 
         return f(*args, **kwargs)
