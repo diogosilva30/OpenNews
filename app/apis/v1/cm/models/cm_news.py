@@ -3,11 +3,6 @@ from typing import List
 
 
 from app.core.common.models.news import News
-from app.core.common.helpers import (
-    datetime_from_string,
-    send_post_then_get_html_string,
-    validate_url,
-)
 
 
 class CMNews(News):

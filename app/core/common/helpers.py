@@ -3,11 +3,6 @@ import dateparser
 import requests
 
 
-def validate_url(url) -> bool:
-    """ Send HTTP GET request to a certain a URL and checks for 200 status code"""
-    return requests.get(url).status_code == 200
-
-
 def normalize_str(string):
     """ Removes extra white space, removes backslash '\\' and removes '\\n' and '\\r'"""
     return (

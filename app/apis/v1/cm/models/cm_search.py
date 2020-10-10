@@ -74,6 +74,7 @@ class CMTopicSearch(CMSearch):
             }
         )
 
+    # TODO: Method is too complex. Break into smaller parts
     def search(self) -> None:
         index = 0
         full_stop = False
