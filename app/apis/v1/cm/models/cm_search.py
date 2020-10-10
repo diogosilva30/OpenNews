@@ -147,8 +147,7 @@ class CMTopicSearch(CMSearch):
                 rubric = url.split("/")[3].capitalize()
                 # Get authors info
                 authors = tree.xpath(author_location)
-                authors = authors[0] if len(authors) != 0 else authors
-                authors = normalize_str(authors)
+                authors = [normalize_str(a) for a in authors]
                 title = tree.xpath(
                     "//div[@class='centro']//section//h1")
                 # Make sure title exists
@@ -166,7 +165,7 @@ class CMTopicSearch(CMSearch):
                     url,
                     rubric,
                     news_date,
-                    [authors],
+                    authors,
                     is_opinion,
                     text,
                 )
