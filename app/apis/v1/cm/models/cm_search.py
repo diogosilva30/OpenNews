@@ -120,7 +120,7 @@ class CMTopicSearch(CMSearch):
                 elif "www.vidas.pt" == urlparse(url).netloc:
 
                     author_location = "//div[@class='autor']//text()"
-                    text_location = "//div[@class='text_container']//text()"
+                    text_location = "//div[@class='text_container']//text()[not(ancestor::iframe)]"
                     date_location = "//div[@class='data']//text()"
                     replace_on_data = "•"
 
@@ -148,6 +148,7 @@ class CMTopicSearch(CMSearch):
                 # Get authors info
                 authors = tree.xpath(author_location)
                 authors = authors[0] if len(authors) != 0 else authors
+                authors = normalize_str(authors)
                 title = tree.xpath(
                     "//div[@class='centro']//section//h1")
                 # Make sure title exists
