@@ -7,7 +7,6 @@ from abc import ABC, abstractmethod
 from typing import List
 from flask import jsonify
 from lxml import html
-import html as h
 
 import requests
 
@@ -132,11 +131,14 @@ class CMTopicSearch(CMSearch):
                 tree = html.fromstring(response.text)
 
                 news_date = datetime_from_string(
-                    article.xpath(
-                        date_location)[0].text.replace(replace_on_data, "")
-                )
-                # Check if inside date range
-                if not (self.start_date < news_date < self.end_date):
+                    tree.xpath(
+                        date_location)[0].replace(replace_on_data, ""))
+
+                if news_date < self.start_date:
+                    full_stop = True
+                    break  # stop the local search
+                # Found news more recent that end date, SKIP AHEAD
+                elif news_date > self.end_date:
                     continue
 
                 # Get if news is opinion article from url
@@ -145,7 +147,7 @@ class CMTopicSearch(CMSearch):
                 rubric = url.split("/")[3].capitalize()
                 # Get authors info
                 authors = tree.xpath(author_location)
-                authors = authors[0].text if len(authors) != 0 else authors
+                authors = authors[0] if len(authors) != 0 else authors
                 title = tree.xpath(
                     "//div[@class='centro']//section//h1")
                 # Make sure title exists
@@ -155,7 +157,6 @@ class CMTopicSearch(CMSearch):
                 text = tree.xpath(text_location)
                 # Remove '\n', '\r', and '\'
                 text = normalize_str(" ".join(text))
-                text = h.unescape(text)
                 # Remove ads in case they exist
                 text = text.split("Para aceder a todos os Exclusivos CM")[0]
                 news = CMNews(

@@ -1,7 +1,5 @@
 from datetime import date, time, datetime
-
-# needs pip install python-dateutil
-import dateutil.parser
+import dateparser
 import requests
 
 
@@ -13,15 +11,17 @@ def validate_url(url) -> bool:
 def normalize_str(string):
     """ Removes extra white space, removes backslash '\\' and removes '\\n' and '\\r'"""
     return (
-        " ".join(string.split()).replace("\n", "").replace("\r", "").replace("\\", "")
+        " ".join(string.split()).replace(
+            "\n", "").replace("\r", "").replace("\\", "")
     )
 
 
 def datetime_from_string(x: str) -> datetime:
     """Parses a str to datetime"""
+
     if isinstance(x, (datetime, date)):
         return x
-    return dateutil.parser.parse(x, dayfirst=True)
+    return dateparser.parse(x)
 
 
 def custom_json_serializer(obj):

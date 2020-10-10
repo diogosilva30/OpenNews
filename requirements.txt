@@ -3,6 +3,6 @@ flask-script==2.0.6
 gunicorn==20.0.4
 lxml==4.5.2
 numpy==1.19.2
-python-dateutil==2.8.1
+dateparser==0.7.6
 requests==2.24.0
 rq==1.5.2
