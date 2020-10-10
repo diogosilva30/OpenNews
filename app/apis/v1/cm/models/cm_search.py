@@ -2,12 +2,13 @@
 This module defines all the needed classes for storing the
 information for all the different CM's searches.
 """
+import json
 import os
 from abc import ABC, abstractmethod
-from typing import List
+from urllib.parse import urlparse
+
 from flask import jsonify
 from lxml import html
-from urllib.parse import urlparse
 import requests
 
 from app.core.common.helpers import (
@@ -25,7 +26,7 @@ class CMSearch(ABC):
         "CM_USER"), "password": os.getenv("CM_PW")}
     login_url = "https://aminhaconta.xl.pt/LoginNonio?returnUrl=https%3a%2f%2fwww.cmjornal.pt%2f&isLayer=1&siteHost=www.cmjornal.pt"
 
-    _found_news: List[CMNews]
+    _found_news: list[CMNews]
 
     def __init__(self):
         self._found_news = []
@@ -74,16 +75,33 @@ class CMTopicSearch(CMSearch):
             }
         )
 
+    def get_news_html(self, url: str):
+        """ Performs login on CM's Website and then gets the news html page"""
+        with requests.Session() as session:
+            payload = {"email": os.getenv("CM_USER", ""),
+                       "password": os.getenv("CM_PW", "")}
+
+            resp = session.post(
+                "https://aminhaconta.xl.pt/Async/Site/LoginHandler/LOGIN_WITH_THIRDPARTY", data=payload)
+            json_response = json.loads(resp.text)
+            # Login Failed, extract news
+            if not json_response["Success"]:
+                return requests.get(url).text
+
+            # Login sucess, get login token and then get news
+            token = json.loads(resp.text)["Data"]["LOGIN_TOKEN"]
+            return session.get(
+                f"https://www.cmjornal.pt/login/login?token={token}&returnUrl={url}").text
+
     # TODO: Method is too complex. Break into smaller parts
+
     def search(self) -> None:
         index = 0
         full_stop = False
-
         while True:
             html_string = requests.get(
                 f"https://www.cmjornal.pt/mais-sobre/loadmore?friendlyUrl=mais-sobre&urlRefParameters=?ref=Mais%20Sobre_BlocoMaisSobre&contentStartIndex={index}&searchKeywords={self.topic.replace(' ', '-')}"
             ).text
-
             if html_string in ["\r\n", ""]:
                 break
 
@@ -129,7 +147,7 @@ class CMTopicSearch(CMSearch):
                 if response.status_code != 200:
                     continue
                 # Build html tree
-                tree = html.fromstring(response.text)
+                tree = html.fromstring(self.get_news_html(url))
 
                 news_date = datetime_from_string(
                     tree.xpath(

@@ -13,7 +13,7 @@ class CMNews(News):
         url: str,
         rubric: str,
         date: str,
-        authors: List[str],
+        authors: list[str],
         is_opinion: bool,
         text: str,
     ):

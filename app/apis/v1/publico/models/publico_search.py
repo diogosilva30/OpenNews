@@ -5,7 +5,6 @@ information for all the different Publico's searches.
 import os
 import json
 from abc import ABC, abstractmethod
-from typing import List
 from flask import jsonify
 import requests
 
@@ -16,7 +15,7 @@ from .publico_news import PublicoNews
 class PublicoSearch(ABC):
     """Base model to store Publico search news"""
 
-    _found_news: List[PublicoNews]
+    _found_news: list[PublicoNews]
 
     def __init__(self):
         self._found_news = []

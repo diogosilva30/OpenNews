@@ -32,7 +32,7 @@ def send_post_then_get_html_string(post_url, post_payload, get_url):
     with requests.Session() as s:
         s.headers.update(
             {
-                "user-agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1"
+                "user-agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1",
             }
         )
         # send POST request to login
@@ -40,11 +40,9 @@ def send_post_then_get_html_string(post_url, post_payload, get_url):
         return s.get(get_url)
 
 
-def to_list(x):
-    if isinstance(x, list):
-        return x
-    else:
-        return [x]
+def to_list(obj):
+    """ Transforms a object into list. If object is already a list, it stays the same"""
+    return obj if isinstance(obj, list) else [obj]
 
 
 def number_of_months_between_2_dates(start_date: datetime, end_date: datetime) -> int:

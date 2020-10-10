@@ -1,5 +1,4 @@
 import json
-from typing import List
 from datetime import datetime
 from abc import ABC, abstractstaticmethod
 
@@ -17,7 +16,7 @@ class News(ABC):
         url: str,
         rubric: str,
         date: str,
-        authors: List[str],
+        authors: list[str],
         is_opinion: bool,
         text: str,
     ) -> None:
@@ -33,12 +32,15 @@ class News(ABC):
     def serialize_to_json(self):
         return json.loads(json.dumps(self, default=custom_json_serializer))
 
+    def __repr__(self) -> str:
+        return json.dumps(self.serialize_to_json())
+
     @abstractstaticmethod
     def deserialize_news(news_dict: dict):
         """Child classes must implement method 'deserialize_news' to construct a 'News' object from a dictionary"""
 
     @staticmethod
-    def extract_authors_names(authors: List[dict]) -> List[str]:
+    def extract_authors_names(authors: list[dict]) -> list[str]:
         """Receives a list of dictionarys containing authors info, and extracts the authors name's to a list"""
         processed_authors = []
         for author in authors:
