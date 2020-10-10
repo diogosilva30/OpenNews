@@ -141,10 +141,10 @@ class CMTopicSearch(CMSearch):
                 elif news_date > self.end_date:
                     continue
 
-                # Get if news is opinion article from url
-                is_opinion = "opiniao" in url.lower()
-                # Get news section from url and capitalize it
-                rubric = url.split("/")[3].capitalize()
+                # Get news section from url path and capitalize it
+                rubric = urlparse(url).path.split('/')[1].capitalize()
+                # Get if news is opinion article from rubric
+                is_opinion = True if rubric == "Opiniao" else False
                 # Get authors info
                 authors = tree.xpath(author_location)
                 authors = [normalize_str(a) for a in authors]
