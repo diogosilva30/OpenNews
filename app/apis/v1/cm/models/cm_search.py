@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from typing import List
 from flask import jsonify
 from lxml import html
-
+from urllib.parse import urlparse
 import requests
 
 from app.core.common.helpers import (
@@ -111,13 +111,13 @@ class CMTopicSearch(CMSearch):
                 text_location = ""
                 date_location = ""
                 replace_on_data = ""
-                if "https://www.cmjornal.pt/" in url:
+                if "www.cmjornal.pt" == urlparse(url).netloc:
 
                     author_location = "//span[@class='autor']//text()"
                     text_location = "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]"
                     date_location = "//span[@class='data']//text()"
                     replace_on_data = "às"
-                elif "https://www.vidas.pt/" in url:
+                elif "www.vidas.pt" == urlparse(url).netloc:
 
                     author_location = "//div[@class='autor']//text()"
                     text_location = "//div[@class='text_container']//text()"
