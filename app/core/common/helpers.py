@@ -17,11 +17,11 @@ def normalize_str(string):
 
 
 def datetime_from_string(x: str) -> datetime:
-    """Parses a str to datetime"""
+    """Parses a str to datetime. Assumes format: dd/mm/YYYY"""
 
     if isinstance(x, (datetime, date)):
         return x
-    return dateparser.parse(x)
+    return dateparser.parse(x, settings={'DATE_ORDER': 'DMY'})
 
 
 def custom_json_serializer(obj):
