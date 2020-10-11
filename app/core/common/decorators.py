@@ -10,6 +10,8 @@ from app.core.common.helpers import (
     number_of_months_between_2_dates,
 )
 
+from app.core import publico_queue, cm_queue
+
 
 def _base_prevent_duplicate_jobs(redis_queue):
     # Extract passed json args into function
@@ -83,6 +85,24 @@ def _base_prevent_duplicate_jobs(redis_queue):
                     ),
                 }
             )
+
+
+def prevent_duplicate_cm_jobs(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        _base_prevent_duplicate_jobs(cm_queue)
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+def prevent_duplicate_publico_jobs(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        _base_prevent_duplicate_jobs(publico_queue)
+        return f(*args, **kwargs)
+
+    return decorated
 
 
 def validate_dates(f):

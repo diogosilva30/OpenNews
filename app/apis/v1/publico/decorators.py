@@ -8,19 +8,6 @@ from app.core.common.custom_exceptions import RequestError
 from .models.publico_news import PublicoNews
 
 
-from app.core.common.decorators import _base_prevent_duplicate_jobs
-from .publico_router import publico_queue
-
-
-def prevent_duplicate_publico_jobs(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        _base_prevent_duplicate_jobs(publico_queue)
-        return f(*args, **kwargs)
-
-    return decorated
-
-
 def validate_urls(f):
     @wraps(f)
     def decorated(*args, **kwargs):

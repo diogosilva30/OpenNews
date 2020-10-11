@@ -1,14 +1,14 @@
 from flask import url_for, jsonify
 from flask_restx import Resource, Namespace
 
-from app.core.common.decorators import validate_dates
+from app.core.common.decorators import validate_dates, prevent_duplicate_publico_jobs
 from app.core.common.parsers import (
     url_search_parser,
     keywords_search_parser,
     topic_search_parser,
 )
 from .services import publico_news_service
-from .decorators import prevent_duplicate_publico_jobs, validate_urls
+from .decorators import validate_urls
 
 # Create Publico queue
 from rq import Queue
