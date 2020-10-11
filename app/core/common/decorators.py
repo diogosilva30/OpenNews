@@ -17,47 +17,13 @@ def _base_prevent_duplicate_jobs(redis_queue):
     # Extract passed json args into function
     function_args = request.get_json()
 
-    # Get list of completed jobs in redis queue
-    completed_job_ids = redis_queue.finished_job_registry.get_job_ids()
+    # Get list of jobs in redis queue
+    jobs = redis_queue.jobs
 
-    print(completed_job_ids)
-    # Fetch for jobs with the previously obtained id's
-    jobs = Job.fetch_many(completed_job_ids, conn)
-    # Check for existence of finished job with same passed args
     for job in jobs:
-        if function_args in job.args:
+        if function_args == dict(job.args):
             print(
-                "Detected a request for already existing finished job '{}'! Redirecting...".format(
-                    job.get_id()
-                )
-            )
-            return job.get_id()
-
-    # If not found in finished jobs, check queued jobs
-    # Gets a list of enqueued job instances
-    queued_jobs = redis_queue.jobs
-    # Iterate over queued_jobs
-    for job in queued_jobs:
-        if function_args in job.args:
-            print(
-                "Detected a request for already queued existing job '{}'! Redirecting...".format(
-                    job.get_id()
-                )
-            )
-            return job.get_id()
-
-    # Get list of currently executing jobs in redis queue
-    current_jobs_ids = redis_queue.started_job_registry.get_job_ids()
-
-    # Fetch for jobs with the previously obtained id's
-    jobs = Job.fetch_many(current_jobs_ids, conn)
-    # Check for existence of executing job with same passed args
-    for job in jobs:
-        if function_args in job.args:
-            print(
-                "Detected a request for already executing job '{}'! Redirecting...".format(
-                    job.get_id()
-                )
+                f"Detected a request for already existing {job.get_status()} job '{job.get_id()}'! Redirecting..."
             )
             return job.get_id()
 
