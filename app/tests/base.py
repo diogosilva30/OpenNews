@@ -7,7 +7,8 @@ from rq import Queue
 # Start fake redis server
 fake_redis_server = Redis("RQ.rdb")
 # Start fake redis queue
-fake_redis_queue = Queue(is_async=False, connection=fake_redis_server)
+fake_publico_queue = Queue(name="publico", is_async=False, connection=fake_redis_server)
+fake_cm_queue = Queue(name="cm", is_async=False, connection=fake_redis_server)
 
 
 def get_results_from_fake_queue(job_id):
