@@ -20,6 +20,7 @@ def _base_prevent_duplicate_jobs(redis_queue):
     # Get list of completed jobs in redis queue
     completed_job_ids = redis_queue.finished_job_registry.get_job_ids()
 
+    print(completed_job_ids)
     # Fetch for jobs with the previously obtained id's
     jobs = Job.fetch_many(completed_job_ids, conn)
     # Check for existence of finished job with same passed args
@@ -67,6 +68,8 @@ def prevent_duplicate_cm_jobs(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         job_id = _base_prevent_duplicate_jobs(cm_queue)
+
+        print("JOB IS:", str(job_id))
         if job_id is not None:
             return jsonify(
                 {
