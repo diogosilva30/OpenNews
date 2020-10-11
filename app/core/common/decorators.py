@@ -19,7 +19,7 @@ def _base_prevent_duplicate_jobs(redis_queue):
     jobs = redis_queue.jobs
 
     for job in jobs:
-        if function_args == dict(job.args):
+        if function_args in job.args:
             print(
                 f"Detected a request for already existing {job.get_status()} job '{job.get_id()}'! Redirecting..."
             )
