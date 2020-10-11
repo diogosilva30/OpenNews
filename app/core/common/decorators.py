@@ -1,8 +1,6 @@
 from functools import wraps
 from flask import request, jsonify, url_for
-from rq.job import Job
 
-from worker import conn
 
 from app.core.common.custom_exceptions import RequestError
 from app.core.common.helpers import (
@@ -34,8 +32,6 @@ def prevent_duplicate_cm_jobs(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         job_id = _base_prevent_duplicate_jobs(cm_queue)
-
-        print("JOB IS:", str(job_id))
         if job_id is not None:
             return jsonify(
                 {
@@ -54,6 +50,8 @@ def prevent_duplicate_cm_jobs(f):
 def prevent_duplicate_publico_jobs(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        print("IM HERE")
+        print(publico_queue.jobs)
         job_id = _base_prevent_duplicate_jobs(publico_queue)
         if job_id is not None:
             return jsonify(
