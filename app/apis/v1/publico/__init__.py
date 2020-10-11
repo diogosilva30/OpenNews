@@ -4,4 +4,4 @@ from .publico_router import api as publico_api
 from rq import Queue
 from worker import conn
 
-cm_queue = Queue(connection=conn)
+publico_queue = Queue(connection=conn)
