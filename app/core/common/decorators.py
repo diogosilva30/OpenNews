@@ -66,14 +66,14 @@ def _base_prevent_duplicate_jobs(redis_queue):
 def prevent_duplicate_cm_jobs(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        job = _base_prevent_duplicate_jobs(cm_queue)
-        if job is not None:
+        job_id = _base_prevent_duplicate_jobs(cm_queue)
+        if job_id is not None:
             return jsonify(
                 {
                     "status": "ok",
-                    "job_id": job.get_id(),
+                    "job_id": str(job_id),
                     "Results URL": url_for(
-                        "api_v1.results", job_id=str(job.get_id()), _external=True
+                        "api_v1.results", job_id=str(job_id), _external=True
                     ),
                 }
             )
@@ -85,14 +85,14 @@ def prevent_duplicate_cm_jobs(f):
 def prevent_duplicate_publico_jobs(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        job = _base_prevent_duplicate_jobs(publico_queue)
-        if job is not None:
+        job_id = _base_prevent_duplicate_jobs(publico_queue)
+        if job_id is not None:
             return jsonify(
                 {
                     "status": "ok",
-                    "job_id": job.get_id(),
+                    "job_id": str(job_id),
                     "Results URL": url_for(
-                        "api_v1.results", job_id=str(job.get_id()), _external=True
+                        "api_v1.results", job_id=str(job_id), _external=True
                     ),
                 }
             )
