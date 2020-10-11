@@ -1,15 +1,15 @@
 from flask import url_for, jsonify
 from flask_restx import Resource, Namespace
 
-from app.core import redis_queue
-from app.core.common.decorators import prevent_duplicate_jobs, validate_dates
+from ..publico import publico_queue
+from app.core.common.decorators import validate_dates
 from app.core.common.parsers import (
     url_search_parser,
     keywords_search_parser,
     topic_search_parser,
 )
 from .services import publico_news_service
-from .decorators import validate_urls
+from .decorators import prevent_duplicate_publico_jobs, validate_urls
 
 ####################################################################################################################################
 # NAMESPACE DECLARATION
@@ -28,7 +28,7 @@ class TopicSearch(Resource):
     # Parser to control expected input
 
     @validate_dates
-    @prevent_duplicate_jobs
+    @prevent_duplicate_publico_jobs
     @api.expect(topic_search_parser(api))
     @api.response(200, description="News successfully fetched by topic.")
     @api.response(
@@ -54,7 +54,7 @@ class TopicSearch(Resource):
         }
         """
         # Add job to redis queue
-        redis_job = redis_queue.enqueue(
+        redis_job = publico_queue.enqueue(
             publico_news_service.search_by_topic,
             api.payload,
             result_ttl=10800,
@@ -81,7 +81,7 @@ class NewsbyKeywords(Resource):
     # Parser to control expected input
 
     @validate_dates
-    @prevent_duplicate_jobs
+    @prevent_duplicate_publico_jobs
     @api.expect(keywords_search_parser(api))
     @api.response(200, description="News successfully fetched by keywords.")
     @api.response(
@@ -113,7 +113,7 @@ class NewsbyKeywords(Resource):
         }
 
         """
-        redis_job = redis_queue.enqueue(
+        redis_job = publico_queue.enqueue(
             publico_news_service.search_by_keywords,
             api.payload,
             result_ttl=10800,
@@ -142,7 +142,7 @@ class NewsbyURL(Resource):
     # Parser to control expected input
 
     @validate_urls
-    @prevent_duplicate_jobs
+    @prevent_duplicate_publico_jobs
     @api.expect(url_search_parser(api))
     @api.response(200, description="News successfully fetched by URLs.")
     @api.response(400, description="Bad request, URLs are invalid or unsupported.")
@@ -162,7 +162,7 @@ class NewsbyURL(Resource):
             "url" : [ "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416", "https://www.publico.pt/2020/08/10/sociedade/noticia/ordem-medicos-recomenda-mascaras-rua-testes-contactos-risco-1927613" ]
         }
         """
-        redis_job = redis_queue.enqueue(
+        redis_job = publico_queue.enqueue(
             publico_news_service.search_by_urls,
             api.payload,
             result_ttl=10800,

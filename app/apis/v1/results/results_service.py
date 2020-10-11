@@ -8,9 +8,7 @@ def get_results(job_id, connection=conn):
         fetched_job = rqjob.fetch(job_id, connection)
 
     except:
-        raise custom_exceptions.ResourceNotFound(
-            f"Job {job_id} does not exist!"
-        )
+        raise custom_exceptions.ResourceNotFound(f"Job {job_id} does not exist!")
 
     if fetched_job.is_finished:
         return fetched_job.result.serialize_to_json()

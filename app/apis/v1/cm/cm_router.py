@@ -1,8 +1,9 @@
+from app.apis.v1.cm.decorators import prevent_duplicate_cm_jobs
 from flask import url_for, jsonify
 from flask_restx import Resource, Namespace
 
-from app.core import redis_queue
-from app.core.common.decorators import prevent_duplicate_jobs, validate_dates
+from ..cm import cm_queue
+from app.core.common.decorators import validate_dates
 from app.core.common.parsers import topic_search_parser
 from .services import cm_news_service
 
@@ -25,7 +26,7 @@ class TopicSearch(Resource):
     # Parser to control expected input
 
     @validate_dates
-    @prevent_duplicate_jobs
+    @prevent_duplicate_cm_jobs
     @api.expect(topic_search_parser(api))
     @api.response(200, description="News successfully fetched by topic.")
     @api.response(
@@ -51,7 +52,7 @@ class TopicSearch(Resource):
         }
         """
         # Add job to redis queue
-        redis_job = redis_queue.enqueue(
+        redis_job = cm_queue.enqueue(
             cm_news_service.search_by_topic,
             api.payload,
             result_ttl=10800,

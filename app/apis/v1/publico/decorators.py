@@ -2,12 +2,23 @@ from functools import wraps
 from flask import request
 
 from app.core.common.helpers import (
-    datetime_from_string,
     to_list,
-    number_of_months_between_2_dates,
 )
 from app.core.common.custom_exceptions import RequestError
 from .models.publico_news import PublicoNews
+
+
+from app.core.common.decorators import _base_prevent_duplicate_jobs
+from app.apis.v1.publico import publico_queue
+
+
+def prevent_duplicate_publico_jobs(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        _base_prevent_duplicate_jobs(publico_queue)
+        return f(*args, **kwargs)
+
+    return decorated
 
 
 def validate_urls(f):
