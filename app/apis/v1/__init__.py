@@ -40,3 +40,9 @@ def handle_not_found_exception(error):
 def handle_still_processing_exception(error):
     """Return a custom message and 202(accepted) status code"""
     return {"status": "ok", "message": str(error)}, 202  # accepted
+
+
+@api.errorhandler(custom_exceptions.FailedJob)
+def handle_failed_job_exception(error, stack_trace):
+    """Return a custom message and 500(error) status code"""
+    return {"status": "error", "message": str(error), "stack trace": stack_trace}

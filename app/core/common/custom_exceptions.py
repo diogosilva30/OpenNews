@@ -16,3 +16,7 @@ class ResourceNotFound(Exception):
 
 class StillProcessing(Exception):
     pass
+
+
+class FailedJob(Exception):
+    pass

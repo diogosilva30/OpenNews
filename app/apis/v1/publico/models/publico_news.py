@@ -157,7 +157,7 @@ class PublicoNews(News):
     # TODO: Add support for more "subjornals" from Publico
     @staticmethod
     def validate_url(url: str) -> bool:
-        """ Validates if a Publico's news URL is supported
+        """Validates if a Publico's news URL is supported
         Currently supported news types are:
             - news
             - opinion

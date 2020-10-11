@@ -17,7 +17,7 @@ class ResultsURLSearch(Resource):
     @api.response(202, "Job is accepted but still waiting to be processed")
     @api.response(404, "Job does not exist")
     def get(self, job_id):
-        """ Retrieves results from a job
+        """Retrieves results from a job
         <em><strong>Important:</strong> These results are only kept in registry for 3 hours. After this timespan they get deleted and a new request must be made.</em>
         """
         return get_results(job_id)

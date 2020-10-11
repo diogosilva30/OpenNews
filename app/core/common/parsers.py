@@ -1,4 +1,3 @@
-
 from flask_restx import Namespace
 from flask_restx import inputs
 from flask_restx.reqparse import RequestParser
@@ -20,8 +19,7 @@ def topic_search_parser(api: Namespace) -> RequestParser:
         help="Ending date for topic search. (Expected string format: dd/mm/AAAA)",
         location="json",
     )
-    parser.add_argument("search_topic", type=str,
-                        location="json", required=True)
+    parser.add_argument("search_topic", type=str, location="json", required=True)
     return parser
 
 

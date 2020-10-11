@@ -22,8 +22,7 @@ from .cm_news import CMNews
 class CMSearch(ABC):
     """Base model to store CM search news"""
 
-    login_payload = {"username": os.getenv(
-        "CM_USER"), "password": os.getenv("CM_PW")}
+    login_payload = {"username": os.getenv("CM_USER"), "password": os.getenv("CM_PW")}
     login_url = "https://aminhaconta.xl.pt/LoginNonio?returnUrl=https%3a%2f%2fwww.cmjornal.pt%2f&isLayer=1&siteHost=www.cmjornal.pt"
 
     _found_news: list[CMNews]
@@ -62,6 +61,7 @@ class CMTopicSearch(CMSearch):
         self.topic = topic
         self.start_date = datetime_from_string(start_date)
         self.end_date = datetime_from_string(end_date)
+        self.session = requests.Session()
 
     def serialize_to_json(self) -> str:
         """ Serializes Keywords Search object to json"""
@@ -75,29 +75,35 @@ class CMTopicSearch(CMSearch):
             }
         )
 
-    def get_news_html(self, url: str):
+    def login(self):
         """ Performs login on CM's Website and then gets the news html page"""
-        with requests.Session() as session:
-            payload = {"email": os.getenv("CM_USER", ""),
-                       "password": os.getenv("CM_PW", "")}
+        payload = {
+            "email": os.getenv("CM_USER", ""),
+            "password": os.getenv("CM_PW", ""),
+        }
+        resp = self.session.post(
+            "https://aminhaconta.xl.pt/Async/Site/LoginHandler/LOGIN_WITH_THIRDPARTY",
+            data=payload,
+        )
+        json_response = json.loads(resp.text)
+        if not json_response["Success"]:
+            self.token = ""
+        else:
+            self.token = json.loads(resp.text)["Data"]["LOGIN_TOKEN"]
 
-            resp = session.post(
-                "https://aminhaconta.xl.pt/Async/Site/LoginHandler/LOGIN_WITH_THIRDPARTY", data=payload)
-            json_response = json.loads(resp.text)
-            # Login Failed, extract news
-            if not json_response["Success"]:
-                return requests.get(url).text
+    def get_news_html(self, url: str):
+        """ Reads a news html page"""
 
-            # Login sucess, get login token and then get news
-            token = json.loads(resp.text)["Data"]["LOGIN_TOKEN"]
-            return session.get(
-                f"https://www.cmjornal.pt/login/login?token={token}&returnUrl={url}").text
+        return self.session.get(
+            f"https://www.cmjornal.pt/login/login?token={self.token}&returnUrl={url}"
+        ).text
 
     # TODO: Method is too complex. Break into smaller parts
 
     def search(self) -> None:
         index = 0
         full_stop = False
+        self.login()
         while True:
             html_string = requests.get(
                 f"https://www.cmjornal.pt/mais-sobre/loadmore?friendlyUrl=mais-sobre&urlRefParameters=?ref=Mais%20Sobre_BlocoMaisSobre&contentStartIndex={index}&searchKeywords={self.topic.replace(' ', '-')}"
@@ -139,7 +145,9 @@ class CMTopicSearch(CMSearch):
                 elif "www.vidas.pt" == urlparse(url).netloc:
 
                     author_location = "//div[@class='autor']//text()"
-                    text_location = "//div[@class='text_container']//text()[not(ancestor::iframe)]"
+                    text_location = (
+                        "//div[@class='text_container']//text()[not(ancestor::iframe)]"
+                    )
                     date_location = "//div[@class='data']//text()"
                     replace_on_data = "•"
 
@@ -150,8 +158,8 @@ class CMTopicSearch(CMSearch):
                 tree = html.fromstring(self.get_news_html(url))
 
                 news_date = datetime_from_string(
-                    tree.xpath(
-                        date_location)[0].replace(replace_on_data, ""))
+                    tree.xpath(date_location)[0].replace(replace_on_data, "")
+                )
 
                 if news_date < self.start_date:
                     full_stop = True
@@ -161,14 +169,13 @@ class CMTopicSearch(CMSearch):
                     continue
 
                 # Get news section from url path and capitalize it
-                rubric = urlparse(url).path.split('/')[1].capitalize()
+                rubric = urlparse(url).path.split("/")[1].capitalize()
                 # Get if news is opinion article from rubric
                 is_opinion = True if rubric == "Opiniao" else False
                 # Get authors info
                 authors = tree.xpath(author_location)
                 authors = [normalize_str(a) for a in authors]
-                title = tree.xpath(
-                    "//div[@class='centro']//section//h1")
+                title = tree.xpath("//div[@class='centro']//section//h1")
                 # Make sure title exists
                 title = title[0].text if len(title) != 0 else ""
                 # Normalize title

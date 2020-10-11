@@ -31,6 +31,7 @@ class PublicoSearch(ABC):
     @found_news.setter
     def found_news(self, value):
         self._found_news = value
+
     # __________________________________________________________________________________________________________________________
 
     @abstractmethod
@@ -62,12 +63,18 @@ class PublicoURLSearch(PublicoSearch):
         news_object = PublicoNews.build_from_url(url)
         if news_object not in self.found_news:
             self.found_news.append(news_object)
+
     # __________________________________________________________________________________________________________________________
 
     def serialize_to_json(self) -> None:
         """ Serializes URL Search object to JSON"""
-        return jsonify({"number of found news": str(len(self.found_news)),
-                        "news": list(map(lambda x: x.serialize_to_json(), self.found_news))})
+        return jsonify(
+            {
+                "number of found news": str(len(self.found_news)),
+                "news": list(map(lambda x: x.serialize_to_json(), self.found_news)),
+            }
+        )
+
 
 # ______________________________________________________________________________________________________________________________
 
@@ -76,8 +83,10 @@ class PublicoAPISearch(PublicoSearch, ABC):
     """Base model to store news from Publico's API."""
 
     page_number: int
-    login_payload = {'username': os.getenv('PUBLICO_USER'),
-                     "password": os.getenv('PUBLICO_PW')}
+    login_payload = {
+        "username": os.getenv("PUBLICO_USER"),
+        "password": os.getenv("PUBLICO_PW"),
+    }
     login_url = "https://www.publico.pt/api/user/login"
     base_api_url: str
 
@@ -106,15 +115,20 @@ class PublicoTopicSearch(PublicoAPISearch):
         super().__init__(start_date, end_date)
         self.search_topic = search_topic
         self.base_api_url = "https://www.publico.pt/api/list/"
+
     # __________________________________________________________________________________________________________________________
 
     def serialize_to_json(self) -> str:
         """ Serializes Topic Search object to json"""
-        return jsonify({"search topic": self.search_topic,
-                        "start date": self.start_date.strftime('%d/%m/%Y'),
-                        "end date": self.end_date.strftime('%d/%m/%Y'),
-                        "number of found news": str(len(self.found_news)),
-                        "news": list(map(lambda x: x.serialize_to_json(), self.found_news))})
+        return jsonify(
+            {
+                "search topic": self.search_topic,
+                "start date": self.start_date.strftime("%d/%m/%Y"),
+                "end date": self.end_date.strftime("%d/%m/%Y"),
+                "number of found news": str(len(self.found_news)),
+                "news": list(map(lambda x: x.serialize_to_json(), self.found_news)),
+            }
+        )
 
     # __________________________________________________________________________________________________________________________
 
@@ -129,8 +143,12 @@ class PublicoTopicSearch(PublicoAPISearch):
 
     @property
     def api_url(self):
-        return self.base_api_url + self.search_topic.replace(
-            " ", "-").lower() + "?page=" + str(self.page_number)
+        return (
+            self.base_api_url
+            + self.search_topic.replace(" ", "-").lower()
+            + "?page="
+            + str(self.page_number)
+        )
 
     # __________________________________________________________________________________________________________________________
 
@@ -138,7 +156,7 @@ class PublicoTopicSearch(PublicoAPISearch):
         # Flag to stop search
         stop_entire_search = False
 
-        while(r := requests.get(self.api_url).text) != "[]":
+        while (r := requests.get(self.api_url).text) != "[]":
             print("Now reading page number {}...".format(self.page_number))
             # Read the json data
             data = json.loads(r)
@@ -157,9 +175,11 @@ class PublicoTopicSearch(PublicoAPISearch):
             if stop_entire_search:
                 break
             # Increment page
-            self.page_number = self.page_number+1
+            self.page_number = self.page_number + 1
 
         print("Found {} news!".format(str(len(self.found_news))))
+
+
 # ________________________________________________________________________________________________________________________________
 
 
@@ -177,11 +197,15 @@ class PublicoKeywordsSearch(PublicoAPISearch):
 
     def serialize_to_json(self) -> str:
         """ Serializes Keywords Search object to json"""
-        return jsonify({"keywords": self.keywords,
-                        "start date": self.start_date.strftime('%d/%m/%Y'),
-                        "end date": self.end_date.strftime('%d/%m/%Y'),
-                        "number of found news": str(len(self.found_news)),
-                        "news": list(map(lambda x: x.serialize_to_json(), self.found_news))})
+        return jsonify(
+            {
+                "keywords": self.keywords,
+                "start date": self.start_date.strftime("%d/%m/%Y"),
+                "end date": self.end_date.strftime("%d/%m/%Y"),
+                "number of found news": str(len(self.found_news)),
+                "news": list(map(lambda x: x.serialize_to_json(), self.found_news)),
+            }
+        )
 
     # __________________________________________________________________________________________________________________________
 
@@ -196,14 +220,22 @@ class PublicoKeywordsSearch(PublicoAPISearch):
 
     @property
     def api_url(self):
-        return self.base_api_url + self.keywords.replace(
-            " ", "%20").lower() + "&start=" + self.start_date.strftime("%d-%m-%Y") + "&end=" + self.end_date.strftime("%d-%m-%Y") + "&page=" + str(self.page_number)
+        return (
+            self.base_api_url
+            + self.keywords.replace(" ", "%20").lower()
+            + "&start="
+            + self.start_date.strftime("%d-%m-%Y")
+            + "&end="
+            + self.end_date.strftime("%d-%m-%Y")
+            + "&page="
+            + str(self.page_number)
+        )
 
     # __________________________________________________________________________________________________________________________
 
     def consume_api(self):
 
-        while(r := requests.get(self.api_url).text) != "[]":
+        while (r := requests.get(self.api_url).text) != "[]":
             print("Now reading page number {}...".format(self.page_number))
             # Read the json data
             data = json.loads(r)
@@ -211,6 +243,6 @@ class PublicoKeywordsSearch(PublicoAPISearch):
             for item in data:
                 self.add_news(item)
             # Increment page
-            self.page_number = self.page_number+1
+            self.page_number = self.page_number + 1
 
         print("Found {} news!".format(str(len(self.found_news))))

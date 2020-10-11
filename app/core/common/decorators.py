@@ -105,8 +105,7 @@ def validate_dates(f):
                 "Invalid date string format provided! Please provide dates in the following format: dd/mm/AAAA"
             )
 
-        months_diff = number_of_months_between_2_dates(
-            start_date, end_date)
+        months_diff = number_of_months_between_2_dates(start_date, end_date)
         if months_diff < 0:
             raise RequestError(
                 "Invalid dates provided! Starting date cannot be greater than end date."

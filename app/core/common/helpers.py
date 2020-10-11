@@ -6,8 +6,7 @@ import requests
 def normalize_str(string):
     """ Removes extra white space, removes backslash '\\' and removes '\\n' and '\\r'"""
     return (
-        " ".join(string.split()).replace(
-            "\n", "").replace("\r", "").replace("\\", "")
+        " ".join(string.split()).replace("\n", "").replace("\r", "").replace("\\", "")
     )
 
 
@@ -16,7 +15,7 @@ def datetime_from_string(x: str) -> datetime:
 
     if isinstance(x, (datetime, date)):
         return x
-    return dateparser.parse(x, settings={'DATE_ORDER': 'DMY'})
+    return dateparser.parse(x, settings={"DATE_ORDER": "DMY"})
 
 
 def custom_json_serializer(obj):

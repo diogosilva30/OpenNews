@@ -8,7 +8,7 @@ from ..models.cm_search import CMTopicSearch
 
 
 def search_by_topic(data: dict) -> CMTopicSearch:
-    """ Searhes news in CM's website by a certain topic within a range of dates.
+    """Searhes news in CM's website by a certain topic within a range of dates.
 
     Parameters
     ----------

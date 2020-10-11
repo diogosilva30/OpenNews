@@ -14,7 +14,7 @@ from ..models.publico_search import (
 
 
 def search_by_topic(data: dict) -> PublicoTopicSearch:
-    """ Searhes news in Publico's website by a certain topic within a range of dates.
+    """Searhes news in Publico's website by a certain topic within a range of dates.
 
     Parameters
     ----------
@@ -49,7 +49,7 @@ def search_by_topic(data: dict) -> PublicoTopicSearch:
 
 
 def search_by_keywords(data: dict) -> PublicoKeywordsSearch:
-    """ Searhes news in Publico's website by keywords within a range of dates.
+    """Searhes news in Publico's website by keywords within a range of dates.
 
     Parameters
     ----------
@@ -86,7 +86,7 @@ def search_by_keywords(data: dict) -> PublicoKeywordsSearch:
 
 
 def search_by_urls(data: dict) -> PublicoURLSearch:
-    """ Searhes news in Publico's website by URL(s).
+    """Searhes news in Publico's website by URL(s).
 
     Parameters
     ----------

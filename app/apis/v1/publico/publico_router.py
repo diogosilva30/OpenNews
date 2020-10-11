@@ -3,7 +3,11 @@ from flask_restx import Resource, Namespace
 
 from app.core import redis_queue
 from app.core.common.decorators import prevent_duplicate_jobs, validate_dates
-from app.core.common.parsers import url_search_parser, keywords_search_parser, topic_search_parser
+from app.core.common.parsers import (
+    url_search_parser,
+    keywords_search_parser,
+    topic_search_parser,
+)
 from .services import publico_news_service
 from .decorators import validate_urls
 
@@ -11,8 +15,7 @@ from .decorators import validate_urls
 # NAMESPACE DECLARATION
 api = Namespace(
     "publico",
-    description="Retrieve news from Publico (" +
-    r"https://www.publico.pt" + ")",
+    description="Retrieve news from Publico (" + r"https://www.publico.pt" + ")",
 )
 
 ####################################################################################################################################
@@ -85,7 +88,7 @@ class NewsbyKeywords(Resource):
         400, description="Bad request, selected dates are invalid or range is too high."
     )
     def post(self):
-        """ Creates job to retrieve Publico's news by keywords
+        """Creates job to retrieve Publico's news by keywords
 
         <em><strong>Important: </strong>Due to the high ammount of required computations for this resource, the date range is limited to 3 months.
         This resource may seem equal to <strong>topic search</strong>. However, this resource gives <strong>broader results</strong>, as it includes <strong>every</strong> news that contains <strong>any</strong> of the keywords.</em>
@@ -144,7 +147,7 @@ class NewsbyURL(Resource):
     @api.response(200, description="News successfully fetched by URLs.")
     @api.response(400, description="Bad request, URLs are invalid or unsupported.")
     def post(self):
-        """ Creates job to retrieve Publico's news by URLs
+        """Creates job to retrieve Publico's news by URLs
         About the parameters:
          \n\t <strong>'url'\t: Required parameter</strong>. Indicates the news URL(s) to search. In the case of multiple URLs these should be passed as a <strong>JSON Array</strong> in the request body. See the examples below.\n
 
