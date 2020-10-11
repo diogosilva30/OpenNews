@@ -91,12 +91,16 @@ class CMTopicSearch(CMSearch):
         else:
             self.token = json.loads(resp.text)["Data"]["LOGIN_TOKEN"]
 
-    def get_news_html(self, url: str):
-        """ Reads a news html page"""
+    def get_news(self, url: str):
+        """ Reads a news page"""
+        # If is from 'www.vidas.pt', use a simple get
+        if urlparse(url).netloc == "www.vidas.pt":
+            return self.session.get(url)
 
+        # If from CM, perform login and get
         return self.session.get(
             f"https://www.cmjornal.pt/login/login?token={self.token}&returnUrl={url}"
-        ).text
+        )
 
     # TODO: Method is too complex. Break into smaller parts
 
@@ -119,18 +123,13 @@ class CMTopicSearch(CMSearch):
 
                 # Discard url junk
                 url = url.split("?ref")[0]
+
                 # If news is of type 'interativa', 'multimedia' or 'perguntas' skip it
                 if any(x in url for x in ["interativa", "multimedia", "perguntas"]):
                     continue
 
                 description = article.xpath('.//span[@class="lead"]')[0].text
 
-                # Read news html
-                response = send_post_then_get_html_string(
-                    self.login_url, self.login_payload, url
-                )
-                # Important- URL might redirect
-                url = response.url
                 # Find text, author and date location
                 author_location = ""
                 text_location = ""
@@ -151,11 +150,13 @@ class CMTopicSearch(CMSearch):
                     date_location = "//div[@class='data']//text()"
                     replace_on_data = "•"
 
+                response = self.get_news(url)
                 # Check if news still exists, if not skip it
                 if response.status_code != 200:
                     continue
+
                 # Build html tree
-                tree = html.fromstring(self.get_news_html(url))
+                tree = html.fromstring(response.text)
 
                 news_date = datetime_from_string(
                     tree.xpath(date_location)[0].replace(replace_on_data, "")
