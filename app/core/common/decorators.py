@@ -30,6 +30,7 @@ def _base_prevent_duplicate_jobs(redis_queue):
                     job.get_id()
                 )
             )
+            return job.get_id()
             return jsonify(
                 {
                     "status": "ok",
@@ -51,6 +52,7 @@ def _base_prevent_duplicate_jobs(redis_queue):
                     queued_job.get_id()
                 )
             )
+            return job.get_id()
             return jsonify(
                 {
                     "status": "ok",
@@ -76,6 +78,7 @@ def _base_prevent_duplicate_jobs(redis_queue):
                     job.get_id()
                 )
             )
+            return job.get_id()
             return jsonify(
                 {
                     "status": "ok",
@@ -85,12 +88,23 @@ def _base_prevent_duplicate_jobs(redis_queue):
                     ),
                 }
             )
+    return None
 
 
 def prevent_duplicate_cm_jobs(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        _base_prevent_duplicate_jobs(cm_queue)
+        job = _base_prevent_duplicate_jobs(cm_queue)
+        if job is not None:
+            return jsonify(
+                {
+                    "status": "ok",
+                    "job_id": job.get_id(),
+                    "Results URL": url_for(
+                        "api_v1.results", job_id=str(job.get_id()), _external=True
+                    ),
+                }
+            )
         return f(*args, **kwargs)
 
     return decorated
@@ -99,7 +113,17 @@ def prevent_duplicate_cm_jobs(f):
 def prevent_duplicate_publico_jobs(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        _base_prevent_duplicate_jobs(publico_queue)
+        job = _base_prevent_duplicate_jobs(publico_queue)
+        if job is not None:
+            return jsonify(
+                {
+                    "status": "ok",
+                    "job_id": job.get_id(),
+                    "Results URL": url_for(
+                        "api_v1.results", job_id=str(job.get_id()), _external=True
+                    ),
+                }
+            )
         return f(*args, **kwargs)
 
     return decorated
