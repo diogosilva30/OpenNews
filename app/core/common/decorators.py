@@ -31,39 +31,19 @@ def _base_prevent_duplicate_jobs(redis_queue):
                 )
             )
             return job.get_id()
-            return jsonify(
-                {
-                    "status": "ok",
-                    "job_id": job.get_id(),
-                    "Results URL": url_for(
-                        "api_v1.results", job_id=str(job.get_id()), _external=True
-                    ),
-                }
-            )
 
     # If not found in finished jobs, check queued jobs
     # Gets a list of enqueued job instances
     queued_jobs = redis_queue.jobs
     # Iterate over queued_jobs
-    for queued_job in queued_jobs:
-        if function_args in queued_job.args:
+    for job in queued_jobs:
+        if function_args in job.args:
             print(
                 "Detected a request for already queued existing job '{}'! Redirecting...".format(
-                    queued_job.get_id()
+                    job.get_id()
                 )
             )
             return job.get_id()
-            return jsonify(
-                {
-                    "status": "ok",
-                    "job_id": queued_job.get_id(),
-                    "Results URL": url_for(
-                        "api_v1.results",
-                        job_id=str(queued_job.get_id()),
-                        _external=True,
-                    ),
-                }
-            )
 
     # Get list of currently executing jobs in redis queue
     current_jobs_ids = redis_queue.started_job_registry.get_job_ids()
@@ -79,15 +59,7 @@ def _base_prevent_duplicate_jobs(redis_queue):
                 )
             )
             return job.get_id()
-            return jsonify(
-                {
-                    "status": "ok",
-                    "job_id": job.get_id(),
-                    "Results URL": url_for(
-                        "api_v1.results", job_id=str(job.get_id()), _external=True
-                    ),
-                }
-            )
+
     return None
 
 
