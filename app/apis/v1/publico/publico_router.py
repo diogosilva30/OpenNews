@@ -1,6 +1,7 @@
 from flask import url_for, jsonify
 from flask_restx import Resource, Namespace
 
+from app.core import publico_queue
 from app.core.common.decorators import validate_dates, prevent_duplicate_publico_jobs
 from app.core.common.parsers import (
     url_search_parser,

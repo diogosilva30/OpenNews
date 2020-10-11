@@ -1,10 +1,10 @@
 from flask import url_for, jsonify
 from flask_restx import Resource, Namespace
 
+from app.core import cm_queue
 from app.core.common.decorators import validate_dates, prevent_duplicate_cm_jobs
 from app.core.common.parsers import topic_search_parser
 from .services import cm_news_service
-
 
 ####################################################################################################################################
 # NAMESPACE DECLARATION
