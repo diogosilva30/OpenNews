@@ -1,7 +1,7 @@
 import unittest
 
 from app.apis.v1.cm.services.cm_news_service import search_by_topic
-from app.tests.base import BaseTestCase, get_results_from_fake_queue, fake_redis_queue
+from app.tests.base import BaseTestCase, get_results_from_fake_queue, fake_cm_queue
 
 
 def send_post_request(client, uri, json_payload):
@@ -20,7 +20,7 @@ class TestCMTopicSearch(BaseTestCase):
         """ Enqueues job for topic_search on the fake redis server"""
 
         # Enqueue fake job with data
-        search_job = fake_redis_queue.enqueue(search_by_topic, data)
+        search_job = fake_cm_queue.enqueue(search_by_topic, data)
 
         # Assert that the job is finished
         self.assertTrue(search_job.is_finished)
