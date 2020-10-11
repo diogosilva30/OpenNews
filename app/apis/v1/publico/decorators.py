@@ -9,7 +9,7 @@ from .models.publico_news import PublicoNews
 
 
 from app.core.common.decorators import _base_prevent_duplicate_jobs
-from app.apis.v1.publico import publico_queue
+from ..publico import publico_queue
 
 
 def prevent_duplicate_publico_jobs(f):
