@@ -1,7 +1,6 @@
 from flask import url_for, jsonify
 from flask_restx import Resource, Namespace
 
-from ..publico import publico_queue
 from app.core.common.decorators import validate_dates
 from app.core.common.parsers import (
     url_search_parser,
@@ -10,6 +9,12 @@ from app.core.common.parsers import (
 )
 from .services import publico_news_service
 from .decorators import prevent_duplicate_publico_jobs, validate_urls
+
+# Create Publico queue
+from rq import Queue
+from worker import conn
+
+publico_queue = Queue(connection=conn)
 
 ####################################################################################################################################
 # NAMESPACE DECLARATION

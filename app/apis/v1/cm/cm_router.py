@@ -7,6 +7,13 @@ from app.core.common.decorators import validate_dates
 from app.core.common.parsers import topic_search_parser
 from .services import cm_news_service
 
+
+# Create CM queue
+from rq import Queue
+from worker import conn
+
+cm_queue = Queue(connection=conn)
+
 ####################################################################################################################################
 # NAMESPACE DECLARATION
 api = Namespace(
