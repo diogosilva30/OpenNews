@@ -43,6 +43,6 @@ def handle_still_processing_exception(error):
 
 
 @api.errorhandler(custom_exceptions.FailedJob)
-def handle_failed_job_exception(error, stack_trace):
+def handle_failed_job_exception(error):
     """Return a custom message and 500(error) status code"""
-    return {"status": "error", "message": str(error), "stack trace": stack_trace}
+    return {"status": "error", "message": str(error)}, 500 # error
