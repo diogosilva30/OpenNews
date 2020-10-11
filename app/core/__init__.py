@@ -6,9 +6,9 @@ from rq import Queue
 from worker import conn
 
 # Create CM queue
-cm_queue = Queue(connection=conn)
+cm_queue = Queue("cm", connection=conn)
 # Create Publico queue
-publico_queue = Queue(connection=conn)
+publico_queue = Queue("publico", connection=conn)
 
 
 def create_app(config_name):
