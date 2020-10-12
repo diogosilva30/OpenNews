@@ -15,7 +15,6 @@ from .decorators import validate_urls
 from rq import Queue
 from worker import conn
 
-publico_queue = Queue(connection=conn)
 
 ####################################################################################################################################
 # NAMESPACE DECLARATION
@@ -66,6 +65,7 @@ class TopicSearch(Resource):
             result_ttl=10800,
             job_timeout=3 * 3600,
         )  # kills job after 3 hours
+
         return jsonify(
             {
                 "status": "ok",

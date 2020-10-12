@@ -50,8 +50,7 @@ def prevent_duplicate_cm_jobs(f):
 def prevent_duplicate_publico_jobs(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        print("IM HERE")
-        print(publico_queue.jobs)
+
         job_id = _base_prevent_duplicate_jobs(publico_queue)
         if job_id is not None:
             return jsonify(
