@@ -25,7 +25,7 @@ def search_by_tag(data: dict) -> dict:
     # Load API payload into JSON doc
     json_doc = json.loads(json.dumps(data))
     # Extract search topic from JSON
-    search_topic = json_doc.get("search_topic").replace("\n", "")
+    search_topic = json_doc.get("tag").replace("\n", "")
     # Extract start date from JSON
     start_date = json_doc.get("start_date")
     # Extract end date from JSON
