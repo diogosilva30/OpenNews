@@ -40,7 +40,11 @@ class TestPublicoURLSearch(BaseTestCase):
 
         self._enqueue_url_search_job(
             {
-                "url": "https://www.cmjornal.pt/sociedade/detalhe/alerta-cm--portugal-ultrapassa-os-100-mil-infetados-por-covid-19-1949-novos-casos-e-17-mortos-nas-ultimas-24-horas"
+                "url": [
+                    "https://www.cmjornal.pt/sociedade/detalhe/alerta-cm--portugal-ultrapassa-os-100-mil-infetados-por-covid-19-1949-novos-casos-e-17-mortos-nas-ultimas-24-horas",
+                    "https://www.vidas.pt/a-ferver/detalhe/isabel-dos-santos-namora-com-o-marido-na-india",
+                    "https://www.cmjornal.pt/opiniao/colunistas/fernanda-cachao/detalhe/20201020-0005-je-suis-paty?ref=Opini%C3%A3o_DestaquesPrincipais",
+                ]
             }
         )
 
