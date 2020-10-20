@@ -42,10 +42,13 @@ class TestPublicoURLSearch(BaseTestCase):
 
     def test_url_search_job(self):
         """ Test for Publico URL fake job creation and news retrieval"""
-
+        # second one is minute updated news
         self._enqueue_url_search_job(
             {
-                "url": "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416"
+                "url": [
+                    "https://www.publico.pt/2020/08/10/local/noticia/estudo-aponta-residuos-perigosos-novas-obras-parque-nacoes-1927416",
+                    "https://www.publico.pt/2020/10/20/sociedade/noticia/covid19-europa-america-norte-seguir-exemplo-asia-hemisferio-sul-defende-oms-1935910",
+                ]
             }
         )
 
