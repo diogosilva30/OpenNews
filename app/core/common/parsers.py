@@ -1,9 +1,14 @@
+""" This modules provides parsers to the different jobs enqueuing. These parsers control
+the expected input for the API's endpoints"""
 from flask_restx import Namespace
 from flask_restx import inputs
 from flask_restx.reqparse import RequestParser
 
 
-def topic_search_parser(api: Namespace) -> RequestParser:
+def tag_search_parser(api: Namespace) -> RequestParser:
+    """
+    Controls the expected input for the tag search jobs
+    """
     parser = api.parser()
     parser.add_argument(
         "start_date",
@@ -19,11 +24,14 @@ def topic_search_parser(api: Namespace) -> RequestParser:
         help="Ending date for topic search. (Expected string format: dd/mm/AAAA)",
         location="json",
     )
-    parser.add_argument("search_topic", type=str, location="json", required=True)
+    parser.add_argument("tag", type=str, location="json", required=True)
     return parser
 
 
 def keywords_search_parser(api: Namespace) -> RequestParser:
+    """
+    Controls the expected input for the keywords search jobs
+    """
     parser = api.parser()
     parser.add_argument(
         "start_date",
@@ -44,6 +52,9 @@ def keywords_search_parser(api: Namespace) -> RequestParser:
 
 
 def url_search_parser(api: Namespace) -> RequestParser:
+    """
+    Controls the expected input for the url search jobs
+    """
     parser = api.parser()
     # Add 'url' query param. Accepts multiple instances
     parser.add_argument(

@@ -2,23 +2,26 @@
 This module contains all the functions needed to route the requests under the CM's namespace.
 """
 
+from app.core.common.helpers import to_list
 import json
 
-from ..models.cm_search import CMTopicSearch
+import numpy as np
+
+from ..models import CMSearch
 
 
-def search_by_topic(data: dict) -> CMTopicSearch:
-    """Searhes news in CM's website by a certain topic within a range of dates.
+def search_by_tag(data: dict) -> dict:
+    """Searhes news in CM's website by a certain tag within a range of dates.
 
     Parameters
     ----------
     data
-        Dictionary containing the POST request payload for the topic search.
+        Dictionary containing the POST request payload for the tag search.
 
     Returns
     -------
     results
-        'CMTopicSearch' object containing the request information and it's results.
+        dict object containing the request information and it's results.
     """
     # Load API payload into JSON doc
     json_doc = json.loads(json.dumps(data))
@@ -29,14 +32,35 @@ def search_by_topic(data: dict) -> CMTopicSearch:
     # Extract end date from JSON
     end_date = json_doc.get("end_date")
     # Create TopicSearch object
-    results = CMTopicSearch(search_topic, start_date, end_date)
+
     # Log topic search start
     print(
         "Starting to topic search news from CM's website with topic '{}' beetween dates {}<-->{}".format(
-            search_topic, results.start_date, results.end_date
+            search_topic, start_date, end_date
         )
     )
     # Perform the search
-    results.search()
+    return CMSearch().tag_search(search_topic, start_date, end_date)
 
-    return results
+
+def search_by_urls(data: dict) -> dict:
+    """Searhes news in CM's website by URL(s).
+
+    Parameters
+    ----------
+    data
+        Dictionary containing the POST request payload for the URL(s) search.
+
+    Returns
+    -------
+    dict
+        dictionary containing the request information and it's results.
+    """
+
+    # Transform dict object into a list of URL(s)
+    data = np.unique(to_list(data.get("url")))
+
+    # Log keywords search start
+    print(f"Starting to search news by URLs {len(data)} from CM")
+
+    return CMSearch().url_search(data)

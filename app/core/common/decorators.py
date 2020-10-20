@@ -1,3 +1,7 @@
+"""
+This module specifies decorator methods used across the application
+"""
+
 from functools import wraps
 from flask import request, jsonify, url_for
 
@@ -6,9 +10,36 @@ from app.core.common.custom_exceptions import RequestError
 from app.core.common.helpers import (
     datetime_from_string,
     number_of_months_between_2_dates,
+    to_list,
+    validate_url,
 )
 
 from app.core import publico_queue, cm_queue
+
+
+def validate_urls(function):
+    """
+    Method wrapper to validate URLs. It checks:
+        - If number of URLs is equal or less than 50;
+        - If all URLs return a 200 status code.
+    If any of the above conditions fails, it raises a RequestError
+    """
+
+    @wraps(function)
+    def decorated(*args, **kwargs):
+        data = to_list(request.get_json().get("url"))
+        if len(data) > 50:
+            raise RequestError("Too many URLS to search. Please provide up to 50 URLS!")
+
+        valid_url = [validate_url(url) for url in data]
+        invalid_urls_index = [i for i, value in enumerate(valid_url) if not value]
+        if len(invalid_urls_index) != 0:
+            raise RequestError(
+                f"Invalid URLs provided at position: {invalid_urls_index}"
+            )
+        return function(*args, **kwargs)
+
+    return decorated
 
 
 def _base_prevent_duplicate_jobs(redis_queue):
@@ -28,47 +59,62 @@ def _base_prevent_duplicate_jobs(redis_queue):
     return None
 
 
-def prevent_duplicate_cm_jobs(f):
-    @wraps(f)
+def _redirect(job_id):
+    return jsonify(
+        {
+            "status": "ok",
+            "job_id": str(job_id),
+            "Results URL": url_for(
+                "api_v1.results", job_id=str(job_id), _external=True
+            ),
+        }
+    )
+
+
+def prevent_duplicate_cm_jobs(function):
+    """
+    Method wrapper to prevent duplicate 'CM' jobs enqueuing. If job already exists,
+    redirects to it
+    """
+
+    @wraps(function)
     def decorated(*args, **kwargs):
         job_id = _base_prevent_duplicate_jobs(cm_queue)
         if job_id is not None:
-            return jsonify(
-                {
-                    "status": "ok",
-                    "job_id": str(job_id),
-                    "Results URL": url_for(
-                        "api_v1.results", job_id=str(job_id), _external=True
-                    ),
-                }
-            )
-        return f(*args, **kwargs)
+            return _redirect(job_id)
+        return function(*args, **kwargs)
 
     return decorated
 
 
-def prevent_duplicate_publico_jobs(f):
-    @wraps(f)
+def prevent_duplicate_publico_jobs(function):
+    """
+    Method wrapper to prevent duplicate 'Publico' jobs enqueuing. If job already exists,
+    redirects to it
+    """
+
+    @wraps(function)
     def decorated(*args, **kwargs):
 
         job_id = _base_prevent_duplicate_jobs(publico_queue)
         if job_id is not None:
-            return jsonify(
-                {
-                    "status": "ok",
-                    "job_id": str(job_id),
-                    "Results URL": url_for(
-                        "api_v1.results", job_id=str(job_id), _external=True
-                    ),
-                }
-            )
-        return f(*args, **kwargs)
+            return _redirect(job_id)
+
+        return function(*args, **kwargs)
 
     return decorated
 
 
-def validate_dates(f):
-    @wraps(f)
+def validate_dates(function):
+    """
+    Method wrapper to validate dates. It checks:
+        - If dates have a valid format (dd/mm/AAAA);
+        - If date range is 3 months maximum;
+        - If starting date is not greater than ending date.
+    If any of the above conditions fails, it raises a RequestError
+    """
+
+    @wraps(function)
     def decorated(*args, **kwargs):
 
         json_doc = request.get_json()
@@ -89,6 +135,6 @@ def validate_dates(f):
                 "Date range is too big. Please limit your search up to 3 months."
             )
 
-        return f(*args, **kwargs)
+        return function(*args, **kwargs)
 
     return decorated

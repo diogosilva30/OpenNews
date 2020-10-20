@@ -1,8 +1,10 @@
+""" This modules provides the base setup for the tests"""
 from flask_testing import TestCase
-from app.apis.v1.results.results_service import get_results
-from manage import app
 from redislite import Redis
 from rq import Queue
+
+from manage import app
+from app.apis.v1.results.results_service import get_results
 
 # Start fake redis server
 fake_redis_server = Redis("RQ.rdb")
@@ -12,6 +14,7 @@ fake_cm_queue = Queue(name="cm", is_async=False, connection=fake_redis_server)
 
 
 def get_results_from_fake_queue(job_id):
+    """ Gets the job results from a fake queue"""
     return get_results(job_id, fake_redis_server)
 
 

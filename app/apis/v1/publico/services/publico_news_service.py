@@ -6,25 +6,21 @@ import json
 import numpy as np
 
 from app.core.common.helpers import to_list
-from ..models.publico_search import (
-    PublicoTopicSearch,
-    PublicoURLSearch,
-    PublicoKeywordsSearch,
-)
+from ..models import PublicoSearch
 
 
-def search_by_topic(data: dict) -> PublicoTopicSearch:
-    """Searhes news in Publico's website by a certain topic within a range of dates.
+def search_by_tag(data: dict) -> dict:
+    """Searhes news in Publico's website by a certain tag within a range of dates.
 
     Parameters
     ----------
     data
-        Dictionary containing the POST request payload for the topic search.
+        Dictionary containing the POST request payload for the tag search.
 
     Returns
     -------
-    results
-        'PublicoTopicSearch' object containing the request information and it's results.
+    dict
+        dictionary containing the request information and it's results.
     """
     # Load API payload into JSON doc
     json_doc = json.loads(json.dumps(data))
@@ -34,21 +30,15 @@ def search_by_topic(data: dict) -> PublicoTopicSearch:
     start_date = json_doc.get("start_date")
     # Extract end date from JSON
     end_date = json_doc.get("end_date")
-    # Create TopicSearch object
-    results = PublicoTopicSearch(search_topic, start_date, end_date)
-    # Log topic search start
+
+    # Log tag search start
     print(
-        "Starting to topic search news from Público with topic '{}' beetween dates {}<-->{}".format(
-            search_topic, results.start_date, results.end_date
-        )
+        f"Starting to topic search news from Público with topic '{search_topic}' beetween dates {start_date}<-->{end_date}"
     )
-    # Consume the Publico's API
-    results.consume_api()
-
-    return results
+    return PublicoSearch().tag_search(search_topic, start_date, end_date)
 
 
-def search_by_keywords(data: dict) -> PublicoKeywordsSearch:
+def search_by_keywords(data: dict) -> dict:
     """Searhes news in Publico's website by keywords within a range of dates.
 
     Parameters
@@ -58,8 +48,8 @@ def search_by_keywords(data: dict) -> PublicoKeywordsSearch:
 
     Returns
     -------
-    results
-        'PublicoURLSearch' object containing the request information and it's results.
+    dict
+        dictionary containing the request information and it's results.
     """
     # Load API payload into JSON doc
     json_doc = json.loads(json.dumps(data))
@@ -69,23 +59,15 @@ def search_by_keywords(data: dict) -> PublicoKeywordsSearch:
     start_date = json_doc.get("start_date")
     # Extract end date
     end_date = json_doc.get("end_date")
-    # Create KeywordsSearch object
-    results = PublicoKeywordsSearch(keywords, start_date, end_date)
 
-    # Log topic search start
+    # Log keywords search start
     print(
-        "Starting to search news from Público with keywords '{}' beetween dates {}<-->{}".format(
-            keywords, results.start_date, results.end_date
-        )
+        f"Starting to search news from Público with keywords '{keywords}' beetween dates {start_date}<-->{end_date}"
     )
-
-    # Consume Publico's API
-    results.consume_api()
-
-    return results
+    return PublicoSearch().keyword_search(keywords, start_date, end_date)
 
 
-def search_by_urls(data: dict) -> PublicoURLSearch:
+def search_by_urls(data: dict) -> dict:
     """Searhes news in Publico's website by URL(s).
 
     Parameters
@@ -95,15 +77,14 @@ def search_by_urls(data: dict) -> PublicoURLSearch:
 
     Returns
     -------
-    results
-        'PublicoURLSearch' object containing the request information and it's results.
+    dict
+        dictionary containing the request information and it's results.
     """
+
     # Transform dict object into a list of URL(s)
     data = np.unique(to_list(data.get("url")))
-    # Create URLSearch object
-    results = PublicoURLSearch()
-    # For each URL add the news
-    for url in data:
-        results.add_news(url)
 
-    return results
+    # Log keywords search start
+    print(f"Starting to search news by URLs {len(data)} from Público")
+
+    return PublicoSearch().url_search(data)

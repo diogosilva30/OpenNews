@@ -1,5 +1,8 @@
+""" This module provided small auxiliary function used across the application"""
 from datetime import date, time, datetime
 import dateparser
+from flask.helpers import url_for
+from flask.json import jsonify
 import requests
 
 
@@ -10,33 +13,49 @@ def normalize_str(string):
     )
 
 
-def datetime_from_string(x: str) -> datetime:
+def datetime_from_string(date_string: str) -> datetime:
     """Parses a str to datetime. Assumes format: dd/mm/YYYY"""
-
-    if isinstance(x, (datetime, date)):
-        return x
-    return dateparser.parse(x, settings={"DATE_ORDER": "DMY"})
+    if isinstance(date_string, (datetime, date)):
+        return date_string
+    return dateparser.parse(date_string, settings={"DATE_ORDER": "DMY"})
 
 
 def custom_json_serializer(obj):
+    """ Provides custom serialization to JSON"""
     if isinstance(obj, (datetime, time)):
         return obj.isoformat()
 
-    elif hasattr(obj, "__dict__"):
+    if hasattr(obj, "__dict__"):
         return obj.__dict__
 
+    return None
 
-def send_post_then_get_html_string(post_url, post_payload, get_url):
-    """Sends an HTTP Post to a certain URL, then sends a HTTP Get to another URL, and returns the obtained HTML string"""
-    with requests.Session() as s:
-        s.headers.update(
-            {
-                "user-agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1",
-            }
-        )
-        # send POST request to login
-        s.post(post_url, data=post_payload)
-        return s.get(get_url)
+
+def results_response(job_id: str):
+    """ Generates a results response for a given 'job_id'"""
+
+    return jsonify(
+        {
+            "status": "ok",
+            "job_id": job_id,
+            "Results URL": url_for("api_v1.results", job_id=job_id, _external=True),
+        }
+    )
+
+
+def validate_url(url: str) -> bool:
+    """Validates if an URL exists (returns 200 status code)
+
+    Parameters
+    ----------
+    url : str
+        URL to validate"""
+    try:
+        if requests.get(url).status_code == 200:
+            return True
+        return False
+    except requests.exceptions.RequestException:
+        return False
 
 
 def to_list(obj):
@@ -45,4 +64,19 @@ def to_list(obj):
 
 
 def number_of_months_between_2_dates(start_date: datetime, end_date: datetime) -> int:
+    """
+    Calculates the number of months beetween 2 dates
+
+    Parameters
+    ----------
+    start_date: datetime
+        Starting date
+    end_date: datetime
+        Ending date
+
+    Returns
+    -------
+    int
+        Number of months
+    """
     return (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month)

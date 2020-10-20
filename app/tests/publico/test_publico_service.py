@@ -3,7 +3,7 @@ import unittest
 
 from app.apis.v1.publico.services.publico_news_service import (
     search_by_keywords,
-    search_by_topic,
+    search_by_tag,
     search_by_urls,
 )
 from app.tests.base import BaseTestCase, get_results_from_fake_queue, fake_publico_queue
@@ -238,17 +238,17 @@ class TestPublicoKeywordsSearch(BaseTestCase):
         )
 
 
-class TestPublicoTopicSearch(BaseTestCase):
-    """ Performs tests for Publico's Topic Search"""
+class TestPublicoTagSearch(BaseTestCase):
+    """ Performs tests for Publico's Tag Search"""
 
     # URI for this resource
-    uri = "/api/v1/news/publico/topic_search"
+    uri = "/api/v1/news/publico/tag_search"
 
-    def _enqueue_topic_search_job(self, data: dict):
-        """ Enqueues job for topic_search on the fake redis server"""
+    def _enqueue_tag_search_job(self, data: dict):
+        """ Enqueues job for tag_search on the fake redis server"""
 
         # Enqueue fake job with data
-        search_job = fake_publico_queue.enqueue(search_by_topic, data)
+        search_job = fake_publico_queue.enqueue(search_by_tag, data)
 
         # Assert that the job is finished
         self.assertTrue(search_job.is_finished)
@@ -259,25 +259,25 @@ class TestPublicoTopicSearch(BaseTestCase):
         # Check that news were found
         self.assertIn("number of found news", response_json)
 
-    def test_topic_search_job(self):
-        """ Test for Publico topic fake job creation and news retrieval"""
-        self._enqueue_topic_search_job(
+    def test_tag_search_job(self):
+        """ Test for Publico tag fake job creation and news retrieval"""
+        self._enqueue_tag_search_job(
             {
                 "start_date": "1/3/2020",
                 "end_date": "15/3/2020",
-                "search_topic": "luanda leaks",
+                "tag": "luanda leaks",
             }
         )
 
-    def test_invalid_dates_topic_search_job(self):
-        """ Test for Publico topic search with invalid date format """
+    def test_invalid_dates_tag_search_job(self):
+        """ Test for Publico tag search with invalid date format """
         response = send_post_request(
             self.client,
             self.uri,
             {
                 "start_date": "not a valid date",
                 "end_date": "another invalid date",
-                "keywords": "covid",
+                "tag": "covid",
             },
         )
 
@@ -285,15 +285,15 @@ class TestPublicoTopicSearch(BaseTestCase):
         self.assertIn("Invalid date string format provided", response.json["message"])
 
         self.assert400(
-            response, "Keyword search should trigger 'Bad Request'! Dates are invalid"
+            response, "Tag search should trigger 'Bad Request'! Dates are invalid"
         )
 
     def test_starting_date_older_than_ending_date(self):
-        """ Test for Publico topic search with starting date > ending date """
+        """ Test for Publico tag search with starting date > ending date """
         response = send_post_request(
             self.client,
             self.uri,
-            {"start_date": "5/03/2020", "end_date": "10/3/2019", "keywords": "covid"},
+            {"start_date": "5/03/2020", "end_date": "10/3/2019", "tag": "luanda leaks"},
         )
 
         self.assertEqual(response.json["status"], "error")
@@ -301,7 +301,7 @@ class TestPublicoTopicSearch(BaseTestCase):
 
         self.assert400(
             response,
-            "Keyword search should trigger 'Bad Request'! Dates are invalid (starting date > ending date)",
+            "Tag search should trigger 'Bad Request'! Dates are invalid (starting date > ending date)",
         )
 
 

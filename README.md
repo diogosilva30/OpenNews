@@ -11,7 +11,7 @@ PT-NEWS-EXTRACTOR is a REST API made in Python to extract news from Portuguese j
 | Journal | URL Search | Keyword Search | Topic Search
 |:---:|:---:|:---:|:---:|
 | [Público](https://www.publico.pt/) | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| [Correio da Manhã](https://www.cmjornal.pt/) | :x: | :x: | :white_check_mark: |
+| [Correio da Manhã](https://www.cmjornal.pt/) | :white_check_mark: | :x: | :white_check_mark: |
 
 
 ## Want to give it a try?

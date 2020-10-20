@@ -1,6 +1,12 @@
+"""
+This module implements the base news class 'News'.
+This class stores information about a particular news
+"""
+from __future__ import annotations
+
 import json
-from datetime import datetime
-from abc import ABC, abstractstaticmethod
+from abc import ABC, abstractclassmethod
+from typing import Union
 
 
 from app.core.common.helpers import datetime_from_string, custom_json_serializer
@@ -29,39 +35,13 @@ class News(ABC):
         self.authors = authors
         self.text = text
 
-    def serialize_to_json(self):
+    def to_json(self):
+        """ Serializes a 'News' object to JSON """
         return json.loads(json.dumps(self, default=custom_json_serializer))
 
     def __repr__(self) -> str:
-        return json.dumps(self.serialize_to_json())
+        return json.dumps(self.to_json())
 
-    @abstractstaticmethod
-    def deserialize_news(news_dict: dict):
-        """Child classes must implement method 'deserialize_news' to construct a 'News' object from a dictionary"""
-
-    @staticmethod
-    def extract_authors_names(authors: list[dict]) -> list[str]:
-        """Receives a list of dictionarys containing authors info, and extracts the authors name's to a list"""
-        processed_authors = []
-        for author in authors:
-            # '_authors' is a list of dicts. Keep only the name for each dict
-            author = {k: v for k, v in author.items() if k.startswith("nome")}
-            # Keep the authors name, unpack them, and add to list
-            processed_authors.append(*author.values())
-        return processed_authors
-
-    @abstractstaticmethod
-    def is_news_valid(obj: dict) -> bool:
-        """Child classes must implement 'is_news_valid' to check if a particular news is valid given it's dict"""
-
-    @abstractstaticmethod
-    def build_from_url(url) -> "News":
-        """Child classes must implement 'build_from_url' method to build a 'News' object from a given URL"""
-
-    @abstractstaticmethod
-    def validate_url(url):
-        """Child classes must implement 'validate_url' method check if a URL is valid"""
-
-    @abstractstaticmethod
-    def parse_date(date_string: str) -> datetime.date:
-        """Child classes must implement 'parse_date' method to parse a date string into a date object"""
+    @abstractclassmethod
+    def from_html_string(cls, html_string: str) -> Union[News, None]:
+        """ Child classes must implement 'from_html_string' to build a news object from a news html page"""

@@ -4,245 +4,134 @@ information for all the different Publico's searches.
 """
 import os
 import json
-from abc import ABC, abstractmethod
-from flask import jsonify
+from datetime import datetime
+
 import requests
 
+from app.core.common.mixins import KeywordSearchMixin, TagSearchMixin, URLSearchMixin
 from app.core.common.helpers import datetime_from_string
 from .publico_news import PublicoNews
 
 
-class PublicoSearch(ABC):
-    """Base model to store Publico search news"""
+class PublicoSearch(
+    URLSearchMixin,
+    KeywordSearchMixin,
+    TagSearchMixin,
+):
+    """ Class to perform and store different types of search in Publico's website"""
 
-    _found_news: list[PublicoNews]
+    def __init__(self) -> None:
+        self.found_news = []
+        self.session = self._login()
 
-    def __init__(self):
-        self._found_news = []
+    @staticmethod
+    def _login() -> requests.Session:
+        """
+        Creates a 'requests.Session', performs login on Publico's Website and returns the session
+        """
 
-    # __________________________________________________________________________________________________________________________
+        login_payload = {
+            "username": os.getenv("PUBLICO_USER"),
+            "password": os.getenv("PUBLICO_PW"),
+        }
+        login_url = "https://www.publico.pt/api/user/login"
+        session = requests.Session()
+        session.headers.update(
+            {
+                "user-agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1",
+            }
+        )
+        # send POST request to login
+        session.post(login_url, data=login_payload)
+        return session
 
-    @property
-    def found_news(self):
-        return self._found_news
+    def _url_search(self, url_list: list[str]) -> PublicoNews:
+        """
+        Builds 'PublicoNews' object from URL
 
-    # __________________________________________________________________________________________________________________________
-
-    @found_news.setter
-    def found_news(self, value):
-        self._found_news = value
-
-    # __________________________________________________________________________________________________________________________
-
-    @abstractmethod
-    def add_news(self, obj: any) -> None:
-        "Child classes must implement 'add_news' method in order to implement their custom logic of adding news to the news list"
-
-    # __________________________________________________________________________________________________________________________
-
-    @abstractmethod
-    def serialize_to_json(self) -> str:
-        "Child classes must implement 'serialize_to_json' method in order to implement their custom logic of serializing themselves to JSON format"
-
-
-class PublicoURLSearch(PublicoSearch):
-    """ Model to store news from Publico's URL search """
-
-    def __init__(self, *args, **kwargs) -> None:
-        super(PublicoURLSearch, self).__init__(*args, **kwargs)
-
-    # __________________________________________________________________________________________________________________________
-
-    def add_news(self, url: str) -> None:
-        """Adds a news to the found news list
         Parameters
         ----------
-        url : str
-            News URL to webscrape"""
-        PublicoNews.validate_url(url)
-        news_object = PublicoNews.build_from_url(url)
-        if news_object not in self.found_news:
-            self.found_news.append(news_object)
+        url: str
+            Publico's news URL
 
-    # __________________________________________________________________________________________________________________________
+        Returns
+        -------
+        PublicoNews
+        """
+        news_list = [
+            PublicoNews.from_html_string(resp.text)
+            for url in url_list
+            if (resp := self.session.get(url)).status_code == 200
+        ]
 
-    def serialize_to_json(self) -> None:
-        """ Serializes URL Search object to JSON"""
-        return jsonify(
-            {
-                "number of found news": str(len(self.found_news)),
-                "news": list(map(lambda x: x.serialize_to_json(), self.found_news)),
-            }
-        )
+        return [news for news in news_list if news is not None]
 
-
-# ______________________________________________________________________________________________________________________________
-
-
-class PublicoAPISearch(PublicoSearch, ABC):
-    """Base model to store news from Publico's API."""
-
-    page_number: int
-    login_payload = {
-        "username": os.getenv("PUBLICO_USER"),
-        "password": os.getenv("PUBLICO_PW"),
-    }
-    login_url = "https://www.publico.pt/api/user/login"
-    base_api_url: str
-
-    def __init__(self, start_date: str, end_date: str) -> None:
-        super().__init__()
-        self.page_number = 1
-        self.start_date = datetime_from_string(start_date).date()
-        self.end_date = datetime_from_string(end_date).date()
-
-    @abstractmethod
-    def consume_api(self) -> None:
-        """Child classes must implement 'consume_api' method in order to implement their custom use of the Publico's API"""
-
-    @property
-    @abstractmethod
-    def api_url(self):
-        "Child classes must implement 'api_url' property in order to build their custom API URL"
-
-
-class PublicoTopicSearch(PublicoAPISearch):
-    """Model to store news from Publico's topic search """
-
-    # __________________________________________________________________________________________________________________________
-
-    def __init__(self, search_topic: str, start_date: str, end_date: str):
-        super().__init__(start_date, end_date)
-        self.search_topic = search_topic
-        self.base_api_url = "https://www.publico.pt/api/list/"
-
-    # __________________________________________________________________________________________________________________________
-
-    def serialize_to_json(self) -> str:
-        """ Serializes Topic Search object to json"""
-        return jsonify(
-            {
-                "search topic": self.search_topic,
-                "start date": self.start_date.strftime("%d/%m/%Y"),
-                "end date": self.end_date.strftime("%d/%m/%Y"),
-                "number of found news": str(len(self.found_news)),
-                "news": list(map(lambda x: x.serialize_to_json(), self.found_news)),
-            }
-        )
-
-    # __________________________________________________________________________________________________________________________
-
-    def add_news(self, data: dict) -> None:
-        """Adds a news to the found news list"""
-        news_object = PublicoNews.deserialize_news(data)
-        # check if object got deserialized, and if news does not already exist
-        if isinstance(news_object, PublicoNews) and news_object not in self.found_news:
-            self.found_news.append(news_object)
-
-    # __________________________________________________________________________________________________________________________
-
-    @property
-    def api_url(self):
-        return (
-            self.base_api_url
-            + self.search_topic.replace(" ", "-").lower()
-            + "?page="
-            + str(self.page_number)
-        )
-
-    # __________________________________________________________________________________________________________________________
-
-    def consume_api(self):
+    def _tag_search(self, tag: str, start_date: datetime, end_date: datetime):
         # Flag to stop search
         stop_entire_search = False
-
-        while (r := requests.get(self.api_url).text) != "[]":
-            print("Now reading page number {}...".format(self.page_number))
+        # Normalize tag
+        tag = tag.replace(" ", "-").lower()
+        # Start page number
+        page_number = 1
+        # Create news URL list
+        collected_news_urls = []
+        # Start the reading loop
+        while (
+            response := requests.get(
+                f"https://www.publico.pt/api/list/{tag}?page={page_number}"
+            ).text
+        ) != "[]":
             # Read the json data
-            data = json.loads(r)
+            data = json.loads(response)
             # iterate over each news dict and create a News object from it
             for item in data:
                 # Found news out of lower bound date, STOP THE SEARCH!
-                if PublicoNews.parse_date(item.get("data")) < self.start_date:
+                if datetime_from_string(item.get("data")) < start_date:
                     stop_entire_search = True
                     break  # stop the local search
                 # Found news more recent that end date, SKIP AHEAD
-                elif PublicoNews.parse_date(item.get("data")) > self.end_date:
+                elif datetime_from_string(item.get("data")) > end_date:
                     continue
                 # Found news inside the date rage, add to list
                 else:
-                    self.add_news(item)
+                    collected_news_urls.append(item.get("shareUrl"))
             if stop_entire_search:
                 break
             # Increment page
-            self.page_number = self.page_number + 1
+            page_number += 1
 
-        print("Found {} news!".format(str(len(self.found_news))))
+        # Webscrappe each collected url
+        return self._url_search(collected_news_urls)
 
+    def _keyword_search(
+        self,
+        keyword: str,
+        start_date: datetime,
+        end_date: datetime,
+    ) -> list[PublicoNews]:
+        # Normalize keyword
+        keyword = keyword.lower()
+        # Start page number
+        page_number = 1
+        # Create news URL list
+        collected_news_urls = []
 
-# ________________________________________________________________________________________________________________________________
-
-
-class PublicoKeywordsSearch(PublicoAPISearch):
-    """ Model to store news from Publico's keywords search """
-
-    # __________________________________________________________________________________________________________________________
-
-    def __init__(self, keywords: str, start_date: str, end_date: str) -> None:
-        super().__init__(start_date, end_date)
-        self.keywords = keywords
-        self.base_api_url = "https://www.publico.pt/api/list/search/?query="
-
-    # __________________________________________________________________________________________________________________________
-
-    def serialize_to_json(self) -> str:
-        """ Serializes Keywords Search object to json"""
-        return jsonify(
-            {
-                "keywords": self.keywords,
-                "start date": self.start_date.strftime("%d/%m/%Y"),
-                "end date": self.end_date.strftime("%d/%m/%Y"),
-                "number of found news": str(len(self.found_news)),
-                "news": list(map(lambda x: x.serialize_to_json(), self.found_news)),
-            }
-        )
-
-    # __________________________________________________________________________________________________________________________
-
-    def add_news(self, data: dict) -> None:
-        """Adds a news to the found news list"""
-        news_object = PublicoNews.deserialize_news(data)
-        # check if object got deserialized, and if news does not already exist
-        if isinstance(news_object, PublicoNews) and news_object not in self.found_news:
-            self.found_news.append(news_object)
-
-    # __________________________________________________________________________________________________________________________
-
-    @property
-    def api_url(self):
-        return (
-            self.base_api_url
-            + self.keywords.replace(" ", "%20").lower()
-            + "&start="
-            + self.start_date.strftime("%d-%m-%Y")
-            + "&end="
-            + self.end_date.strftime("%d-%m-%Y")
-            + "&page="
-            + str(self.page_number)
-        )
-
-    # __________________________________________________________________________________________________________________________
-
-    def consume_api(self):
-
-        while (r := requests.get(self.api_url).text) != "[]":
-            print("Now reading page number {}...".format(self.page_number))
+        while (
+            (
+                response := requests.get(
+                    f"https://www.publico.pt/api/list/search/?query={keyword}\
+                                &start={start_date.strftime('%d-%m-%Y')}\
+                                &end={end_date.strftime('%d-%m-%Y')}\
+                                &page={page_number}"
+                ).text
+            )
+            != "[]"
+        ):
             # Read the json data
-            data = json.loads(r)
-            # iterate over each news dict and create a News object from it
-            for item in data:
-                self.add_news(item)
+            data = json.loads(response)
+            collected_news_urls.append(data.get("shareUrl"))
             # Increment page
-            self.page_number = self.page_number + 1
+            page_number += 1
 
-        print("Found {} news!".format(str(len(self.found_news))))
+        # Webscrappe each collected url
+        return self._url_search(collected_news_urls)
