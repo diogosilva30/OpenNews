@@ -18,11 +18,11 @@ class TestResults(BaseTestCase):
         """ Tests getting results with still processing job"""
         response = send_post_request(
             self.client,
-            "/api/v1/news/publico/topic_search",
+            "/api/v1/news/publico/tag_search",
             {
                 "start_date": "1/3/2020",
                 "end_date": "15/3/2020",
-                "search_topic": "luanda leaks",
+                "tag": "luanda leaks",
             },
         )
         self.assert200(response)
