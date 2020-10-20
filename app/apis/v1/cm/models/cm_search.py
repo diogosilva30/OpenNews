@@ -24,6 +24,7 @@ class CMSearch(
 
     def __init__(self) -> None:
         super(CMSearch).__init__()
+
         self.found_news = []
         self.session = self._login()
 
