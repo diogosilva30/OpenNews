@@ -25,22 +25,19 @@ def search_by_tag(data: dict) -> dict:
     """
     # Load API payload into JSON doc
     json_doc = json.loads(json.dumps(data))
-    # Extract search topic from JSON
-    search_topic = json_doc.get("search_topic").replace("\n", "")
+    # Extract search tag from JSON
+    tag = json_doc.get("tag").replace("\n", "")
     # Extract start date from JSON
     start_date = json_doc.get("start_date")
     # Extract end date from JSON
     end_date = json_doc.get("end_date")
-    # Create TopicSearch object
 
-    # Log topic search start
+    # Log tag search start
     print(
-        "Starting to topic search news from CM's website with topic '{}' beetween dates {}<-->{}".format(
-            search_topic, start_date, end_date
-        )
+        f"Starting to tag search news from CM's website with tag '{tag}' beetween dates {start_date}<-->{end_date}"
     )
     # Perform the search
-    return CMSearch().tag_search(search_topic, start_date, end_date)
+    return CMSearch().tag_search(tag, start_date, end_date)
 
 
 def search_by_urls(data: dict) -> dict:
