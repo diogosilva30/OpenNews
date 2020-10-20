@@ -118,19 +118,16 @@ class PublicoSearch(
         collected_news_urls = []
 
         while (
-            (
-                response := requests.get(
-                    f"https://www.publico.pt/api/list/search/?query={keyword}\
-                                &start={start_date.strftime('%d-%m-%Y')}\
-                                &end={end_date.strftime('%d-%m-%Y')}\
-                                &page={page_number}"
-                ).text
-            )
-            != "[]"
-        ):
+            response := requests.get(
+                f"https://www.publico.pt/api/list/search/?query={keyword}&start={start_date.strftime('%d-%m-%Y')}&end={end_date.strftime('%d-%m-%Y')}&page={page_number}"
+            ).text
+        ) != "[]":
             # Read the json data
             data = json.loads(response)
-            collected_news_urls.append(data.get("shareUrl"))
+            # Get the URLs
+            urls = [d.get("shareUrl") for d in data]
+            # Append URLs to list
+            collected_news_urls += urls
             # Increment page
             page_number += 1
 
