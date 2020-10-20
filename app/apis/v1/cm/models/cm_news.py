@@ -27,15 +27,26 @@ class CMNews(News):
         if any(x in url for x in ["interativo", "multimedia", "perguntas"]):
             return None
 
+        # Get news section from url path and capitalize it
+        rubric = urlparse(url).path.split("/")[1].capitalize()
+        # Get if news is opinion article from rubric
+        is_opinion = rubric == "Opiniao"
+
         # Find text, author and date location
         author_location = ""
         text_location = ""
+        description_location = ""
         date_location = ""
         replace_on_data = ""
         if urlparse(url).netloc == "www.cmjornal.pt":
 
             author_location = "//span[@class='autor']//text()"
             text_location = "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]"
+            description_location = (
+                "//p[@class='destaques_lead']//text()"
+                if is_opinion
+                else "//strong[@class='lead']//text()"
+            )
             date_location = "//span[@class='data']//text()"
             replace_on_data = "às"
         elif urlparse(url).netloc == "www.vidas.pt":
@@ -44,6 +55,7 @@ class CMNews(News):
             text_location = (
                 "//div[@class='text_container']//text()[not(ancestor::iframe)]"
             )
+            description_location = "//div[@class='lead']//text()"
             date_location = "//div[@class='data']//text()"
             replace_on_data = "•"
 
@@ -51,16 +63,7 @@ class CMNews(News):
             tree.xpath(date_location)[0].replace(replace_on_data, "")
         )
 
-        # Get news section from url path and capitalize it
-        rubric = urlparse(url).path.split("/")[1].capitalize()
-        # Get if news is opinion article from rubric
-        is_opinion = rubric == "Opiniao"
-        if is_opinion:
-            description = normalize_str(
-                tree.xpath("//p[@class='destaques_lead']//text()")[0]
-            )
-        else:
-            description = tree.xpath("//strong[@class='lead']//text()")[0]
+        description = normalize_str(tree.xpath(description_location)[0])
         # Get authors info
         authors = tree.xpath(author_location)
         authors = [normalize_str(a) for a in authors]
