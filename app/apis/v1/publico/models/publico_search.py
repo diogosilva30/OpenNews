@@ -86,11 +86,12 @@ class PublicoSearch(
             # iterate over each news dict and create a News object from it
             for item in data:
                 # Found news out of lower bound date, STOP THE SEARCH!
-                if datetime_from_string(item.get("data")) < start_date:
+
+                if datetime_from_string(item.get("data"), order="YMD") < start_date:
                     stop_entire_search = True
                     break  # stop the local search
                 # Found news more recent that end date, SKIP AHEAD
-                elif datetime_from_string(item.get("data")) > end_date:
+                elif datetime_from_string(item.get("data"), order="YMD") > end_date:
                     continue
                 # Found news inside the date rage, add to list
                 else:

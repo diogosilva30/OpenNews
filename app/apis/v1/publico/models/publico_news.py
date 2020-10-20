@@ -47,7 +47,7 @@ class PublicoNews(News):
             return None
         # Extract info
         description = json_doc["descricao"]
-        is_opinion = json_doc["isOpinion"]
+        is_opinion = json_doc["isOpiniao"]
         title = json_doc["titulo"]
         authors = [author.get("nome") for author in json_doc["autores"]]
         rubric = json_doc["seccao"]
