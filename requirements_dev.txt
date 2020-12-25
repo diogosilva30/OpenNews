@@ -3,4 +3,4 @@ black==20.8b1
 pytest-cov
 coverage==5.3
 redislite==5.0.165407
-Flask-Testing==0.8.0
+Flask-Testing==0.8.1
