@@ -10,6 +10,7 @@ import requests
 from lxml import html
 
 from app.core.common.models.news import News
+from app.core.common.helpers import datetime_from_string
 
 
 class PublicoNews(News):
@@ -67,4 +68,13 @@ class PublicoNews(News):
             "",
         )
 
-        return cls(title, description, url, rubric, date, authors, is_opinion, text)
+        return cls(
+            title,
+            description,
+            url,
+            rubric,
+            datetime_from_string(date, "YMD"),
+            authors,
+            is_opinion,
+            text,
+        )
