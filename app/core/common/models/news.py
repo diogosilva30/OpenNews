@@ -9,7 +9,7 @@ from abc import ABC, abstractclassmethod
 from typing import Union
 
 
-from app.core.common.helpers import datetime_from_string, custom_json_serializer
+from app.core.common.helpers import custom_json_serializer
 
 
 class News(ABC):
@@ -31,7 +31,7 @@ class News(ABC):
         self.url = url
         self.rubric = rubric
         self.is_opinion = is_opinion
-        self.date = datetime_from_string(date)
+        self.date = date
         self.authors = authors
         self.text = text
 
