@@ -124,7 +124,7 @@ class PublicoNews(News):
         date_element = "".join(
             tree.xpath('//time[contains(@class, "dateline")]')[0].xpath("@datetime")
         )
-        _date = datetime_from_string(date_element)
+        _date = datetime_from_string(date_element, "YMD")
 
         return PublicoNews(_title, _description, _url, _rubric, _date, _authors, False)
 

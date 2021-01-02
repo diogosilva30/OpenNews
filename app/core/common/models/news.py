@@ -3,7 +3,7 @@ from datetime import datetime
 from abc import ABC, abstractstaticmethod
 
 
-from app.core.common.helpers import datetime_from_string, custom_json_serializer
+from app.core.common.helpers import custom_json_serializer
 
 
 class News(ABC):
@@ -15,7 +15,7 @@ class News(ABC):
         description: str,
         url: str,
         rubric: str,
-        date: str,
+        date: datetime,
         authors: list[str],
         is_opinion: bool,
         text: str,
@@ -25,7 +25,7 @@ class News(ABC):
         self.url = url
         self.rubric = rubric
         self.is_opinion = is_opinion
-        self.date = datetime_from_string(date)
+        self.date = date
         self.authors = authors
         self.text = text
 
