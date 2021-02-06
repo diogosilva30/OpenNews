@@ -5,4 +5,4 @@ lxml==4.6.1
 numpy==1.19.2
 dateparser==0.7.6
 requests==2.24.0
-rq==1.5.2
+rq==1.7.0
