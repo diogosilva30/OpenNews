@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from flask import Flask
 from rq import Queue
 from worker import conn
@@ -18,3 +19,5 @@ def create_app(config_name):
     app.config["JSON_SORT_KEYS"] = False
     app.config["ERROR_404_HELP"] = False
     return app
+=======
+>>>>>>> a113840a32cbc277c00a4a534838395585f085a8
