@@ -3,7 +3,6 @@ Contains tests for results API
 """
 from django.test import TestCase
 from rest_framework.test import APIClient
-from django_rq import get_worker
 from django.urls import reverse
 from rest_framework import status
 
