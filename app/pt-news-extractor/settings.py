@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     # 3rd party apps
     "rest_framework",
     "django_rq",
+    "django_nose",
     # Project apps
     "core",
     "publico",
+    "results",
 ]
 
 MIDDLEWARE = [

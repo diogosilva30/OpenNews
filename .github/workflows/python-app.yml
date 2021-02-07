@@ -39,7 +39,7 @@ jobs:
 
       - name: Generate coverage report
         run: |
-          pytest ./app/tests -v -x --cov=./ --cov-report=xml
+          coverage run -m pytest
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1 
       

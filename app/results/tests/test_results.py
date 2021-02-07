@@ -23,7 +23,7 @@ class ResultsAPITest(TestCase):
             reverse("results", kwargs={"job_id": "non_existing_job_id"})
         )
 
-        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_still_processing_job(self):
         """
