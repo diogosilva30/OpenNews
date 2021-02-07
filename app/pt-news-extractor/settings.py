@@ -24,7 +24,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "some key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["pt-news-extractor.herokuapp.com"]
 
 
 # Application definition
