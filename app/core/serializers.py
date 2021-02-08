@@ -79,10 +79,10 @@ class JobResultSerializer(serializers.Serializer):
         """
         return len(obj["news"])
 
-    def to_internal_value(self, data):
-        return {
-            "news": data,
-        }
+    # def to_internal_value(self, data):
+    #     return {
+    #         "news": data,
+    #     }
 
 
 class JobSerializer(serializers.Serializer):
