@@ -8,5 +8,9 @@ from .views import ResultsView
 
 
 urlpatterns = [
-    path("<str:job_id>/", ResultsView.as_view(), name="results"),
+    path(
+        "<str:job_id>/",
+        ResultsView.as_view(),
+        name="results",
+    ),
 ]

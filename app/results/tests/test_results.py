@@ -24,10 +24,16 @@ class ResultsAPITest(TestCase):
         Tests the fetching of a non existing job.
         """
         response = self.api.get(
-            reverse("results", kwargs={"job_id": "non_existing_job_id"})
+            reverse(
+                "results",
+                kwargs={"job_id": "non_existing_job_id"},
+            )
         )
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_404_NOT_FOUND,
+        )
 
     def test_still_processing_job(self):
         """
@@ -54,7 +60,10 @@ class ResultsAPITest(TestCase):
         response = self.api.get(response.data["results_url"])
 
         # Assert that response is status code 202
-        self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_202_ACCEPTED,
+        )
 
     def test_correct_job_response(self):
         """

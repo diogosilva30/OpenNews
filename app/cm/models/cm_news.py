@@ -24,11 +24,15 @@ class CMNews(News):
         text = " ".join(text)
 
         if is_opinion:
-            description = html_tree.xpath("//p[@class='destaques_lead']//text()")[0]
+            description = html_tree.xpath(
+                "//p[@class='destaques_lead']//text()"
+            )[0]
         else:
             description = html_tree.xpath("//strong[@class='lead']//text()")[0]
 
-        date = html_tree.xpath("//span[@class='data']//text()")[0].replace("às", "")
+        date = html_tree.xpath("//span[@class='data']//text()")[0].replace(
+            "às", ""
+        )
         authors = html_tree.xpath("//span[@class='autor']//text()")
 
         return text, description, date, authors
@@ -42,7 +46,9 @@ class CMNews(News):
         text = " ".join(text)
 
         description = html_tree.xpath("//div[@class='lead']//text()")[0]
-        date = html_tree.xpath("//div[@class='data']//text()")[0].replace("•", "")
+        date = html_tree.xpath("//div[@class='data']//text()")[0].replace(
+            "•", ""
+        )
         authors = html_tree.xpath("//div[@class='autor']//text()")
 
         return text, description, date, authors
@@ -78,7 +84,14 @@ class CMNews(News):
             raise UnsupportedNews
 
         # If news is of type 'interativo', 'multimedia' or 'perguntas' raise exception
-        if any(x in url for x in ["interativo", "multimedia", "perguntas"]):
+        if any(
+            x in url
+            for x in [
+                "interativo",
+                "multimedia",
+                "perguntas",
+            ]
+        ):
             raise UnsupportedNews
 
         try:
@@ -98,7 +111,9 @@ class CMNews(News):
         elif parsed_url_netloc == "www.vidas.pt":
             parse_func = CMNews._parse_vidas_news_info
         else:
-            raise UnsupportedNews(f"Unknow news URL netloc: {parsed_url_netloc}")
+            raise UnsupportedNews(
+                f"Unknow news URL netloc: {parsed_url_netloc}"
+            )
 
         # Call the correct method for finding
         # `text`, `description` and `date` elements

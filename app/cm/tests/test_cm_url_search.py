@@ -35,14 +35,22 @@ class CMURLSearchAPITest(TestCase):
         )
 
         # Assert 400 response status code
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST,
+        )
 
         # Assert that error was in `urls`
         self.assertTrue("urls" in response.data)
 
-        self.assertEqual(response.data["urls"][0].code, "not_a_list")
+        self.assertEqual(
+            response.data["urls"][0].code,
+            "not_a_list",
+        )
 
-    def test_invalid_url_format_list_payload(self):
+    def test_invalid_url_format_list_payload(
+        self,
+    ):
         """
         Tests creating a URL search job with invalid urls in the url list.
         """
@@ -57,7 +65,10 @@ class CMURLSearchAPITest(TestCase):
             format="json",
         )
         # Assert 400 response status code
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_400_BAD_REQUEST,
+        )
 
         # Assert that error was in `urls`
         self.assertTrue("urls" in response.data)
@@ -98,7 +109,10 @@ class CMURLSearchAPITest(TestCase):
         response = self.api.get(response.data["results_url"])
 
         # Assert that response is status code 200
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
 
     def test_correct_webscraping(self):
         """
@@ -131,7 +145,10 @@ class CMURLSearchAPITest(TestCase):
         response = self.api.get(response.data["results_url"])
 
         # Assert that response is status code 200
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
 
         # Number of news should be in response
         self.assertIn("number_of_news", response.data)
@@ -202,7 +219,10 @@ class CMURLSearchAPITest(TestCase):
         response = self.api.get(response.data["results_url"])
 
         # Assert that response is status code 200
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
 
         # Number of news should be in response
         self.assertIn("number_of_news", response.data)

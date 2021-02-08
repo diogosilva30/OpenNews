@@ -1,5 +1,5 @@
 """
-Worker file 
+Worker file
 """
 import django_rq
 

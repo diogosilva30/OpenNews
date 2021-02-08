@@ -33,7 +33,8 @@ class PublicoURLSearchView(APIView):
 
             # Create a job serializer
             job_serializer = JobSerializer(
-                data={"job_id": job_id}, context={"request": request}
+                data={"job_id": job_id},
+                context={"request": request},
             )
 
             # Return the job serializer data
@@ -78,9 +79,13 @@ class PublicoTagSearchView(APIView):
                 return Response(job_serializer.data)
             else:
                 return Response(
-                    job_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                    job_serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class PublicoKeywordSearchView(APIView):
@@ -110,6 +115,10 @@ class PublicoKeywordSearchView(APIView):
                 return Response(job_serializer.data)
             else:
                 return Response(
-                    job_serializer.errors, status=status.HTTP_400_BAD_REQUEST
+                    job_serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )

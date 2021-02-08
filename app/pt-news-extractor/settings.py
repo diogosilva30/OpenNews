@@ -24,7 +24,10 @@ SECRET_KEY = os.getenv("SECRET_KEY", "some key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["pt-news-extractor.herokuapp.com", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    "pt-news-extractor.herokuapp.com",
+    "127.0.0.1",
+]
 
 
 # Application definition
@@ -129,7 +132,10 @@ STATIC_URL = "/static/"
 # Queues of redis
 RQ_QUEUES = {
     "default": {
-        "URL": os.getenv("REDISTOGO_URL", "redis://localhost:6379/0"),
+        "URL": os.getenv(
+            "REDISTOGO_URL",
+            "redis://localhost:6379/0",
+        ),
         "DEFAULT_TIMEOUT": 500,
     },
 }

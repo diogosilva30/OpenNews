@@ -7,4 +7,7 @@ def datetime_from_string(date_string: str, order="DMY") -> datetime:
 
     if isinstance(date_string, (datetime, date)):
         return date_string
-    return dateparser.parse(date_string, settings={"DATE_ORDER": order})
+    return dateparser.parse(
+        date_string,
+        settings={"DATE_ORDER": order},
+    )

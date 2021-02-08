@@ -5,7 +5,11 @@ import requests
 import os
 import json
 
-from core.mixins import URLSearchMixin, TagSearchMixin, KeywordSearchMixin
+from core.mixins import (
+    URLSearchMixin,
+    TagSearchMixin,
+    KeywordSearchMixin,
+)
 from core.models import NewsFactory
 from core.exceptions import UnsupportedNews
 

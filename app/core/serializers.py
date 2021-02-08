@@ -6,23 +6,22 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 
-# import the logging library
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
-
-
 class BaseDateSearchSerializer(serializers.Serializer):
     """
     Base core serializer for date range related searches
     """
 
     # Starting search date
-    starting_date = serializers.DateField(format="%Y-%m-%d", input_formats=["iso-8601"])
+    starting_date = serializers.DateField(
+        format="%Y-%m-%d",
+        input_formats=["iso-8601"],
+    )
 
     # Ending search date
-    ending_date = serializers.DateField(format="%Y-%m-%d", input_formats=["iso-8601"])
+    ending_date = serializers.DateField(
+        format="%Y-%m-%d",
+        input_formats=["iso-8601"],
+    )
 
     def validate(self, attrs):
         # Check that `ending_date` is greater than `starting_date`
@@ -41,7 +40,10 @@ class TagSearchSerializer(BaseDateSearchSerializer):
     """
 
     # The list of tags to search
-    tags = serializers.ListField(child=serializers.CharField(), allow_empty=False)
+    tags = serializers.ListField(
+        child=serializers.CharField(),
+        allow_empty=False,
+    )
 
 
 class KeywordSearchSerializer(BaseDateSearchSerializer):
@@ -50,7 +52,10 @@ class KeywordSearchSerializer(BaseDateSearchSerializer):
     """
 
     # The list of keywords to search
-    keywords = serializers.ListField(child=serializers.CharField(), allow_empty=False)
+    keywords = serializers.ListField(
+        child=serializers.CharField(),
+        allow_empty=False,
+    )
 
 
 class URLSearchSerializer(serializers.Serializer):
@@ -59,7 +64,10 @@ class URLSearchSerializer(serializers.Serializer):
     """
 
     # The list of urls to search
-    urls = serializers.ListField(child=serializers.URLField(), allow_empty=False)
+    urls = serializers.ListField(
+        child=serializers.URLField(),
+        allow_empty=False,
+    )
 
 
 class NewsSerializer(serializers.Serializer):
@@ -115,5 +123,8 @@ class JobSerializer(serializers.Serializer):
         request = self.context["request"]
         # Return URL
         return request.build_absolute_uri(
-            reverse("results", kwargs={"job_id": obj["job_id"]})
+            reverse(
+                "results",
+                kwargs={"job_id": obj["job_id"]},
+            )
         )

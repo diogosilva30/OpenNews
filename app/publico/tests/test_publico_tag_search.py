@@ -33,7 +33,10 @@ class PublicoTagSearchAPITest(TestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
         # Assert that a `job_id` is returned
         self.assertIn("job_id", response.data)
 
@@ -47,7 +50,10 @@ class PublicoTagSearchAPITest(TestCase):
         response = self.api.get(response.data["results_url"])
 
         # Assert that response is status code 200
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
 
         # Number of news should be in response
         self.assertIn("number_of_news", response.data)

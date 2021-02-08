@@ -27,7 +27,10 @@ class TagSearchMixin(ABC):
 
     @abstractmethod
     def tag_search(
-        self, tags: list[str], starting_date: str, ending_date: str
+        self,
+        tags: list[str],
+        starting_date: str,
+        ending_date: str,
     ) -> list[News]:
         """
         Abstract method that child classes must implement
@@ -42,7 +45,10 @@ class KeywordSearchMixin(ABC):
 
     @abstractmethod
     def keyword_search(
-        self, keywords: list[str], starting_date: str, ending_date: str
+        self,
+        keywords: list[str],
+        starting_date: str,
+        ending_date: str,
     ) -> list[News]:
         """
         Abstract method that child classes must implement

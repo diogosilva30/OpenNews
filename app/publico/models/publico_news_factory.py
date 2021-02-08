@@ -10,7 +10,11 @@ import pytz
 
 
 from core.models import NewsFactory
-from core.mixins import URLSearchMixin, TagSearchMixin, KeywordSearchMixin
+from core.mixins import (
+    URLSearchMixin,
+    TagSearchMixin,
+    KeywordSearchMixin,
+)
 from core.exceptions import UnsupportedNews
 from core.utils import datetime_from_string
 
@@ -134,12 +138,24 @@ class PublicoNewsFactory(
             # iterate over each news dict
             for item in data:
                 # Found news out of lower bound date, stop the search
-                if datetime_from_string(item.get("data"), order="YMD") < starting_date:
+                if (
+                    datetime_from_string(
+                        item.get("data"),
+                        order="YMD",
+                    )
+                    < starting_date
+                ):
                     stop_entire_search = True  # Will break main loop
                     break  # Will break current loop
 
                 # Found news more recent that end date, SKIP AHEAD
-                elif datetime_from_string(item.get("data"), order="YMD") > ending_date:
+                elif (
+                    datetime_from_string(
+                        item.get("data"),
+                        order="YMD",
+                    )
+                    > ending_date
+                ):
                     continue
 
                 # Found news inside the date rage, add to list
@@ -176,7 +192,9 @@ class PublicoNewsFactory(
         """
 
         # Collect urls from each tag
-        news_urls = [self._tag_search(tag, starting_date, ending_date) for tag in tags]
+        news_urls = [
+            self._tag_search(tag, starting_date, ending_date) for tag in tags
+        ]
 
         # `news_urls` is a list of lists. Combine into a single list
         news_urls = list(itertools.chain.from_iterable(news_urls))
@@ -187,7 +205,10 @@ class PublicoNewsFactory(
         return self.url_search(news_urls)
 
     def _keyword_search(
-        self, keyword: str, starting_date: str, ending_date: str
+        self,
+        keyword: str,
+        starting_date: str,
+        ending_date: str,
     ) -> list[PublicoNews]:
 
         # Normalize keyword
@@ -247,7 +268,11 @@ class PublicoNewsFactory(
         """
         # Collect urls from each keyword
         news_urls = [
-            self._keyword_search(keyword, starting_date, ending_date)
+            self._keyword_search(
+                keyword,
+                starting_date,
+                ending_date,
+            )
             for keyword in keywords
         ]
 

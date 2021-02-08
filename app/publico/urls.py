@@ -1,6 +1,10 @@
 from django.urls import path
 
-from .views import PublicoURLSearchView, PublicoTagSearchView, PublicoKeywordSearchView
+from .views import (
+    PublicoURLSearchView,
+    PublicoTagSearchView,
+    PublicoKeywordSearchView,
+)
 
 
 urlpatterns = [

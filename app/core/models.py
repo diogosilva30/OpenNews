@@ -6,7 +6,11 @@ from typing import Union
 import requests
 import json
 
-from abc import ABC, abstractclassmethod, abstractmethod, abstractstaticmethod
+from abc import (
+    ABC,
+    abstractclassmethod,
+    abstractstaticmethod,
+)
 
 
 class News(ABC):
@@ -44,7 +48,12 @@ class News(ABC):
         """
 
     def __repr__(self) -> str:
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return json.dumps(
+            self,
+            default=lambda o: o.__dict__,
+            sort_keys=True,
+            indent=4,
+        )
 
 
 class NewsFactory(ABC):

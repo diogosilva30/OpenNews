@@ -33,7 +33,8 @@ class CMURLSearchView(APIView):
 
             # Create a job serializer
             job_serializer = JobSerializer(
-                data={"job_id": job_id}, context={"request": request}
+                data={"job_id": job_id},
+                context={"request": request},
             )
 
             # Return the job serializer data

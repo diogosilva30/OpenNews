@@ -1,2 +1,4 @@
-from .publico_news import PublicoNews
-from .publico_news_factory import PublicoNewsFactory
+from .publico_news import PublicoNews  # noqa
+from .publico_news_factory import (
+    PublicoNewsFactory,
+)  # noqa
