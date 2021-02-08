@@ -1,4 +1,6 @@
-from datetime import datetime
+"""
+Module containg the concrete PublicoNewsFactory
+"""
 import requests
 import os
 import json

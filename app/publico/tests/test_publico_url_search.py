@@ -8,7 +8,7 @@ from django.urls import reverse
 from rest_framework import status
 
 
-class URLSearchAPITest(TestCase):
+class PublicoURLSearchAPITest(TestCase):
     """
     Performs tests for Publico's URL Search
     """
@@ -75,6 +75,8 @@ class URLSearchAPITest(TestCase):
                     "https://www.google.pt/",
                     # Notice the typo 'xxxx'
                     "https://www.publico.pt/2021/01/31/economia/noticia/irs-contribuintes-podem-validar-agregado-familiar-ate-15-fevereiro-xxxx",
+                    # not a news
+                    "https://www.publico.pt/",
                 ]
             },
             format="json",
@@ -93,6 +95,12 @@ class URLSearchAPITest(TestCase):
 
         # Assert that response is status code 200
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Number of news should be in response
+        self.assertIn("number_of_news", response.data)
+
+        # Number of news should be 0
+        self.assertEqual(response.data["number_of_news"], 0)
 
     def test_correct_webscraping(self):
         """
@@ -142,14 +150,27 @@ class URLSearchAPITest(TestCase):
             # Check if news is well constructed
             self.assertIn("title", news)
             self.assertTrue(isinstance(news["title"], str))
+
             self.assertIn("description", news)
             self.assertTrue(isinstance(news["description"], str))
+
             self.assertIn("url", news)
+            self.assertTrue(isinstance(news["url"], str))
+
             self.assertIn("rubric", news)
+            self.assertTrue(isinstance(news["rubric"], str))
+
             self.assertIn("date", news)
+            self.assertTrue(isinstance(news["date"], str))
+
             self.assertIn("authors", news)
+            self.assertTrue(isinstance(news["authors"], list))
+
             self.assertIn("is_opinion", news)
+            self.assertTrue(isinstance(news["is_opinion"], bool))
+
             self.assertIn("text", news)
+            self.assertTrue(isinstance(news["text"], str))
 
     def test_minute_update_url_search(self):
         """

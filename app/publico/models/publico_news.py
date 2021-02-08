@@ -23,12 +23,21 @@ class PublicoNews(News):
     def from_html_string(cls, html_string: str) -> Union[PublicoNews]:
         """
         Builds a News object from a given URL.
-        Returns None if:
-            - News is minute-updated.
+
         Parameters
         ----------
         html_string : str
             A news page HTML's string
+
+        Returns
+        -------
+        PublicoNews
+            The built PublicoNews object.
+
+        Raises
+        ------
+        UnsupportedNews
+            If news is minute updated.
         """
 
         # Build HTML tree

@@ -1,5 +1,5 @@
 """
-Contains tests for Publico's Tag search
+Contains tests for Publico's Keyword Search
 """
 from django.test import TestCase
 from rest_framework.test import APIClient
@@ -10,23 +10,23 @@ from rest_framework import status
 from core.utils import datetime_from_string
 
 
-class TagSearchAPITest(TestCase):
+class PublicoKeywordSearchAPITest(TestCase):
     """
-    Performs tests for Publico's Tag Search
+    Performs tests for Publico's Keyword Search
     """
 
     api = APIClient()
 
-    def test_tag_search_job(self):
+    def test_keyword_search_job(self):
         """
-        Tests enqueing a Publico's tag search job and retrieveing news from the job
+        Tests enqueing a Publico's keyword search job and retrieveing news from the job
         """
         start_date = "2020-3-1"
         end_date = "2020-3-15"
         response = self.api.post(
-            reverse("publico_tag_search"),
+            reverse("publico_keyword_search"),
             {
-                "tags": ["luanda leaks"],
+                "keywords": ["luanda leaks"],
                 "starting_date": start_date,
                 "ending_date": end_date,
             },
@@ -52,27 +52,40 @@ class TagSearchAPITest(TestCase):
         # Number of news should be in response
         self.assertIn("number_of_news", response.data)
 
-        # Number of news should be 3
-        self.assertEqual(response.data["number_of_news"], 3)
+        # Number of news should be 7
+        self.assertEqual(response.data["number_of_news"], 5)
 
         # Get found_news
         found_news = response.data["news"]
 
-        # Number of news in the list should be 3 (re-check)
-        self.assertEqual(len(found_news), 3)
+        # Number of news in the list should be 5 (re-check)
+        self.assertEqual(len(found_news), 5)
 
         for news in found_news:
             # Check if news is well constructed
             self.assertIn("title", news)
             self.assertTrue(isinstance(news["title"], str))
+
             self.assertIn("description", news)
             self.assertTrue(isinstance(news["description"], str))
+
             self.assertIn("url", news)
+            self.assertTrue(isinstance(news["url"], str))
+
             self.assertIn("rubric", news)
+            self.assertTrue(isinstance(news["rubric"], str))
+
             self.assertIn("date", news)
+            self.assertTrue(isinstance(news["date"], str))
+
             self.assertIn("authors", news)
+            self.assertTrue(isinstance(news["authors"], list))
+
             self.assertIn("is_opinion", news)
+            self.assertTrue(isinstance(news["is_opinion"], bool))
+
             self.assertIn("text", news)
+            self.assertTrue(isinstance(news["text"], str))
 
             # Check that date is inside bound
             self.assertTrue(

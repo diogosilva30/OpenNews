@@ -37,7 +37,7 @@ class News(ABC):
         self.text = text
 
     @abstractclassmethod
-    def from_html_string(cls, html_string: str) -> Union[News, None]:
+    def from_html_string(cls, html_string: str) -> Union[News]:
         """
         Child classes must implement 'from_html_string' to build a news object from a news html page.
         Might return `None` is that news is not supported.

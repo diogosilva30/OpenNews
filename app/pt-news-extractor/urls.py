@@ -13,5 +13,6 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls", namespace="rest")),
     path("django-rq/", include("django_rq.urls")),
     path("api/publico/", include("publico.urls")),
+    path("api/cm/", include("cm.urls")),
     path("api/results/", include("results.urls")),
 ]
