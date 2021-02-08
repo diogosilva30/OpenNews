@@ -7,6 +7,12 @@ from django_rq import get_worker
 from django.urls import reverse
 from rest_framework import status
 
+# import the logging library
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 
 class PublicoURLSearchAPITest(TestCase):
     """
@@ -199,6 +205,7 @@ class PublicoURLSearchAPITest(TestCase):
         # Now make the request to get the results
         response = self.api.get(response.data["results_url"])
 
+        logger.error(response.data)
         # Assert that response is status code 200
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

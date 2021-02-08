@@ -3,6 +3,14 @@ Contains the core news serializers
 """
 from rest_framework import serializers
 from django.urls import reverse
+from django.utils.timezone import now
+
+
+# import the logging library
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class BaseDateSearchSerializer(serializers.Serializer):
@@ -70,19 +78,28 @@ class NewsSerializer(serializers.Serializer):
 
 
 class JobResultSerializer(serializers.Serializer):
-    number_of_news = serializers.SerializerMethodField()
+    number_of_news = serializers.SerializerMethodField(read_only=True)
     news = NewsSerializer(many=True)
+    date = serializers.SerializerMethodField()
+
+    def get_date(self, obj):
+        return now()
 
     def get_number_of_news(self, obj):
         """
-        Number of news is the length of news (list of news)
+        `obj` is the dict created in `to_internal_value`.
+        We acess `news` key, which is a ListSerializer object.
+        So we then acess the primitive data and use len for
+        counting the number of news.
         """
         return len(obj["news"])
 
-    # def to_internal_value(self, data):
-    #     return {
-    #         "news": data,
-    #     }
+    def to_internal_value(self, data):
+        # Create serializer with list of instances
+        serializer = NewsSerializer(data, many=True)
+        return {
+            "news": serializer.data,
+        }
 
 
 class JobSerializer(serializers.Serializer):
