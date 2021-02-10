@@ -128,7 +128,8 @@ class CMNews(News):
         text = text.split("Para aceder a todos os Exclusivos CM")[0].split(
             "Ler o artigo completo"
         )[0]
-        text = text.replace("\\n", "").replace("\\r", "")
+        # CM text contains extra white, aswell as carriage
+        text = " ".join(text.split())
         # Find title
         title = tree.xpath("//div[@class='centro']//h1//text()")[0]
 
