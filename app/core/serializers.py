@@ -86,9 +86,9 @@ class NewsSerializer(serializers.Serializer):
 
 
 class JobResultSerializer(serializers.Serializer):
+    date = serializers.SerializerMethodField()
     number_of_news = serializers.SerializerMethodField(read_only=True)
     news = NewsSerializer(many=True)
-    date = serializers.SerializerMethodField()
 
     def get_date(self, obj):
         return now()
