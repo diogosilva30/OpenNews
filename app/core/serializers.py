@@ -5,6 +5,12 @@ from rest_framework import serializers
 from django.urls import reverse
 from django.utils.timezone import now
 
+# import the logging library
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 
 class BaseDateSearchSerializer(serializers.Serializer):
     """
@@ -96,15 +102,14 @@ class JobResultSerializer(serializers.Serializer):
     def get_number_of_news(self, obj):
         """
         `obj` is the dict created in `to_internal_value`.
-        We acess `news` key, which is a ListSerializer object.
-        So we then acess the primitive data and use len for
-        counting the number of news.
+        We acess `news` key.
         """
         return len(obj["news"])
 
     def to_internal_value(self, data):
         # Create serializer with list of instances
         serializer = NewsSerializer(data, many=True)
+
         return {
             "news": serializer.data,
         }
