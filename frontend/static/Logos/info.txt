@@ -1,0 +1,5 @@
+fontColor: {"gradient-0":"#B43EFF","gradient-1":"#5282FC"}
+bgColor: {"hex":"#000000"}
+iconColor: {"gradient-0":"#B43EFF","gradient-1":"#5282FC"}
+
+      
