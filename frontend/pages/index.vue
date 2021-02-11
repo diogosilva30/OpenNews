@@ -1,22 +1,31 @@
 <template>
-  <v-container fluid fill-height class="blue">
+  <v-container class="black" fluid fill-height>
     <v-row>
-      <v-card tile flat class="white" width="70%" height="100vh"></v-card>
-      <v-card id="test" tile flat class="white" width="20%" height="100vh">
-      </v-card>
+      <v-col cols="8" offset="2">
+        <v-img src="/Logos/vector/default-monochrome.svg" alt="OpenNews logo">
+        </v-img>
+      </v-col>
+      <v-col cols="2" class="d-flex justify-end align-center">
+        <v-card class="purple lighten-4" rounded>
+          <v-card-text>
+            <v-img
+              v-for="icon in icons"
+              :key="icon.id"
+              :src="icon"
+              max-width="32"
+              class="my-3"
+            ></v-img>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-export default {}
-</script>
-<style scoped>
-#test {
-  -webkit-transform: skewX(-5deg);
-  -moz-transform: skewX(-5deg);
-  -ms-transform: skewX(-5deg);
-  -o-transform: skewX(-5deg);
-  transform: skewX(-5deg);
+export default {
+  data: () => ({
+    icons: ['/SideMenu/GitHub-Mark-64px.png', '/SideMenu/bmc-logo.svg'],
+  }),
 }
-</style>
+</script>
