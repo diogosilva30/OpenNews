@@ -4,7 +4,6 @@ Contains the core news models
 from __future__ import annotations
 from typing import Union
 import requests
-import json
 
 from abc import (
     ABC,
@@ -31,6 +30,28 @@ class News(ABC):
         is_opinion: bool,
         text: str,
     ) -> None:
+        """
+        Base constructor for a News object.
+
+        Parameters
+        ----------
+        title: str
+            The news title
+        description: str
+            The news description
+        url: str
+            The news URL
+        rubric: str
+            The news rubric
+        date: str
+            The news date in ISO 8601 format
+        authors: list of str
+            A list of the news authors
+        is_opinion: bool
+            If the news is opinion article or not
+        text: str
+            The news body.
+        """
         self.title = title
         self.description = description
         self.url = url
@@ -46,14 +67,6 @@ class News(ABC):
         Child classes must implement 'from_html_string' to build a news object from a news html page.
         Might return `None` is that news is not supported.
         """
-
-    def __repr__(self) -> str:
-        return json.dumps(
-            self,
-            default=lambda o: o.__dict__,
-            sort_keys=True,
-            indent=4,
-        )
 
 
 class NewsFactory(ABC):

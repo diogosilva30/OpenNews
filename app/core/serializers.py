@@ -80,8 +80,13 @@ class NewsSerializer(serializers.Serializer):
     url = serializers.URLField()
     rubric = serializers.CharField()
     is_opinion = serializers.BooleanField()
-    date = serializers.DateField()
-    authors = serializers.ListField(child=serializers.CharField())
+    date = serializers.DateTimeField()
+    # Allow blank authors
+    authors = serializers.ListField(
+        child=serializers.CharField(
+            allow_blank=True,
+        ),
+    )
     text = serializers.CharField()
 
 
@@ -101,12 +106,16 @@ class JobResultSerializer(serializers.Serializer):
         return len(obj["news"])
 
     def to_internal_value(self, data):
-        # Create serializer with list of instances
-        serializer = NewsSerializer(data, many=True)
 
-        return {
-            "news": serializer.data,
-        }
+        # Create serializer with list of instances
+        data = [vars(instance) for instance in data]
+        serializer = NewsSerializer(data=data, many=True)
+        if serializer.is_valid():
+            return {
+                "news": serializer.data,
+            }
+
+        raise ValueError(serializer.errors, data[2])
 
 
 class JobSerializer(serializers.Serializer):

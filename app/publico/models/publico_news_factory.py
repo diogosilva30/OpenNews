@@ -6,7 +6,6 @@ import os
 import json
 from urllib.parse import urlparse
 import itertools
-import pytz
 
 
 from core.models import NewsFactory
@@ -120,13 +119,10 @@ class PublicoNewsFactory(
         # Create news URL list
         collected_news_urls = []
 
-        # Starting date and ending date are timezone unware
-        starting_date = pytz.utc.localize(
-            datetime_from_string(starting_date, order="YMD"),
-        )
-        ending_date = pytz.utc.localize(
-            datetime_from_string(ending_date, order="YMD"),
-        )
+        # Parse `starting_date`
+        starting_date = datetime_from_string(starting_date, order="YMD").date()
+        # Parse `ending_date`
+        ending_date = datetime_from_string(ending_date, order="YMD").date()
 
         while (
             response := requests.get(
@@ -137,28 +133,28 @@ class PublicoNewsFactory(
             data = json.loads(response)
             # iterate over each news dict
             for item in data:
-                # Found news out of lower bound date, stop the search
+                # If news out of lower bound date, stop the search
                 if (
                     datetime_from_string(
                         item.get("data"),
                         order="YMD",
-                    )
+                    ).date()
                     < starting_date
                 ):
                     stop_entire_search = True  # Will break main loop
                     break  # Will break current loop
 
-                # Found news more recent that end date, SKIP AHEAD
+                # If news more recent that end date, SKIP AHEAD
                 elif (
                     datetime_from_string(
                         item.get("data"),
                         order="YMD",
-                    )
+                    ).date()
                     > ending_date
                 ):
                     continue
 
-                # Found news inside the date rage, add to list
+                # If news inside the date rage, collect the URL
                 else:
                     collected_news_urls.append(item.get("shareUrl"))
             if stop_entire_search:
@@ -218,13 +214,10 @@ class PublicoNewsFactory(
         # Create news URL list
         collected_news_urls = []
 
-        # Starting date and ending date are timezone unware
-        starting_date = pytz.utc.localize(
-            datetime_from_string(starting_date, order="YMD"),
-        )
-        ending_date = pytz.utc.localize(
-            datetime_from_string(ending_date, order="YMD"),
-        )
+        # Parse `starting_date`
+        starting_date = datetime_from_string(starting_date, order="YMD")
+        # Parse `ending_date`
+        ending_date = datetime_from_string(ending_date, order="YMD")
 
         while (
             response := requests.get(

@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 
 from core.models import News
 from core.exceptions import UnsupportedNews
+from core.utils import datetime_from_string
 
 
 class CMNews(News):
@@ -49,6 +50,7 @@ class CMNews(News):
         date = html_tree.xpath("//div[@class='data']//text()")[0].replace(
             "•", ""
         )
+
         authors = html_tree.xpath("//div[@class='autor']//text()")
 
         return text, description, date, authors
@@ -124,6 +126,9 @@ class CMNews(News):
             authors,
         ) = parse_func(tree, is_opinion)
 
+        # Date must be parsed and converted
+        # to ISO 8601 format.
+        date = datetime_from_string(date).isoformat()
         # Remove ads in case they exist
         text = text.split("Para aceder a todos os Exclusivos CM")[0].split(
             "Ler o artigo completo"

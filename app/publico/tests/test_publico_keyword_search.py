@@ -95,8 +95,8 @@ class PublicoKeywordSearchAPITest(TestCase):
 
             # Check that date is inside bound
             self.assertTrue(
-                datetime_from_string(start_date, order="YMD")
-                <= datetime_from_string(news["date"], order="YMD")
-                <= datetime_from_string(end_date, order="YMD"),
+                datetime_from_string(start_date, order="YMD").date()
+                <= datetime_from_string(news["date"], order="YMD").date()
+                <= datetime_from_string(end_date, order="YMD").date(),
                 msg="News out of expected date range",
             )

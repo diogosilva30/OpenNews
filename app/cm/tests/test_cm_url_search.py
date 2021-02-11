@@ -152,7 +152,6 @@ class CMURLSearchAPITest(TestCase):
 
         # Number of news should be in response
         self.assertIn("number_of_news", response.data)
-        logger.error(response.data)
         # Number of news should be 3
         self.assertEqual(response.data["number_of_news"], 3)
 

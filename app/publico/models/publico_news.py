@@ -62,12 +62,17 @@ class PublicoNews(News):
         if len(minuteUpdated) != 0:
             raise UnsupportedNews
 
-        # Extract info
+        # Extract description
         description = json_doc["descricao"]
+        # Extract if news is opinion
         is_opinion = json_doc["isOpiniao"]
+        # Extract news title
         title = json_doc["titulo"]
+        # Get authors list
         authors = [author.get("nome") for author in json_doc["autores"]]
+        # Get rubric
         rubric = json_doc["seccao"]
+        # Get news date, already is in ISO 8601 format
         date = json_doc["data"]
 
         # Extract text
