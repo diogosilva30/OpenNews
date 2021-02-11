@@ -5,14 +5,29 @@
       <v-row class="align-self-center" style="z-index: 5" no-gutters>
         <v-col cols="8" offset="2">
           <v-img
-            class="logo"
             src="/Logos/vector/default-monochrome.svg"
             alt="OpenNews logo"
+            class="zoomOnHover"
           >
           </v-img>
         </v-col>
       </v-row>
+      <!-- Particle background effects -->
+      <client-only>
+        <Particles
+          color="#DCBA8F"
+          :particles-number="150"
+          shape-type="circle"
+          :particle-size="2"
+          movement-direction="right"
+          lines-color="#dedede"
+          :line-linked="true"
+          :move-speed="0.75"
+          :hover-effect="true"
+        />
+      </client-only>
     </v-card>
+
     <!-- Right side card -->
     <v-card
       tile
@@ -52,7 +67,10 @@
 </template>
 
 <script>
+import Particles from '~/components/Particles.vue'
+
 export default {
+  components: { Particles },
   data: () => ({
     icons: [
       {
@@ -102,6 +120,10 @@ export default {
   background-size: 400% 400%;
   animation: gradient 10s ease-in-out infinite;
 }
+.iconLeft {
+  background: linear-gradient(10deg, #b43eff, #c574f7, #23a6d5, #0a7196);
+  animation: gradient 10s ease-in-out infinite;
+}
 
 @keyframes gradient {
   0% {
@@ -113,5 +135,25 @@ export default {
   100% {
     background-position: 0 50%;
   }
+}
+/* Particles */
+#particles-instance- {
+  height: 100vh !important;
+  position: absolute;
+  top: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 1 !important;
+}
+
+/* Logo Zoom on hover */
+.zoomOnHover {
+  transition: transform 0.2s; /* Animation */
+}
+.zoomOnHover:hover {
+  transform: scale(1.1);
 }
 </style>
