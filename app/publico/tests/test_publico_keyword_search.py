@@ -59,13 +59,13 @@ class PublicoKeywordSearchAPITest(TestCase):
         self.assertIn("number_of_news", response.data)
 
         # Number of news should be 7
-        self.assertEqual(response.data["number_of_news"], 5)
+        self.assertEqual(response.data["number_of_news"], 7)
 
         # Get found_news
         found_news = response.data["news"]
 
-        # Number of news in the list should be 5 (re-check)
-        self.assertEqual(len(found_news), 5)
+        # Number of news in the list should be 7 (re-check)
+        self.assertEqual(len(found_news), 7)
 
         for news in found_news:
             # Check if news is well constructed
