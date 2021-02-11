@@ -58,7 +58,7 @@ export default {
       {
         src: '/SideMenu/GitHub-Mark-64px.png',
         href: 'https://github.com/spamz23/PT-NEWS_EXTRACTOR',
-        text: 'Github',
+        text: 'GitHub',
       },
       {
         src: '/SideMenu/bmc-logo.svg',
