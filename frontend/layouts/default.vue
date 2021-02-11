@@ -1,7 +1,7 @@
 <template>
-  <v-app>
+  <v-app dark>
     <v-main>
-      <nuxt-child />
+      <nuxt />
     </v-main>
   </v-app>
 </template>
