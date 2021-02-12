@@ -28,40 +28,56 @@
       </client-only>
     </v-card>
 
-    <!-- Right side card -->
+    <!-- Right side -->
     <v-card
-      tile
-      flat
-      class="d-flex"
+      id="fadeBackground"
+      class="d-inline-flex align-center flex-column"
       style="z-index: 0"
       height="100%"
       width="30%"
     >
-      <v-img id="fadeBackground" class="d-flex align-center">
-        <!-- SOCIAL ICONS -->
-        <!-- justify-end to align items to the right -->
-        <v-row class="justify-end" height no-gutters>
-          <v-card class="transparent" flat>
-            <v-row v-for="icon in icons" :key="icon.id" class="ma-3">
-              <v-tooltip left>
-                <template #activator="{ on, attrs }">
-                  <v-btn
-                    fab
-                    v-bind="attrs"
-                    class="transparent elevation-0"
-                    :href="icon.href"
-                    target="_blank"
-                    v-on="on"
-                  >
-                    <v-img :src="icon.src" max-width="30" contain></v-img>
-                  </v-btn>
-                </template>
-                <span>{{ icon.text }}</span>
-              </v-tooltip>
-            </v-row>
-          </v-card>
-        </v-row>
-      </v-img>
+      <!-- Place Social Media icons at most right and center screen -->
+      <div
+        class="ml-auto"
+        style="
+          position: fixed;
+          top: 50%;
+          right: 0;
+          transform: translate(0, -50%);
+        "
+      >
+        <!-- Social icons card -->
+        <v-card
+          v-for="icon in icons"
+          :key="icon.id"
+          outlined
+          class="transparent"
+        >
+          <v-tooltip left>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                fab
+                v-bind="attrs"
+                class="transparent elevation-0"
+                :href="icon.href"
+                target="_blank"
+                v-on="on"
+              >
+                <v-img :src="icon.src" max-width="30" contain></v-img>
+              </v-btn>
+            </template>
+            <span>{{ icon.text }}</span>
+          </v-tooltip>
+        </v-card>
+      </div>
+      <!-- Place Get started button at bottom with flex auto margin -->
+      <div class="mx-auto mb-10 mt-auto">
+        <v-hover v-slot="{ hover }">
+          <v-btn outlined x-large rounded :class="{ 'black--text': hover }"
+            >Get started
+          </v-btn>
+        </v-hover>
+      </div>
     </v-card>
   </v-container>
 </template>
@@ -80,7 +96,7 @@ export default {
       },
       {
         src: '/SideMenu/bmc-logo.svg',
-        href: 'https://github.com/spamz23/PT-NEWS_EXTRACTOR',
+        href: 'https://www.buymeacoffee.com/diogosilva',
         text: 'Buy me a coffee',
       },
     ],
@@ -114,28 +130,7 @@ export default {
   -webkit-transform: skew(-10deg, 0deg);
   transform: skew(-10deg, 0deg);
 }
-/* Animated gradient background */
-#fadeBackground {
-  background: linear-gradient(10deg, #b43eff, #c574f7, #23a6d5, #0a7196);
-  background-size: 400% 400%;
-  animation: gradient 10s ease-in-out infinite;
-}
-.iconLeft {
-  background: linear-gradient(10deg, #b43eff, #c574f7, #23a6d5, #0a7196);
-  animation: gradient 10s ease-in-out infinite;
-}
 
-@keyframes gradient {
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0 50%;
-  }
-}
 /* Particles */
 #particles-instance- {
   height: 100vh !important;
