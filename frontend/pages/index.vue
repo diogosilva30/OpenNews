@@ -130,28 +130,7 @@ export default {
   -webkit-transform: skew(-10deg, 0deg);
   transform: skew(-10deg, 0deg);
 }
-/* Animated gradient background */
-#fadeBackground {
-  background: linear-gradient(10deg, #b43eff, #c574f7, #23a6d5, #0a7196);
-  background-size: 400% 400%;
-  animation: gradient 10s ease-in-out infinite;
-}
-.iconLeft {
-  background: linear-gradient(10deg, #b43eff, #c574f7, #23a6d5, #0a7196);
-  animation: gradient 10s ease-in-out infinite;
-}
 
-@keyframes gradient {
-  0% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0 50%;
-  }
-}
 /* Particles */
 #particles-instance- {
   height: 100vh !important;
