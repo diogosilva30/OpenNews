@@ -57,6 +57,11 @@ export default {
           error: colors.deepOrange.accent4,
           success: colors.green.accent3,
         },
+        light: {
+          primary: colors.black,
+          purple: '#B43EFF', // #FFCDD2
+          blue: '#5282FC', // #3F51B5
+        },
       },
     },
   },
