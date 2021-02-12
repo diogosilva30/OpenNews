@@ -4,7 +4,7 @@
       <v-col md="6">
         <v-card class="black rounded-xl" rounded>
           <v-card-title class="justify-center">
-            <div class="text-h2 mylight--text">Search News</div>
+            <div class="text-h2 mylight--text">Search News {{ step }}</div>
           </v-card-title>
           <v-card-text>
             <v-card class="mx-auto black" tile flat max-width="500">
@@ -22,64 +22,68 @@
               </v-card-title>
 
               <!-- Choose jornal -->
-              <v-window v-model="step">
-                <v-window-item :value="1">
-                  <v-card-text>
-                    <v-select
-                      :items="supportedJournals"
-                      outlined
-                      prepend-icon="feed"
-                      label="Journal"
-                      color="myblue"
-                    >
-                    </v-select>
-                  </v-card-text>
-                </v-window-item>
+              <div v-if="step === 1">
+                <v-card-text>
+                  <v-select
+                    v-model="selected_journal"
+                    :items="supportedJournals"
+                    outlined
+                    prepend-icon="feed"
+                    label="Journal"
+                    color="myblue"
+                    class="mypurple--text"
+                    dark
+                  >
+                  </v-select>
+                </v-card-text>
+              </div>
+              <!-- Choose type of search -->
+              <div v-if="step === 2">
+                <v-card-text>
+                  <v-select
+                    v-model="selected_search_type"
+                    :items="supportedSearchTypes"
+                    outlined
+                    prepend-icon="feed"
+                    label="Search type"
+                    color="myblue"
+                    class="mypurple--text"
+                    dark
+                  >
+                  </v-select>
+                </v-card-text>
+              </div>
 
-                <v-window-item :value="2">
-                  <v-card-text>
-                    <v-text-field
-                      label="Password"
-                      type="password"
-                    ></v-text-field>
-                    <v-text-field
-                      label="Confirm Password"
-                      type="password"
-                    ></v-text-field>
-                    <span class="caption grey--text text--darken-1">
-                      Please enter a password for your account
-                    </span>
-                  </v-card-text>
-                </v-window-item>
-
-                <v-window-item :value="3">
-                  <div class="pa-4 text-center">
-                    <v-img
-                      class="mb-4"
-                      contain
-                      height="128"
-                      src="https://cdn.vuetifyjs.com/images/logos/v.svg"
-                    ></v-img>
-                    <h3 class="title font-weight-light mb-2">
-                      Welcome to Vuetify
-                    </h3>
-                    <span class="caption grey--text"
-                      >Thanks for signing up!</span
-                    >
-                  </div>
-                </v-window-item>
-              </v-window>
-
+              <div v-if="step === 3">
+                <v-card-text>
+                  <v-select
+                    v-model="selected_search_type"
+                    :items="supportedSearchTypes"
+                    outlined
+                    prepend-icon="feed"
+                    label="Search type"
+                    color="myblue"
+                    class="mypurple--text"
+                    dark
+                  >
+                  </v-select>
+                </v-card-text>
+              </div>
               <v-card-actions>
-                <v-btn :disabled="step === 1" text @click="step--">
+                <v-btn
+                  :disabled="step === 1"
+                  color="mylight"
+                  outlined
+                  @click="setStep(step - 1)"
+                >
                   Back
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
                   :disabled="step === 3"
-                  color="white"
+                  color="mylight"
                   outlined
-                  @click="step++"
+                  @click="setStep(step + 1)"
                 >
                   Next
                 </v-btn>
@@ -95,20 +99,53 @@
 <script>
 export default {
   data: () => ({
-    step: 1,
     supportedJournals: ['Público', 'Correio da Manhã'],
+    selected_journal: null,
+    selected_search_type: null,
   }),
 
   computed: {
+    // eslint-disable-next-line vue/return-in-computed-property
     currentTitle() {
       switch (this.step) {
         case 1:
           return 'Select a journal.'
         case 2:
-          return 'Create a password'
-        default:
+          return 'Select the type of search'
+        case 3:
           return 'Account created'
       }
+    },
+    supportedSearchTypes() {
+      switch (this.selected_journal) {
+        case 'Público':
+          return ['URL Search', 'Tag Search', 'Keywords Search']
+        case 'Correio da Manhã':
+          return ['URL Search', 'Tag Search']
+        default:
+          return []
+      }
+    },
+    step() {
+      // Get step from URL. Defaults to 1
+      const urlStep = this.$route.query.step || 1
+      // If step is greater than 4 , push to first step
+      const parsedUrlStep = parseInt(urlStep)
+      if (isNaN(parsedUrlStep) || parsedUrlStep >= 4) {
+        this.setStep(1)
+      }
+      return parsedUrlStep
+    },
+    query() {
+      return this.$route.query
+    },
+  },
+  methods: {
+    setStep(stepNumber) {
+      this.$router.push({
+        path: this.$route.path,
+        query: { step: stepNumber },
+      })
     },
   },
 }
