@@ -73,8 +73,8 @@
       <!-- Place Get started button at bottom with flex auto margin -->
       <div class="mx-auto mb-10 mt-auto">
         <v-hover v-slot="{ hover }">
-          <v-btn outlined x-large rounded :class="{ 'mylight--text': hover }"
-            >Get started
+          <v-btn outlined x-large rounded :class="{ 'mylight--text': hover }">
+            Get started
           </v-btn>
         </v-hover>
       </div>
