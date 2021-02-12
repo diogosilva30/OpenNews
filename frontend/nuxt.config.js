@@ -58,11 +58,6 @@ export default {
           mydark: '#000000',
           mylight: '#ffffff',
         },
-        light: {
-          primary: colors.black,
-          purple: '#B43EFF', // #FFCDD2
-          blue: '#5282FC', // #3F51B5
-        },
       },
     },
   },

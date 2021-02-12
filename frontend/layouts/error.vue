@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-container fluid fill-height class="pa-0">
+    <v-container fluid fill-height class="pa-0 mydark">
       <!-- Particle background effects -->
       <client-only>
         <Particles
@@ -16,7 +16,18 @@
       /></client-only>
       <v-row align="center" justify="center">
         <v-col md="6">
-          <v-card-title class="justify-center">404 </v-card-title>
+          <v-card-title
+            class="py-0 text-h1 justify-center mylight--text font-weight-black"
+            >ARE YOU LOST?
+          </v-card-title>
+          <v-card-title
+            class="mb-8 text-h3 justify-center mylight--text font-weight-bold"
+          >
+            ERROR 404
+          </v-card-title>
+          <v-card class="text-center transparent" style="z-index: 999">
+            <v-btn to="/" outlined class="mylight--text"> Pull me back </v-btn>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
