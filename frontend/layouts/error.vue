@@ -26,7 +26,9 @@
             ERROR 404
           </v-card-title>
           <v-card class="text-center transparent" style="z-index: 999">
-            <v-btn to="/" outlined class="mylight--text"> Pull me back </v-btn>
+            <v-btn outlined nuxt to="/" x-large rounded class="mylight--text"
+              >Pull me back
+            </v-btn>
           </v-card>
         </v-col>
       </v-row>
