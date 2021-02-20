@@ -1,5 +1,5 @@
 /* Animated gradient background */
-#fadeBackground {
+.fadeBackground {
   background: linear-gradient(10deg, #b43eff, #c574f7, #23a6d5, #0a7196);
   background-size: 400% 400%;
   animation: gradient 10s ease-in-out infinite;

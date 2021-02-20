@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-container fluid fill-height class="pa-0 mydark">
+    <v-container fluid fill-height class="mydark">
       <!-- Particle background effects -->
       <client-only>
         <Particles
@@ -14,20 +14,27 @@
           :move-speed="0.75"
           :hover-effect="true"
       /></client-only>
-      <v-row align="center" justify="center">
-        <v-col md="6">
-          <v-card-title
-            class="py-0 text-h1 justify-center mylight--text font-weight-black"
-            >ARE YOU LOST?
-          </v-card-title>
+      <!-- Make sure content is above background (z-index = 2) -->
+      <v-row align="center" justify="center" style="z-index: 2">
+        <v-col md="8">
+          <v-card-text
+            class="py-0 text-h1 mylight--text font-weight-black text-center"
+            style="word-break: normal"
+          >
+            <template v-if="error.statusCode === 404">
+              <span>ARE YOU LOST? </span>
+            </template>
+            <template v-else>AN ERROR OCCURED</template>
+          </v-card-text>
           <v-card-title
             class="mb-8 text-h3 justify-center mylight--text font-weight-bold"
           >
-            ERROR 404
+            <template v-if="error.statusCode === 404"> ERROR 404 </template>
+            <template v-else>ERROR 500</template>
           </v-card-title>
-          <v-card class="text-center transparent" style="z-index: 999">
-            <v-btn outlined nuxt to="/" x-large rounded class="mylight--text"
-              >Pull me back
+          <v-card class="text-center transparent">
+            <v-btn outlined nuxt to="/" x-large rounded class="mylight--text">
+              Pull me back
             </v-btn>
           </v-card>
         </v-col>
@@ -62,9 +69,6 @@ export default {
 </script>
 
 <style scoped>
-h1 {
-  font-size: 20px;
-}
 /* Particles */
 #particles-instance- {
   height: 100vh !important;
@@ -72,6 +76,7 @@ h1 {
   top: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
+  left: 0 !important;
   width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
