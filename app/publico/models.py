@@ -6,9 +6,10 @@ import os
 import json
 from urllib.parse import urlparse
 import itertools
+from lxml import html
 
 
-from core.models import NewsFactory
+from core.models import NewsFactory, News
 from core.mixins import (
     URLSearchMixin,
     TagSearchMixin,
@@ -16,8 +17,6 @@ from core.mixins import (
 )
 from core.exceptions import UnsupportedNews
 from core.utils import datetime_from_string
-
-from .publico_news import PublicoNews
 
 
 class PublicoNewsFactory(
@@ -74,7 +73,7 @@ class PublicoNewsFactory(
             return False
         return super()._validate_url(url)
 
-    def url_search(self, urls: list[str]) -> list[PublicoNews]:
+    def url_search(self, urls: list[str]) -> list[News]:
         """
         Iterates over a list of Publico news URLs
         and build Publico News objects.
@@ -86,7 +85,7 @@ class PublicoNewsFactory(
 
         Returns
         -------
-        PublicoNews: list
+        News: list
         """
         news_obj_list = []
         for url in urls:
@@ -94,7 +93,7 @@ class PublicoNewsFactory(
             if self._validate_url(url):
                 response = self.session.get(url)
                 try:
-                    news_obj = PublicoNews.from_html_string(response.text)
+                    news_obj = self.from_html_string(response.text)
                     news_obj_list.append(news_obj)
                 # Catch unsupported news
                 # Continue
@@ -108,7 +107,7 @@ class PublicoNewsFactory(
         tag: str,
         starting_date: str,
         ending_date: str,
-    ) -> list[PublicoNews]:
+    ) -> list[News]:
 
         # Normalize tag
         tag = tag.replace(" ", "-").lower()
@@ -169,7 +168,7 @@ class PublicoNewsFactory(
         tags: list[str],
         starting_date: str,
         ending_date: str,
-    ) -> list[PublicoNews]:
+    ) -> list[News]:
         """
         Performs a tag search of Publico news between the date range,
         merges the news from all tags.
@@ -205,7 +204,7 @@ class PublicoNewsFactory(
         keyword: str,
         starting_date: str,
         ending_date: str,
-    ) -> list[PublicoNews]:
+    ) -> list[News]:
 
         # Normalize keyword
         keyword = keyword.lower()
@@ -240,7 +239,7 @@ class PublicoNewsFactory(
         keywords: list[str],
         starting_date: str,
         ending_date: str,
-    ) -> list[PublicoNews]:
+    ) -> list[News]:
         """
         Performs a keyword search of Publico news between the date range,
         merges the news from all keywords.
@@ -257,7 +256,7 @@ class PublicoNewsFactory(
 
         Returns
         -------
-        PublicoNews: list
+        News: list
         """
         # Collect urls from each keyword
         news_urls = [
@@ -276,3 +275,83 @@ class PublicoNewsFactory(
 
         # Perform URL search on each collected url
         return self.url_search(news_urls)
+
+    def from_html_string(self, html_string: str) -> News:
+        """
+        Builds a News object from a given URL.
+
+        Parameters
+        ----------
+        html_string : str
+            A news page HTML's string
+
+        Returns
+        -------
+        News
+            The built News object.
+
+        Raises
+        ------
+        UnsupportedNews
+            If news is minute updated.
+        """
+
+        # Build HTML tree
+        tree = html.fromstring(html_string)
+
+        # Extract URL
+        url = tree.xpath("//meta[@property='og:url']")[0].get("content")
+
+        # Extract news id
+        news_id = urlparse(url).path.split("-")[-1]
+
+        # Make GET request to publico news summary API endpoint
+        response = requests.get(
+            f"https://api.publico.pt/content/summary/scriptor_noticias/{news_id}"
+        )
+        # Load json response
+        json_doc = json.loads(response.text)
+
+        # If minute updated news, raise Unsupported News
+        minuteUpdated = tree.xpath("//span[@class='label label--live']")
+
+        if len(minuteUpdated) != 0:
+            raise UnsupportedNews
+
+        # Extract description
+        description = json_doc["descricao"]
+        # Extract if news is opinion
+        is_opinion = json_doc["isOpiniao"]
+        # Extract news title
+        title = json_doc["titulo"]
+        # Get authors list
+        authors = [author.get("nome") for author in json_doc["autores"]]
+        # Get rubric
+        rubric = json_doc["seccao"]
+        # Get news date, already is in ISO 8601 format
+        date = json_doc["data"]
+
+        # Extract text
+        text = " ".join(
+            tree.xpath(
+                (
+                    "//div[@class='story__body']//p//text()[not(ancestor::aside)][not(ancestor::div[contains(@class, 'supplemental-slot')])] | \
+                //div[@class='story__body']//blockquote//text()[not(ancestor::aside)][not(ancestor::div[contains(@class, 'supplemental-slot')])]  | \
+                //div[@class='story__body']//*[self::h1 or self::h2 or self::h3 or self::h4]//text()[not(ancestor::aside)][not(ancestor::div[contains(@class, 'supplemental-slot')])]"
+                )
+            )
+        ).replace(
+            "Subscreva gratuitamente as newsletters e receba o melhor da actualidade e os trabalhos mais profundos do Público.",
+            "",
+        )
+
+        return News(
+            title,
+            description,
+            url,
+            rubric,
+            date,
+            authors,
+            is_opinion,
+            text,
+        )

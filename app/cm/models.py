@@ -1,21 +1,92 @@
 """
-Contains the CM's News models
+Module containg the concrete CMNewsFactory
 """
-from __future__ import annotations
-
-from typing import Union
+import requests
+import os
+import json
 from lxml import html
 from urllib.parse import urlparse
 
-from core.models import News
+from core.mixins import (
+    URLSearchMixin,
+    TagSearchMixin,
+    KeywordSearchMixin,
+)
+from core.models import NewsFactory, News
 from core.exceptions import UnsupportedNews
 from core.utils import datetime_from_string
 
 
-class CMNews(News):
+class CMNewsFactory(
+    URLSearchMixin,
+    NewsFactory,
+):
     """
-    CM's news model
+    Performs and stores different types of search in CM's website
     """
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    @staticmethod
+    def _login() -> requests.Session:
+        """
+        Creates a 'requests.Session', performs login on CM's Website and returns the session
+        """
+
+        # Create session
+        session = requests.Session()
+
+        payload = {
+            "email": os.getenv("CM_USER", ""),
+            "password": os.getenv("CM_PW", ""),
+        }
+
+        # Send POST request
+        resp = session.post(
+            "https://aminhaconta.xl.pt/Async/Site/LoginHandler/LOGIN_WITH_THIRDPARTY",
+            data=payload,
+        )
+        json_response = json.loads(resp.text)
+        if not json_response["Success"]:
+            token = ""
+        else:
+            token = json.loads(resp.text)["Data"]["LOGIN_TOKEN"]
+
+        session.get(
+            f"https://www.cmjornal.pt/login/login?token={token}&returnUrl=https://www.cmjornal.pt"
+        )
+
+        return session
+
+    def url_search(self, urls: list[str]) -> News:
+        """
+        Iterates over a list of CM news URLs
+        and build CM News objects.
+
+        Parameters
+        ----------
+        url: list of str
+            List of strings containing CM's news URLs
+
+        Returns
+        -------
+        News: list
+        """
+        news_obj_list = []
+        for url in urls:
+            # If valid URL
+            if self._validate_url(url):
+                response = self.session.get(url)
+                try:
+                    news_obj = self.from_html_string(response.text)
+                    news_obj_list.append(news_obj)
+                # Catch unsupported news
+                # Continue
+                except UnsupportedNews:
+                    continue
+
+        return news_obj_list
 
     @staticmethod
     def _parse_cm_news_info(html_tree, is_opinion):
@@ -55,8 +126,7 @@ class CMNews(News):
 
         return text, description, date, authors
 
-    @classmethod
-    def from_html_string(cls, html_string: str) -> Union[CMNews]:
+    def from_html_string(self, html_string: str) -> News:
         """
         Builds a News object from a given URL.
 
@@ -67,8 +137,8 @@ class CMNews(News):
 
         Returns
         -------
-        CMNews
-            The built CMNews object
+        News
+            The built News object
 
         Raises
         ------
@@ -109,9 +179,9 @@ class CMNews(News):
         # Needs custom webscrapping for each subjornal
         parsed_url_netloc = urlparse(url).netloc
         if parsed_url_netloc == "www.cmjornal.pt":
-            parse_func = CMNews._parse_cm_news_info
+            parse_func = self._parse_cm_news_info
         elif parsed_url_netloc == "www.vidas.pt":
-            parse_func = CMNews._parse_vidas_news_info
+            parse_func = self._parse_vidas_news_info
         else:
             raise UnsupportedNews(
                 f"Unknow news URL netloc: {parsed_url_netloc}"
@@ -138,7 +208,7 @@ class CMNews(News):
         # Find title
         title = tree.xpath("//div[@class='centro']//h1//text()")[0]
 
-        return cls(
+        return News(
             title,
             description,
             url,

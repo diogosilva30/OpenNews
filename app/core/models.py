@@ -8,6 +8,7 @@ import requests
 from abc import (
     ABC,
     abstractclassmethod,
+    abstractmethod,
     abstractstaticmethod,
 )
 
@@ -61,13 +62,6 @@ class News(ABC):
         self.authors = authors
         self.text = text
 
-    @abstractclassmethod
-    def from_html_string(cls, html_string: str) -> Union[News]:
-        """
-        Child classes must implement 'from_html_string' to build a news object from a news html page.
-        Might return `None` is that news is not supported.
-        """
-
 
 class NewsFactory(ABC):
     """
@@ -92,3 +86,10 @@ class NewsFactory(ABC):
         Validates than a given URL returns a 200 status code
         """
         return self.session.get(url).status_code == 200
+
+    @abstractmethod
+    def from_html_string(self, html_string: str) -> News:
+        """
+        Child factories must implement 'from_html_string' to
+        build a news object from a news html page.
+        """
