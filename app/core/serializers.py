@@ -91,6 +91,11 @@ class NewsSerializer(serializers.Serializer):
 
 
 class JobResultSerializer(serializers.Serializer):
+    """
+    Core job result serializer. Serializes the
+    results from a particular job.
+    """
+
     date = serializers.SerializerMethodField()
     number_of_news = serializers.SerializerMethodField(read_only=True)
     news = NewsSerializer(many=True)
