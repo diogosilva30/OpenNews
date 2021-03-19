@@ -13,7 +13,7 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault(
     "DJANGO_SETTINGS_MODULE",
-    "pt-news-extractor.settings",
+    "pt-news-extractor.settings.base",
 )
 
 application = get_wsgi_application()
