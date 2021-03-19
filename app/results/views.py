@@ -2,14 +2,19 @@
 Contains the Results endpoints (views)
 """
 import django_rq
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import generics, mixins, status
+
 
 from core.serializers import JobResultSerializer
 
 
-class ResultsView(APIView):
+class ResultsView(
+    mixins.CreateModelMixin,
+    generics.GenericAPIView,
+):
+    serializer_class = JobResultSerializer
+
     def get(self, request, job_id, *args, **kwargs):
         """
         Returns the results of a job
@@ -55,7 +60,7 @@ class ResultsView(APIView):
 
         # If we get here the job was sucessful
         # We can serialize the news
-        serializer = JobResultSerializer(data=job.result)
+        serializer = self.get_serializer(data=job.result)
 
         if serializer.is_valid():
             return Response(

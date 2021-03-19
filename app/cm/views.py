@@ -2,11 +2,11 @@
 Contains the CM's API Endpoints (Views)
 """
 import django_rq
-from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import generics, mixins, status
 from rest_framework.response import Response
 
-from .models import CMNewsFactory
+from drf_yasg.utils import swagger_auto_schema
+
 from core.serializers import (
     TagSearchSerializer,
     JobSerializer,
@@ -14,15 +14,23 @@ from core.serializers import (
     KeywordSearchSerializer,
 )
 
+from .models import CMNewsFactory
 
-class CMURLSearchView(APIView):
+
+class CMURLSearchView(
+    mixins.CreateModelMixin,
+    generics.GenericAPIView,
+):
     """
     Creates a CM's URL Search job
     """
 
+    serializer_class = URLSearchSerializer
+
+    @swagger_auto_schema(responses={201: JobSerializer()})
     def post(self, request, *args, **kwargs):
         # Create serializer from request data
-        serializer = URLSearchSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
             # Enqueue job

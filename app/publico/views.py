@@ -2,9 +2,13 @@
 Contains the Publico's API Endpoints (Views)
 """
 import django_rq
-from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework import generics
+from rest_framework import mixins
 from rest_framework.response import Response
+
+from drf_yasg.utils import swagger_auto_schema
+
 
 from .models import PublicoNewsFactory
 from core.serializers import (
@@ -15,14 +19,20 @@ from core.serializers import (
 )
 
 
-class PublicoURLSearchView(APIView):
+class PublicoURLSearchView(
+    mixins.CreateModelMixin,
+    generics.GenericAPIView,
+):
     """
     Creates a Publico's URL Search job
     """
 
+    serializer_class = URLSearchSerializer
+
+    @swagger_auto_schema(responses={201: JobSerializer()})
     def post(self, request, *args, **kwargs):
         # Create serializer from request data
-        serializer = URLSearchSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
             # Enqueue job
@@ -39,7 +49,10 @@ class PublicoURLSearchView(APIView):
 
             # Return the job serializer data
             if job_serializer.is_valid():
-                return Response(job_serializer.data)
+                return Response(
+                    job_serializer.data,
+                    status=status.HTTP_201_CREATED,
+                )
             else:
                 return Response(
                     job_serializer.errors,
@@ -52,14 +65,20 @@ class PublicoURLSearchView(APIView):
         )
 
 
-class PublicoTagSearchView(APIView):
+class PublicoTagSearchView(
+    mixins.CreateModelMixin,
+    generics.GenericAPIView,
+):
     """
     Creates a Publico's Tag Search job
     """
 
+    serializer_class = TagSearchSerializer
+
+    @swagger_auto_schema(responses={201: JobSerializer()})
     def post(self, request, *args, **kwargs):
         # Create serializer from request data
-        serializer = TagSearchSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             # Enqueue job
             job_id = django_rq.enqueue(
@@ -88,14 +107,20 @@ class PublicoTagSearchView(APIView):
         )
 
 
-class PublicoKeywordSearchView(APIView):
+class PublicoKeywordSearchView(
+    mixins.CreateModelMixin,
+    generics.GenericAPIView,
+):
     """
     Creates a Publico's Keyword Search job
     """
 
+    serializer_class = KeywordSearchSerializer
+
+    @swagger_auto_schema(responses={201: JobSerializer()})
     def post(self, request, *args, **kwargs):
         # Create serializer from request data
-        serializer = KeywordSearchSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             # Enqueue job
             job_id = django_rq.enqueue(

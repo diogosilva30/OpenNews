@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     # 3rd party apps
     "rest_framework",
     "django_rq",
+    "drf_yasg",
     # Project apps
     "core",
     "publico",
@@ -48,6 +49,10 @@ MIDDLEWARE = [
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
 
 ROOT_URLCONF = "pt-news-extractor.urls"
 
