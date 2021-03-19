@@ -16,20 +16,6 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-
-SECRET_KEY = os.getenv("SECRET_KEY", "some key")
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = [
-    "pt-news-extractor.herokuapp.com",
-    "127.0.0.1",
-]
-
-
 # Application definition
 
 INSTALLED_APPS = [
