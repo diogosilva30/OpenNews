@@ -25,9 +25,6 @@ class CMNewsFactory(
     Performs and stores different types of search in CM's website
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-
     @staticmethod
     def _login() -> requests.Session:
         """

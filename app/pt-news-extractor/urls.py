@@ -21,7 +21,7 @@ schema_view = get_schema_view(
         description="PT-NEWS-EXTRACTOR is a REST API made in Python to extract news from Portuguese journals. It is intended for academic use.",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="diogosilv30@gmail.com"),
-        license=openapi.License(name="BSD License"),
+        license=openapi.License(name="BSD-3-Clause License"),
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
