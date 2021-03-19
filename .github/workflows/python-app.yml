@@ -16,7 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DJANGO_SETTINGS_MODULE: pt-news-extractor.settings
+      DJANGO_SETTINGS_MODULE: pt-news-extractor.settings.dev
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
