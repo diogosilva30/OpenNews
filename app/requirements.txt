@@ -1,5 +1,5 @@
 django-rq==2.4.0
-djangorestframework==3.12.2
+djangorestframework==3.12.3
 whitenoise==5.2.0
 requests==2.25.1
 lxml==4.6.2
