@@ -4,5 +4,5 @@ whitenoise==5.2.0
 requests==2.25.1
 lxml==4.6.3
 dateparser==1.0.0
-gunicorn==20.0.4
+gunicorn==20.1.0
 drf-yasg[validation]
