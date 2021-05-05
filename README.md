@@ -19,7 +19,7 @@ PT-NEWS-EXTRACTOR is a REST API made in Python to extract news from Portuguese j
 
 ## Want to give it a try?
 
-Read and play with the swagger documentation [here](https://pt-news-extractor.herokuapp.com/api/v1/) :fire:
+Read and play with the swagger documentation [here](https://pt-news-extractor.herokuapp.com/) :fire:
 
 ## Contributing
 
