@@ -315,8 +315,9 @@ class PublicoNewsFactory(
         if len(minuteUpdated) != 0:
             raise UnsupportedNews
 
-        # Extract description
-        description = json_doc["descricao"]
+        # Extract description, might be null.
+        # Therefore use a empty string as default
+        description = json_doc.get("descricao", "")
         # Extract if news is opinion
         is_opinion = json_doc["isOpiniao"]
         # Extract news title
