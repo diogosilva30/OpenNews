@@ -76,7 +76,8 @@ class NewsSerializer(serializers.Serializer):
     """
 
     title = serializers.CharField()
-    description = serializers.CharField()
+    # Allow Blank Descriptions
+    description = serializers.CharField(allow_blank = True)
     url = serializers.URLField()
     rubric = serializers.CharField()
     is_opinion = serializers.BooleanField()
