@@ -120,7 +120,7 @@ class JobResultSerializer(serializers.Serializer):
                 "news": serializer.data,
             }
 
-        raise ValueError(serializer.errors, data[2])
+        raise ValueError(serializer.errors)
 
 
 class JobSerializer(serializers.Serializer):
