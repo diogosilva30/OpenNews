@@ -308,7 +308,10 @@ class PublicoNewsFactory(
         )
         # Load json response
         json_doc = json.loads(response.text)
-
+        
+        # Delete every key that has 'None' value
+        json_doc = {k: v for k, v in json_doc.items() if v is not None}
+    
         # If minute updated news, raise Unsupported News
         minuteUpdated = tree.xpath("//span[@class='label label--live']")
 
