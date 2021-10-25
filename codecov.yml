@@ -1,3 +1,3 @@
 fixes:
-  - "::app/"         # move root   e.g., "path/" => "app/path/"
+  - "::api/"         # move root   e.g., "path/" => "app/path/"
 

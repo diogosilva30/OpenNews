@@ -7,6 +7,7 @@ import json
 from lxml import html
 from urllib.parse import urlparse
 
+
 from core.mixins import (
     URLSearchMixin,
     TagSearchMixin,
@@ -56,7 +57,8 @@ class CMNewsFactory(
 
         return session
 
-    def url_search(self, urls: list[str]) -> News:
+    @classmethod
+    def from_url_search(cls, url_list: list[str]) -> News:
         """
         Iterates over a list of CM news URLs
         and build CM News objects.
@@ -70,20 +72,20 @@ class CMNewsFactory(
         -------
         News: list
         """
-        news_obj_list = []
-        for url in urls:
+        instance = cls()
+        for url in url_list:
             # If valid URL
-            if self._validate_url(url):
-                response = self.session.get(url)
+            if instance._validate_url(url):
+                response = instance.session.get(url)
                 try:
-                    news_obj = self.from_html_string(response.text)
-                    news_obj_list.append(news_obj)
+                    news_obj = instance.from_html_string(response.text)
+                    instance.collect(news_obj)
                 # Catch unsupported news
                 # Continue
                 except UnsupportedNews:
                     continue
 
-        return news_obj_list
+        return instance
 
     @staticmethod
     def _parse_cm_news_info(html_tree, is_opinion):

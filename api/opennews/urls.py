@@ -16,9 +16,9 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="PT NEWS EXTRACTOR API",
+        title="OpenNews API",
         default_version="v2",
-        description="PT-NEWS-EXTRACTOR is a REST API made in Python to extract news from Portuguese journals. It is intended for academic use.",
+        description="OpenNews is a REST API made in Python to extract news from Portuguese journals. It is intended for academic use.",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="diogosilv30@gmail.com"),
         license=openapi.License(name="BSD-3-Clause License"),
@@ -42,8 +42,7 @@ urlpatterns = [
             namespace="rest",
         ),
     ),
-    path("django-rq/", include("django_rq.urls")),
-    path("api/publico/", include("publico.urls")),
-    path("api/cm/", include("cm.urls")),
-    path("api/results/", include("results.urls")),
+    path("publico/", include("publico.urls")),
+    path("cm/", include("cm.urls")),
+    path("results/", include("results.urls")),
 ]

@@ -9,7 +9,7 @@ DEBUG = False
 
 SECRET_KEY = env["SECRET_KEY"]
 
-ALLOWED_HOSTS = ["pt-news-extractor.herokuapp.com", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["api.onews.diogosilva.tech", "localhost", "127.0.0.1"]
 
 
 # Database
@@ -35,9 +35,3 @@ COMPRESS_CSS_FILTERS = [
     "compressor.filters.cssmin.CSSMinFilter",
 ]
 COMPRESS_CSS_HASHING_METHOD = "content"
-
-
-try:
-    from .local import *
-except ImportError:
-    pass

@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # 3rd party apps
     "rest_framework",
-    "django_rq",
     "drf_yasg",
     # Project apps
     "core",
@@ -54,7 +53,7 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
 
-ROOT_URLCONF = "pt-news-extractor.urls"
+ROOT_URLCONF = "opennews.urls"
 
 TEMPLATES = [
     {
@@ -72,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "pt-news-extractor.wsgi.application"
+WSGI_APPLICATION = "opennews.wsgi.application"
 
 
 # Database
@@ -124,13 +123,16 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-# Queues of redis
-RQ_QUEUES = {
-    "default": {
-        "URL": os.getenv(
-            "REDISTOGO_URL",
-            "redis://localhost:6379/0",
-        ),
-        "DEFAULT_TIMEOUT": 500,
-    },
-}
+
+# Celery settings
+from celery.schedules import crontab
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ["json", "pickle"]
+CELERY_RESULT_EXTENDED = True
+CELERY_TASK_SERIALIZER = "pickle"
+CELERY_RESULT_SERIALIZER = "pickle"
+
+CELERY_TIMEZONE = "Europe/Lisbon"
+CELERY_IMPORTS = ["core.tasks"]

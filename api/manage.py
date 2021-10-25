@@ -7,7 +7,7 @@ import sys
 def main():
     os.environ.setdefault(
         "DJANGO_SETTINGS_MODULE",
-        "pt-news-extractor.settings",
+        "opennews.settings.dev",
     )
     try:
         from django.core.management import (

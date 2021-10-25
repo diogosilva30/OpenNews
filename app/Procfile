@@ -1,2 +1,0 @@
-web: gunicorn pt-news-extractor.wsgi --log-file -
-worker: python worker.py

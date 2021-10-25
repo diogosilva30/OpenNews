@@ -2,12 +2,11 @@
 Contains the core news models
 """
 from __future__ import annotations
-from typing import Union
 import requests
+import json
 
 from abc import (
     ABC,
-    abstractclassmethod,
     abstractmethod,
     abstractstaticmethod,
 )
@@ -62,6 +61,10 @@ class News(ABC):
         self.authors = authors
         self.text = text
 
+    @property
+    def json(self):
+        return json.dumps(self.__dict__)
+
 
 class NewsFactory(ABC):
     """
@@ -93,3 +96,10 @@ class NewsFactory(ABC):
         Child factories must implement 'from_html_string' to
         build a news object from a news html page.
         """
+
+    def collect(self, news: News) -> None:
+        self.found_news.append(news)
+
+    @property
+    def json(self):
+        return json.dumps([obj.json for obj in self.found_news])

@@ -1,0 +1,2 @@
+web: gunicorn opennews.wsgi --log-file -
+worker: python worker.py

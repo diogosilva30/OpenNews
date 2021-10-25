@@ -15,6 +15,7 @@ from core.serializers import (
 )
 
 from .models import CMNewsFactory
+from core.tasks import enqueue_url_search_job
 
 
 class CMURLSearchView(
@@ -34,14 +35,14 @@ class CMURLSearchView(
 
         if serializer.is_valid():
             # Enqueue job
-            job_id = django_rq.enqueue(
-                CMNewsFactory().url_search,
-                urls=serializer.data["urls"],
-            ).id
+            result = enqueue_url_search_job.delay(
+                CMNewsFactory, url_list=serializer.data["urls"]
+            )
+            from pprint import pprint
 
             # Create a job serializer
             job_serializer = JobSerializer(
-                data={"job_id": job_id},
+                data={"job_id": result.id},
                 context={"request": request},
             )
 

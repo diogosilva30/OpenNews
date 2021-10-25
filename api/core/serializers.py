@@ -4,6 +4,7 @@ Contains the core news serializers
 from rest_framework import serializers
 from django.urls import reverse
 from django.utils.timezone import now
+from celery.result import AsyncResult
 
 
 class BaseDateSearchSerializer(serializers.Serializer):
@@ -77,7 +78,7 @@ class NewsSerializer(serializers.Serializer):
 
     title = serializers.CharField()
     # Allow Blank Descriptions
-    description = serializers.CharField(allow_blank = True)
+    description = serializers.CharField(allow_blank=True)
     url = serializers.URLField()
     rubric = serializers.CharField()
     is_opinion = serializers.BooleanField()
@@ -89,39 +90,6 @@ class NewsSerializer(serializers.Serializer):
         ),
     )
     text = serializers.CharField()
-
-
-class JobResultSerializer(serializers.Serializer):
-    """
-    Core job result serializer. Serializes the
-    results from a particular job.
-    """
-
-    date = serializers.SerializerMethodField()
-    number_of_news = serializers.SerializerMethodField(read_only=True)
-    news = NewsSerializer(many=True)
-
-    def get_date(self, obj):
-        return now()
-
-    def get_number_of_news(self, obj):
-        """
-        `obj` is the dict created in `to_internal_value`.
-        We acess `news` key.
-        """
-        return len(obj["news"])
-
-    def to_internal_value(self, data):
-
-        # Create serializer with list of instances
-        data = [vars(instance) for instance in data]
-        serializer = NewsSerializer(data=data, many=True)
-        if serializer.is_valid():
-            return {
-                "news": serializer.data,
-            }
-
-        raise ValueError(serializer.errors)
 
 
 class JobSerializer(serializers.Serializer):
