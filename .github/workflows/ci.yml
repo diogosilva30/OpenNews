@@ -16,16 +16,16 @@ on:
   # Allows to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: app
 jobs:
-
   # First job: Checks if API in a good state
   api-check-job:
     runs-on: ubuntu-latest
     env:
       DJANGO_SETTINGS_MODULE: opennews.settings.testing
+    # Working directory for this job is api
+    defaults:
+      run:
+        working-directory: api
     steps:
       # checking our the code at current commit that triggers the workflow
       - name: Checkout code 
