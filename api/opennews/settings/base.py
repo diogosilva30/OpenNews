@@ -130,9 +130,8 @@ from celery.schedules import crontab
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
 CELERY_ACCEPT_CONTENT = ["json", "pickle"]
-CELERY_RESULT_EXTENDED = True
 CELERY_TASK_SERIALIZER = "pickle"
 CELERY_RESULT_SERIALIZER = "pickle"
-
+CELERY_TASK_TRACK_STARTED = True
 CELERY_TIMEZONE = "Europe/Lisbon"
 CELERY_IMPORTS = ["core.tasks"]

@@ -3,8 +3,6 @@ Contains the core news serializers
 """
 from rest_framework import serializers
 from django.urls import reverse
-from django.utils.timezone import now
-from celery.result import AsyncResult
 
 
 class BaseDateSearchSerializer(serializers.Serializer):

@@ -25,9 +25,9 @@ class TagSearchMixin(ABC):
     Mixin class for concrete news factorys that implement Tag Search
     """
 
-    @abstractmethod
-    def tag_search(
-        self,
+    @abstractclassmethod
+    def from_tag_search(
+        cls,
         tags: list[str],
         starting_date: str,
         ending_date: str,
@@ -43,9 +43,9 @@ class KeywordSearchMixin(ABC):
     Mixin class for concrete news factorys that implement Keyword Search
     """
 
-    @abstractmethod
-    def keyword_search(
-        self,
+    @abstractclassmethod
+    def from_keyword_search(
+        cls,
         keywords: list[str],
         starting_date: str,
         ending_date: str,

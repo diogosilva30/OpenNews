@@ -1,5 +1,7 @@
 from celery.result import AsyncResult
 from rest_framework import serializers
+from rest_framework.exceptions import NotFound
+
 from core.serializers import NewsSerializer
 from django.utils.timezone import now
 
@@ -10,7 +12,7 @@ class JobResultSerializer(serializers.Serializer):
     results from a particular job.
     """
 
-    status = serializers.CharField()
+    state = serializers.CharField()
     date_done = serializers.DateField()
     number_of_news = serializers.SerializerMethodField(read_only=True)
     news = NewsSerializer(many=True)
@@ -27,15 +29,17 @@ class JobResultSerializer(serializers.Serializer):
 
     def to_internal_value(self, job: AsyncResult):
 
-        from pprint import pprint
+        # Check if state is 'PENDING'. If so, the task
+        # is unknown (does not exist).
+        if job.state == "PENDING":
+            raise NotFound({"state": "NOT_FOUND"})
 
-        print(job.status)
-        if job.result is None:
-            news = []
-        else:
-            news = job.result
-        # serializer = NewsSerializer(data=data, many=True)
-        # if serializer.is_valid():
-        return {"status": job.status, "news": news, "date_done": job.date_done}
+        # Try to get the result. If result is still None,
+        # default to empty list
+        news = job.result if job.result is not None else []
 
-        raise ValueError(serializer.errors)
+        return {
+            "state": job.status,
+            "news": news,
+            "date_done": job.date_done,
+        }

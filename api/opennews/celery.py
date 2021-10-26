@@ -16,11 +16,8 @@ app = Celery("opennews")
 # - namespace='CELERY' means all celery-related configuration keys
 #   should have a `CELERY_` prefix.
 app.config_from_object("django.conf:settings", namespace="CELERY")
-app.conf.update(
-    task_serializer="pickle",
-    result_serializer="pickle",
-    accept_content=["json"],
-)
+
+
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
 
@@ -30,21 +27,27 @@ from celery import current_app
 # for older versions use the deprecated `task_sent` signal
 from celery.signals import after_task_publish
 
+# when using celery versions older than 4.0, use body instead of headers
+
 
 @after_task_publish.connect
-def task_sent_handler(sender=None, headers=None, body=None, **kwargs):
+def update_sent_state(sender=None, headers=None, body=None, **kwargs):
+    """
+    Use after task publish signal to change the task default state.
+    By default, celery uses the state 'PENDING' for both pending and unknown
+    tasks. We want to distinguish from unknown and pending tasks. As such, we set
+    the default state to 'WAITING'. Any task that has 'PENDING' is unknown, and we can
+    return a 404.
+    """
+    # the task may not exist if sent using `send_task` which
+    # sends tasks by name, so fall back to the default result backend
+    # if that is the case.
+
     # information about task are located in headers for task messages
     # using the task protocol version 2.
     info = headers if "task" in headers else body
 
-    from celery.result import AsyncResult
-
-    task = AsyncResult(info["id"])
-    task.update_state(state="SENT")
-    print(sender, task)
-    print(task.state)
-    print(
-        "after_task_publish for task id {info[id]}".format(
-            info=info,
-        )
-    )
+    task = current_app.tasks.get(sender)
+    backend = task.backend if task else current_app.backend
+    # Change status of task to 'WAITING'
+    backend.store_result(info["id"], None, "WAITING")
