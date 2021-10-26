@@ -1,4 +1,3 @@
-from api.opennews.settings.dev import DEBUG
 from .base import *
 
 # Execute celery tasks in synchronous mode
