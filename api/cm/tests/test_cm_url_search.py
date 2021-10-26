@@ -3,15 +3,8 @@ Contains tests for CM's URL search
 """
 from django.test import TestCase
 from rest_framework.test import APIClient
-from django_rq import get_worker
 from django.urls import reverse
 from rest_framework import status
-
-
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
 
 
 class CMURLSearchAPITest(TestCase):
