@@ -36,7 +36,7 @@ urlpatterns = [
     ),
     path("admin/", admin.site.urls),
     path(
-        "api-auth/",
+        "auth/",
         include(
             "rest_framework.urls",
             namespace="rest",

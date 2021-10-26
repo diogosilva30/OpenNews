@@ -1,0 +1,105 @@
+version: "3.9"
+
+services:
+
+  # NGINX reverse proxy
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - nginx-certs:/etc/nginx/certs
+      - nginx-vhost:/etc/nginx/vhost.d
+      - nginx-html:/usr/share/nginx/html
+    depends_on:
+      - api
+    restart: always
+
+  # Automatically generate a SSL certificate (the website gets HTTPS)
+  ssl-generator:
+    image: nginxproxy/acme-companion
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - nginx-certs:/etc/nginx/certs
+      - nginx-vhost:/etc/nginx/vhost.d
+      - nginx-html:/usr/share/nginx/html
+      - acme:/etc/acme.sh
+    environment:
+      DEFAULT_EMAIL: diogosilv30@gmail.com
+    depends_on:
+      - nginx-proxy
+
+  # Service for the OpenNews api
+  api:
+    container_name: api
+    build: api
+    # Command to start the server at port 8000
+    command: gunicorn aautad.wsgi:application -b 0.0.0.0:8000 --workers 2 --threads 4 --worker-class gthread
+  
+    environment:
+      # Needed for nginx-proxy
+      VIRTUAL_HOST: api.onews.diogosilva.tech # API Domain
+      # Needed for SSL
+      LETSENCRYPT_HOST: api.onews.diogosilva.tech # API Domain
+      # Use production settings
+      DJANGO_SETTINGS_MODULE: opennews.settings.production
+
+    restart: always
+
+  # # Service for the website frontend
+  # frontend:
+  #   container_name: frontend
+  #   build: frontend # The sub-directory
+  #   # Command to start the server
+  #   command: npm run start
+  #   depends_on:
+  #     - api
+  #   environment:
+  #     # API URL for requests in server side
+  #     API_URL: http://backoffice.aautad.pt:8000 # Here we use the name of the backend service "backoffice.aautad.pt" (which matches domain)
+  #     # API URL for request in client side
+  #     API_URL_BROWSER: http://localhost:8000
+  #     # Base website URL
+  #     BASE_URL: "https://aautad.pt"
+  #     # Needed for nginx-proxy
+  #     VIRTUAL_HOST: aautad.pt
+  #     # Needed for SSL
+  #     LETSENCRYPT_HOST: aautad.pt
+  #   restart: always
+
+
+
+
+  # Redis database to serve as a message broker between backend
+  # and celeris worker
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    volumes:
+      - "redis:/data"
+    restart: always
+
+  # Celery background worker
+  celery:
+    build:
+      context: ./api
+    container_name: celery
+    command: celery -A opennews worker -l info
+    environment:
+      # Use production settings
+      DJANGO_SETTINGS_MODULE: opensnews.settings.production
+    depends_on:
+      - api
+      - redis
+
+    
+volumes:
+  redis:
+  nginx-vhost:
+  nginx-html:
+  nginx-certs:
+  acme:

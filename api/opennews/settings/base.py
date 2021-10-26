@@ -125,7 +125,6 @@ STATIC_URL = "/static/"
 
 
 # Celery settings
-from celery.schedules import crontab
 
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
