@@ -2,17 +2,21 @@
 Module containg the concrete CMNewsFactory
 """
 import requests
+import datetime
 import os
 import json
 from lxml import html
 from urllib.parse import urlparse
+from core.utils import datetime_from_string
+
+from typeguard import typechecked
 
 
 from core.models import NewsFactory, News
 from core.exceptions import UnsupportedNews
-from core.utils import datetime_from_string
 
 
+@typechecked
 class CMNewsFactory(NewsFactory):
     """
     Performs and stores different types of search in CM's website
@@ -50,7 +54,7 @@ class CMNewsFactory(NewsFactory):
         return session
 
     @staticmethod
-    def _parse_cm_news_info(html_tree, is_opinion):
+    def _parse_cm_news_info(html_tree, is_opinion) -> tuple:
         text = html_tree.xpath(
             "//div[@class='texto_container paywall']//text()[not(ancestor::aside)][not(ancestor::div[@class='inContent'])][not(ancestor::blockquote)]"
         )
@@ -153,13 +157,13 @@ class CMNewsFactory(NewsFactory):
         (
             text,
             description,
-            date,
+            published_at,
             authors,
         ) = parse_func(tree, is_opinion)
 
-        # Date must be parsed and converted
-        # to ISO 8601 format.
-        date = datetime_from_string(date).isoformat()
+        # Date must be parsed
+        published_at = datetime_from_string(published_at)
+
         # Remove ads in case they exist
         text = text.split("Para aceder a todos os Exclusivos CM")[0].split(
             "Ler o artigo completo"
@@ -174,7 +178,7 @@ class CMNewsFactory(NewsFactory):
             description,
             url,
             rubric,
-            date,
+            published_at,
             authors,
             is_opinion,
             text,
@@ -184,8 +188,8 @@ class CMNewsFactory(NewsFactory):
     def from_keyword_search(
         cls,
         keywords: list[str],
-        starting_date: str,
-        ending_date: str,
+        starting_date: datetime.date,
+        ending_date: datetime.date,
     ) -> list[News]:
         return super().from_keyword_search(
             keywords, starting_date, ending_date
@@ -195,7 +199,7 @@ class CMNewsFactory(NewsFactory):
     def from_tag_search(
         cls,
         tags: list[str],
-        starting_date: str,
-        ending_date: str,
+        starting_date: datetime.date,
+        ending_date: datetime.date,
     ) -> NewsFactory:
         return super().from_tag_search(tags, starting_date, ending_date)

@@ -1,24 +1,23 @@
 """
 Module containg the concrete PublicoNewsFactory
 """
+import datetime
 import requests
 import os
 import json
 from urllib.parse import urlparse
-import itertools
 from lxml import html
 
+from django.utils.dateparse import parse_datetime
+
+from typeguard import typechecked
 
 from core.models import NewsFactory, News
 from core.exceptions import UnsupportedNews
-from core.utils import datetime_from_string
 
 
-class PublicoNewsFactory(
-    # TagSearchMixin,
-    # KeywordSearchMixin,
-    NewsFactory,
-):
+@typechecked
+class PublicoNewsFactory(NewsFactory):
     """
     Performs and stores different types of search in Publico's website
     """
@@ -68,8 +67,8 @@ class PublicoNewsFactory(
     def from_tag_search(
         cls,
         tags: list[str],
-        starting_date: str,
-        ending_date: str,
+        starting_date: datetime.date,
+        ending_date: datetime.date,
     ) -> NewsFactory:
 
         # Create news URL list
@@ -84,41 +83,23 @@ class PublicoNewsFactory(
             # Flag to stop the search
             stop_entire_search = False
 
-            # Parse `starting_date`
-            starting_date = datetime_from_string(
-                starting_date, order="YMD"
-            ).date()
-            # Parse `ending_date`
-            ending_date = datetime_from_string(ending_date, order="YMD").date()
-
             while (
                 response := requests.get(
                     f"https://www.publico.pt/api/list/{tag}?page={page_number}"
                 ).text
             ) != "[]":
+
                 # Read the json data
                 data = json.loads(response)
                 # iterate over each news dict
                 for item in data:
                     # If news out of lower bound date, stop the search
-                    if (
-                        datetime_from_string(
-                            item.get("data"),
-                            order="YMD",
-                        ).date()
-                        < starting_date
-                    ):
+                    if parse_datetime(item.get("data")).date() < starting_date:
                         stop_entire_search = True  # Will break main loop
                         break  # Will break current loop
 
                     # If news more recent that end date, SKIP AHEAD
-                    elif (
-                        datetime_from_string(
-                            item.get("data"),
-                            order="YMD",
-                        ).date()
-                        > ending_date
-                    ):
+                    elif parse_datetime(item.get("data")).date() > ending_date:
                         continue
 
                     # If news inside the date rage, collect the URL
@@ -129,10 +110,6 @@ class PublicoNewsFactory(
                 # Increment page
                 page_number += 1
 
-        # `collected_news_urls` is a list of lists. Combine into a single list
-        collected_news_urls = list(
-            itertools.chain.from_iterable(collected_news_urls)
-        )
         # Remove duplicates
         collected_news_urls = list(dict.fromkeys(collected_news_urls))
 
@@ -143,8 +120,8 @@ class PublicoNewsFactory(
     def from_keyword_search(
         cls,
         keywords: list[str],
-        starting_date: str,
-        ending_date: str,
+        starting_date: datetime.date,
+        ending_date: datetime.date,
     ) -> list[News]:
 
         # Create news URL list
@@ -156,11 +133,6 @@ class PublicoNewsFactory(
             keyword = keyword.lower()
             # Start page number
             page_number = 1
-
-            # Parse `starting_date`
-            starting_date = datetime_from_string(starting_date, order="YMD")
-            # Parse `ending_date`
-            ending_date = datetime_from_string(ending_date, order="YMD")
 
             while (
                 response := requests.get(
@@ -176,10 +148,6 @@ class PublicoNewsFactory(
                 # Increment page
                 page_number += 1
 
-        # `collected_news_urls` is a list of lists. Combine into a single list
-        collected_news_urls = list(
-            itertools.chain.from_iterable(collected_news_urls)
-        )
         # Remove duplicates
         collected_news_urls = list(dict.fromkeys(collected_news_urls))
 
@@ -243,7 +211,7 @@ class PublicoNewsFactory(
         # Get rubric
         rubric = json_doc["seccao"]
         # Get news date, already is in ISO 8601 format
-        date = json_doc["data"]
+        published_at = parse_datetime(json_doc["data"])
 
         # Extract text
         text = " ".join(
@@ -267,7 +235,7 @@ class PublicoNewsFactory(
             description,
             url,
             rubric,
-            date,
+            published_at,
             authors,
             is_opinion,
             text,

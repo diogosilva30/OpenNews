@@ -1,4 +1,7 @@
 from django.test import TestCase
+from django.utils.dateparse import parse_datetime, parse_date
+import datetime
+
 from ..models import PublicoNewsFactory
 
 
@@ -35,7 +38,9 @@ class CMURLSearchAPITest(TestCase):
             "https://www.publico.pt/2021/01/31/politica/noticia/chega-pede-demissao-conselho-directivo-inem-1948705",
         )
 
-        self.assertEqual(news_obj.date, "2021-01-31T16:54:12")
+        self.assertEqual(
+            news_obj.published_at, datetime.datetime(2021, 1, 31, 16, 54, 12)
+        )
 
         self.assertEqual(news_obj.is_opinion, False)
 
@@ -49,3 +54,25 @@ class CMURLSearchAPITest(TestCase):
             """O Chega pediu, este domingo, a demissão do conselho directivo do INEM, na sequência da aplicação de vacinas contra o covid-19 a cidadãos que não se encontravam nos grupos prioritários.""",
             news_obj.text,
         )
+
+    def test_from_tag_search(self):
+        """
+        Tests the correct scraping of news by tags
+        """
+        starting_date = parse_date("2020-3-1")
+        ending_date = parse_date("2020-3-15")
+        factory = PublicoNewsFactory.from_tag_search(
+            ["luanda leaks"],
+            starting_date=starting_date,
+            ending_date=ending_date,
+        )
+
+        # Number of news should be 3
+        self.assertEqual(len(factory.news), 3)
+
+        for news in factory.news:
+            # Check that date is inside bound
+            self.assertTrue(
+                starting_date <= news.published_at.date() <= ending_date,
+                msg="News out of expected date range",
+            )

@@ -2,8 +2,12 @@
 Contains the core news models
 """
 from __future__ import annotations
+import datetime
 import requests
 import json
+
+from typeguard import typechecked
+
 
 from abc import (
     ABC,
@@ -15,9 +19,12 @@ from abc import (
 from .exceptions import UnsupportedNews
 
 
+@typechecked
 class News(ABC):
     """
-    Abstract news base model for storing details about a particular news. Derivated classes should implement some methods
+    Abstract news base model for storing details about a particular news. Derivated classes should implement some methods.
+
+    Type hints are hard checked, and a error is raised if type does not match the type hint.
 
     * Abstract class
     """
@@ -28,7 +35,7 @@ class News(ABC):
         description: str,
         url: str,
         rubric: str,
-        date: str,
+        published_at: datetime.datetime,
         authors: list[str],
         is_opinion: bool,
         text: str,
@@ -46,8 +53,8 @@ class News(ABC):
             The news URL
         rubric: str
             The news rubric
-        date: str
-            The news date in ISO 8601 format
+        published_at: datetime
+            The news published datetime
         authors: list of str
             A list of the news authors
         is_opinion: bool
@@ -60,18 +67,22 @@ class News(ABC):
         self.url = url
         self.rubric = rubric
         self.is_opinion = is_opinion
-        self.date = date
+        self.published_at = published_at
         self.authors = authors
         self.text = text
 
     @property
-    def json(self):
+    def json(self) -> str:
         return json.dumps(self.__dict__)
 
 
+@typechecked
 class NewsFactory(ABC):
     """
-    Abstract news factory
+    Abstract news factory.
+
+    Type hints are hard checked, and a error is raised if type does not match the type hint.
+
     """
 
     def __init__(self) -> None:
@@ -121,8 +132,8 @@ class NewsFactory(ABC):
     def from_tag_search(
         cls,
         tags: list[str],
-        starting_date: str,
-        ending_date: str,
+        starting_date: datetime.date,
+        ending_date: datetime.date,
     ) -> NewsFactory:
         """
         Abstract class method that child classes must implement
@@ -133,9 +144,9 @@ class NewsFactory(ABC):
     def from_keyword_search(
         cls,
         keywords: list[str],
-        starting_date: str,
-        ending_date: str,
-    ) -> list[News]:
+        starting_date: datetime.date,
+        ending_date: datetime.date,
+    ) -> NewsFactory:
         """
         Abstract class method that child classes must implement
         to instantiate a factory with news collected from a keyword search.
