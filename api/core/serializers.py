@@ -12,13 +12,13 @@ class BaseDateSearchSerializer(serializers.Serializer):
 
     # Starting search date
     starting_date = serializers.DateField(
-        format="%Y-%m-%d",
+        format=None,  # Return date objects
         input_formats=["iso-8601"],
     )
 
     # Ending search date
     ending_date = serializers.DateField(
-        format="%Y-%m-%d",
+        format=None,  # Return date objects
         input_formats=["iso-8601"],
     )
 
@@ -80,7 +80,7 @@ class NewsSerializer(serializers.Serializer):
     url = serializers.URLField()
     rubric = serializers.CharField()
     is_opinion = serializers.BooleanField()
-    date = serializers.DateTimeField()
+    published_at = serializers.DateTimeField()
     # Allow blank authors
     authors = serializers.ListField(
         child=serializers.CharField(

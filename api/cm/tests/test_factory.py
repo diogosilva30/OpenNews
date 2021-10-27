@@ -1,3 +1,4 @@
+import datetime
 from django.test import TestCase
 from ..models import CMNewsFactory
 
@@ -35,7 +36,9 @@ class CMURLSearchAPITest(TestCase):
             "https://www.cmjornal.pt/mundo/detalhe/especialista-avisa-que-grandes-casamentos-e-festivais-acabaram-nos-proximos-anos",
         )
 
-        self.assertEqual(news_obj.date, "2021-02-07T15:19:00")
+        self.assertEqual(
+            news_obj.published_at, datetime.datetime(2021, 2, 7, 15, 19)
+        )
 
         self.assertEqual(news_obj.is_opinion, False)
 
