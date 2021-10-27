@@ -7,9 +7,12 @@ import json
 
 from abc import (
     ABC,
+    abstractclassmethod,
     abstractmethod,
     abstractstaticmethod,
 )
+
+from .exceptions import UnsupportedNews
 
 
 class News(ABC):
@@ -73,7 +76,7 @@ class NewsFactory(ABC):
 
     def __init__(self) -> None:
         # Empty list for storing found news
-        self.found_news = []
+        self.news = []
         self.session = self._login()
 
     @abstractstaticmethod
@@ -82,6 +85,60 @@ class NewsFactory(ABC):
         Concrete factories must provide their own implementation
         of this method to perform login on a particular news website,
         and return the login session.
+        """
+
+    @classmethod
+    def from_url_search(cls, urls: list[str]) -> NewsFactory:
+        """
+        Instanciates a news factory, and build the news list from
+        a list of URLs.
+
+        Parameters
+        ----------
+        urls: list of str
+            List of strings containing news URLs
+
+        Returns
+        -------
+        NewsFactory
+        """
+        instance = cls()
+        for url in urls:
+            # If valid URL
+            if instance._validate_url(url):
+                response = instance.session.get(url)
+                try:
+                    news_obj = instance.from_html_string(response.text)
+                    instance.collect(news_obj)
+                # Catch unsupported news
+                # Continue
+                except UnsupportedNews:
+                    continue
+
+        return instance
+
+    @abstractclassmethod
+    def from_tag_search(
+        cls,
+        tags: list[str],
+        starting_date: str,
+        ending_date: str,
+    ) -> NewsFactory:
+        """
+        Abstract class method that child classes must implement
+        to instantiate a factory with news collected from a tag search.
+        """
+
+    @abstractclassmethod
+    def from_keyword_search(
+        cls,
+        keywords: list[str],
+        starting_date: str,
+        ending_date: str,
+    ) -> list[News]:
+        """
+        Abstract class method that child classes must implement
+        to instantiate a factory with news collected from a keyword search.
         """
 
     def _validate_url(self, url: str) -> bool:
@@ -98,8 +155,8 @@ class NewsFactory(ABC):
         """
 
     def collect(self, news: News) -> None:
-        self.found_news.append(news)
+        self.news.append(news)
 
     @property
     def json(self):
-        return json.dumps([obj.json for obj in self.found_news])
+        return json.dumps([obj.json for obj in self.news])

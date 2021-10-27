@@ -10,19 +10,13 @@ from lxml import html
 
 
 from core.models import NewsFactory, News
-from core.mixins import (
-    URLSearchMixin,
-    TagSearchMixin,
-    KeywordSearchMixin,
-)
 from core.exceptions import UnsupportedNews
 from core.utils import datetime_from_string
 
 
 class PublicoNewsFactory(
-    URLSearchMixin,
-    TagSearchMixin,
-    KeywordSearchMixin,
+    # TagSearchMixin,
+    # KeywordSearchMixin,
     NewsFactory,
 ):
     """
@@ -70,208 +64,127 @@ class PublicoNewsFactory(
             return False
         return super()._validate_url(url)
 
-    def url_search(self, urls: list[str]) -> list[News]:
-        """
-        Iterates over a list of Publico news URLs
-        and build Publico News objects.
-
-        Parameters
-        ----------
-        url: list of str
-            List of strings containing Publico's news URLs
-
-        Returns
-        -------
-        News: list
-        """
-        news_obj_list = []
-        for url in urls:
-            # If valid URL
-            if self._validate_url(url):
-                response = self.session.get(url)
-                try:
-                    news_obj = self.from_html_string(response.text)
-                    news_obj_list.append(news_obj)
-                # Catch unsupported news
-                # Continue
-                except UnsupportedNews:
-                    continue
-
-        return news_obj_list
-
-    def _tag_search(
-        self,
-        tag: str,
-        starting_date: str,
-        ending_date: str,
-    ) -> list[News]:
-
-        # Normalize tag
-        tag = tag.replace(" ", "-").lower()
-        # Start page number
-        page_number = 1
-        # Flag to stop the search
-        stop_entire_search = False
-        # Create news URL list
-        collected_news_urls = []
-
-        # Parse `starting_date`
-        starting_date = datetime_from_string(starting_date, order="YMD").date()
-        # Parse `ending_date`
-        ending_date = datetime_from_string(ending_date, order="YMD").date()
-
-        while (
-            response := requests.get(
-                f"https://www.publico.pt/api/list/{tag}?page={page_number}"
-            ).text
-        ) != "[]":
-            # Read the json data
-            data = json.loads(response)
-            # iterate over each news dict
-            for item in data:
-                # If news out of lower bound date, stop the search
-                if (
-                    datetime_from_string(
-                        item.get("data"),
-                        order="YMD",
-                    ).date()
-                    < starting_date
-                ):
-                    stop_entire_search = True  # Will break main loop
-                    break  # Will break current loop
-
-                # If news more recent that end date, SKIP AHEAD
-                elif (
-                    datetime_from_string(
-                        item.get("data"),
-                        order="YMD",
-                    ).date()
-                    > ending_date
-                ):
-                    continue
-
-                # If news inside the date rage, collect the URL
-                else:
-                    collected_news_urls.append(item.get("shareUrl"))
-            if stop_entire_search:
-                break
-            # Increment page
-            page_number += 1
-
-        return collected_news_urls
-
-    def tag_search(
-        self,
+    @classmethod
+    def from_tag_search(
+        cls,
         tags: list[str],
         starting_date: str,
         ending_date: str,
-    ) -> list[News]:
-        """
-        Performs a tag search of Publico news between the date range,
-        merges the news from all tags.
+    ) -> NewsFactory:
 
-        Parameters
-        ----------
-        starting_date: str
-            The starting search date
-        ending_date: str
-            The ending search date
-        tags: list of str
-            The tags to search for
-        Returns
-        -------
-        PublicoNews: list
-        """
-
-        # Collect urls from each tag
-        news_urls = [
-            self._tag_search(tag, starting_date, ending_date) for tag in tags
-        ]
-
-        # `news_urls` is a list of lists. Combine into a single list
-        news_urls = list(itertools.chain.from_iterable(news_urls))
-        # Remove duplicates
-        news_urls = list(dict.fromkeys(news_urls))
-
-        # Perform URL search on each collected url
-        return self.url_search(news_urls)
-
-    def _keyword_search(
-        self,
-        keyword: str,
-        starting_date: str,
-        ending_date: str,
-    ) -> list[News]:
-
-        # Normalize keyword
-        keyword = keyword.lower()
-        # Start page number
-        page_number = 1
         # Create news URL list
         collected_news_urls = []
 
-        # Parse `starting_date`
-        starting_date = datetime_from_string(starting_date, order="YMD")
-        # Parse `ending_date`
-        ending_date = datetime_from_string(ending_date, order="YMD")
+        # Iterate over each tag
+        for tag in tags:
+            # Normalize tag
+            tag = tag.replace(" ", "-").lower()
+            # Start page number
+            page_number = 1
+            # Flag to stop the search
+            stop_entire_search = False
 
-        while (
-            response := requests.get(
-                f"https://www.publico.pt/api/list/search/?query={keyword}&start={starting_date.strftime('%d-%m-%Y')}&end={ending_date.strftime('%d-%m-%Y')}&page={page_number}"
-            ).text
-        ) != "[]":
-            # Read the json data
-            data = json.loads(response)
-            # Get the URLs (this search type needs fullUrl)
-            urls = [d.get("fullUrl") for d in data]
-            # Append URLs to list
-            collected_news_urls += urls
-            # Increment page
-            page_number += 1
+            # Parse `starting_date`
+            starting_date = datetime_from_string(
+                starting_date, order="YMD"
+            ).date()
+            # Parse `ending_date`
+            ending_date = datetime_from_string(ending_date, order="YMD").date()
 
-        return collected_news_urls
+            while (
+                response := requests.get(
+                    f"https://www.publico.pt/api/list/{tag}?page={page_number}"
+                ).text
+            ) != "[]":
+                # Read the json data
+                data = json.loads(response)
+                # iterate over each news dict
+                for item in data:
+                    # If news out of lower bound date, stop the search
+                    if (
+                        datetime_from_string(
+                            item.get("data"),
+                            order="YMD",
+                        ).date()
+                        < starting_date
+                    ):
+                        stop_entire_search = True  # Will break main loop
+                        break  # Will break current loop
 
-    def keyword_search(
-        self,
+                    # If news more recent that end date, SKIP AHEAD
+                    elif (
+                        datetime_from_string(
+                            item.get("data"),
+                            order="YMD",
+                        ).date()
+                        > ending_date
+                    ):
+                        continue
+
+                    # If news inside the date rage, collect the URL
+                    else:
+                        collected_news_urls.append(item.get("shareUrl"))
+                if stop_entire_search:
+                    break
+                # Increment page
+                page_number += 1
+
+        # `collected_news_urls` is a list of lists. Combine into a single list
+        collected_news_urls = list(
+            itertools.chain.from_iterable(collected_news_urls)
+        )
+        # Remove duplicates
+        collected_news_urls = list(dict.fromkeys(collected_news_urls))
+
+        # Pass collected URLs to URL Search
+        return cls.from_url_search(collected_news_urls)
+
+    @classmethod
+    def from_keyword_search(
+        cls,
         keywords: list[str],
         starting_date: str,
         ending_date: str,
     ) -> list[News]:
-        """
-        Performs a keyword search of Publico news between the date range,
-        merges the news from all keywords.
 
-        Parameters
-        ----------
+        # Create news URL list
+        collected_news_urls = []
 
-        starting_date: str
-            The starting search date
-        ending_date: str
-            The ending search date
-        keywords: list of str
-            A list of keywords to search for.
+        # Iterate over each keyword
+        for keyword in keywords:
+            # Normalize keyword
+            keyword = keyword.lower()
+            # Start page number
+            page_number = 1
 
-        Returns
-        -------
-        News: list
-        """
-        # Collect urls from each keyword
-        news_urls = [
-            self._keyword_search(
-                keyword,
-                starting_date,
-                ending_date,
-            )
-            for keyword in keywords
-        ]
+            # Parse `starting_date`
+            starting_date = datetime_from_string(starting_date, order="YMD")
+            # Parse `ending_date`
+            ending_date = datetime_from_string(ending_date, order="YMD")
 
-        # `news_urls` is a list of lists. Combine into a single list
-        news_urls = list(itertools.chain.from_iterable(news_urls))
+            while (
+                response := requests.get(
+                    f"https://www.publico.pt/api/list/search/?query={keyword}&start={starting_date.strftime('%d-%m-%Y')}&end={ending_date.strftime('%d-%m-%Y')}&page={page_number}"
+                ).text
+            ) != "[]":
+                # Read the json data
+                data = json.loads(response)
+                # Get the URLs (this search type needs fullUrl)
+                urls = [d.get("fullUrl") for d in data]
+                # Append URLs to list
+                collected_news_urls += urls
+                # Increment page
+                page_number += 1
+
+        # `collected_news_urls` is a list of lists. Combine into a single list
+        collected_news_urls = list(
+            itertools.chain.from_iterable(collected_news_urls)
+        )
         # Remove duplicates
-        news_urls = list(dict.fromkeys(news_urls))
+        collected_news_urls = list(dict.fromkeys(collected_news_urls))
 
-        # Perform URL search on each collected url
-        return self.url_search(news_urls)
+        # Pass collected URLs to URL Search
+        return cls.from_url_search(collected_news_urls)
 
     def from_html_string(self, html_string: str) -> News:
         """
@@ -345,6 +258,9 @@ class PublicoNewsFactory(
             "Subscreva gratuitamente as newsletters e receba o melhor da actualidade e os trabalhos mais profundos do Público.",
             "",
         )
+
+        # Remove extra white spaces
+        text = " ".join(text.split())
 
         return News(
             title,

@@ -8,20 +8,12 @@ from lxml import html
 from urllib.parse import urlparse
 
 
-from core.mixins import (
-    URLSearchMixin,
-    TagSearchMixin,
-    KeywordSearchMixin,
-)
 from core.models import NewsFactory, News
 from core.exceptions import UnsupportedNews
 from core.utils import datetime_from_string
 
 
-class CMNewsFactory(
-    URLSearchMixin,
-    NewsFactory,
-):
+class CMNewsFactory(NewsFactory):
     """
     Performs and stores different types of search in CM's website
     """
@@ -56,36 +48,6 @@ class CMNewsFactory(
         )
 
         return session
-
-    @classmethod
-    def from_url_search(cls, url_list: list[str]) -> News:
-        """
-        Iterates over a list of CM news URLs
-        and build CM News objects.
-
-        Parameters
-        ----------
-        url: list of str
-            List of strings containing CM's news URLs
-
-        Returns
-        -------
-        News: list
-        """
-        instance = cls()
-        for url in url_list:
-            # If valid URL
-            if instance._validate_url(url):
-                response = instance.session.get(url)
-                try:
-                    news_obj = instance.from_html_string(response.text)
-                    instance.collect(news_obj)
-                # Catch unsupported news
-                # Continue
-                except UnsupportedNews:
-                    continue
-
-        return instance
 
     @staticmethod
     def _parse_cm_news_info(html_tree, is_opinion):
@@ -217,3 +179,23 @@ class CMNewsFactory(
             is_opinion,
             text,
         )
+
+    @classmethod
+    def from_keyword_search(
+        cls,
+        keywords: list[str],
+        starting_date: str,
+        ending_date: str,
+    ) -> list[News]:
+        return super().from_keyword_search(
+            keywords, starting_date, ending_date
+        )
+
+    @classmethod
+    def from_tag_search(
+        cls,
+        tags: list[str],
+        starting_date: str,
+        ending_date: str,
+    ) -> NewsFactory:
+        return super().from_tag_search(tags, starting_date, ending_date)
