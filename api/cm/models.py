@@ -190,7 +190,7 @@ class CMNewsFactory(NewsFactory):
         keywords: list[str],
         starting_date: datetime.date,
         ending_date: datetime.date,
-    ) -> list[News]:
+    ) -> NewsFactory:
         """
         Searches news in CM's website by keywords in a date range.
         """

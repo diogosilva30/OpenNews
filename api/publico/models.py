@@ -113,7 +113,7 @@ class PublicoNewsFactory(NewsFactory):
                 # Increment page
                 page_number += 1
 
-        # Remove duplicates
+        # Remove (possible) duplicates
         collected_news_urls = list(dict.fromkeys(collected_news_urls))
 
         # Pass collected URLs to URL Search
@@ -151,7 +151,7 @@ class PublicoNewsFactory(NewsFactory):
                 # Increment page
                 page_number += 1
 
-        # Remove duplicates
+        # Remove (possible) duplicates
         collected_news_urls = list(dict.fromkeys(collected_news_urls))
 
         # Pass collected URLs to URL Search

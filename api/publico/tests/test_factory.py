@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.utils.dateparse import parse_datetime, parse_date
 import datetime
 
 from ..models import PublicoNewsFactory
@@ -59,8 +58,8 @@ class CMURLSearchAPITest(TestCase):
         """
         Tests the correct scraping of news by tags
         """
-        starting_date = parse_date("2020-3-1")
-        ending_date = parse_date("2020-3-15")
+        starting_date = datetime.datetime(2020, 3, 1).date()
+        ending_date = datetime.datetime(2020, 3, 15).date()
         factory = PublicoNewsFactory.from_tag_search(
             ["luanda leaks"],
             starting_date=starting_date,

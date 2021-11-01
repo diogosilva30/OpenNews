@@ -52,3 +52,25 @@ class CMURLSearchAPITest(TestCase):
             """Um professor em epidemiologia genética do King's College London, no Reino Unido, afirmou que grandes eventos como casamentos não vão acontecer como "antigamente" durante os próximos anos devido à ameaça que representa o coronavírus.""",
             news_obj.text,
         )
+
+    def test_from_keyword_search(self):
+        """
+        Tests the correct scraping of news by keywords
+        """
+        starting_date = datetime.datetime(2020, 3, 1).date()
+        ending_date = datetime.datetime(2020, 3, 15).date()
+        factory = CMNewsFactory.from_keyword_search(
+            ["Luanda leaks"],
+            starting_date=starting_date,
+            ending_date=ending_date,
+        )
+
+        # Number of news should be greater than 0
+        self.assertGreater(len(factory.news), 0)
+
+        for news in factory.news:
+            # Check that date is inside bound
+            self.assertTrue(
+                starting_date <= news.published_at.date() <= ending_date,
+                msg="News out of expected date range",
+            )
