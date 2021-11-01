@@ -38,7 +38,7 @@ services:
     container_name: api
     build: api
     # Command to start the server at port 8000
-    command: gunicorn aautad.wsgi:application -b 0.0.0.0:8000 --workers 2 --threads 4 --worker-class gthread
+    command: gunicorn opensnews.wsgi:application -b 0.0.0.0:8000 --workers 2 --threads 4 --worker-class gthread
   
     environment:
       # Needed for nginx-proxy
