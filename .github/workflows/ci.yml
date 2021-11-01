@@ -1,0 +1,102 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: CI
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "api/**" # Run on api updates
+      - "frontend/**" # Run on frontend updates
+      - "docker-compose.yml"
+  pull_request:
+    branches: [master]
+  
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # First job: Checks if API in a good state
+  api-check-job:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: opennews.settings.testing
+    # Working directory for this job is api
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      # checking our the code at current commit that triggers the workflow
+      - name: Checkout code 
+        uses: actions/checkout@v2
+      
+      # caching dependency will make our build faster.
+      - name: Cache dependency 
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      # setting python environment to 3.9
+      - name: Setup python environment 
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+        
+      # checking the python version to see if 3.x is installed.
+      - name: Check Python version 
+        run: python --version
+
+      # install application requirements
+      - name: Install requirements 
+        run: pip install -r requirements.txt
+
+      # install application dev requirements
+      - name: Install requirements (dev) 
+        run: pip install -r requirements_dev.txt
+
+      # check correct formatting
+      - name: Black Formatter Check
+        uses: jpetrucciani/black-check@20.8b1
+      
+      # run migrations
+      - name: Run Migrations 
+        run: python manage.py migrate
+
+      # Checks if in deployment conditions
+      - name: Check if Deployable 
+        run: python manage.py check --deploy
+      
+      # Run the tests with coverage
+      - name: Run tests (with coverage report)
+        working-directory: ./api
+        run: |
+          coverage run -m pytest
+
+      # Upload coverage report
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+
+
+  # -------------------------------------------------------------------------------------------------------
+  # Second job: Deploy to server
+  deploy-job:
+    runs-on: self-hosted
+    needs: [api-check-job] # will be fired if and only if api-check-job is passed.
+    # Only trigger a deploy for a PUSH on master branch
+    # https://docs.github.com/pt/actions/reference/context-and-expression-syntax-for-github-actions#github-context
+    # https://docs.github.com/pt/actions/reference/workflow-syntax-for-github-actions
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    steps:
+        # Get code from repository
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        # Run docker composer
+      - name: Run Docker Compose
+        run: docker-compose up --build -d --remove-orphans
+        # Clean unused data to save space
+      - name: Clean Unused Data
+        run: docker system prune -a -f
