@@ -7,9 +7,9 @@ import os
 import json
 from lxml import html
 from urllib.parse import urlparse
-from core.utils import datetime_from_string
 
 from typeguard import typechecked
+from core.utils import datetime_from_string
 
 
 from core.models import NewsFactory, News
@@ -191,9 +191,51 @@ class CMNewsFactory(NewsFactory):
         starting_date: datetime.date,
         ending_date: datetime.date,
     ) -> list[News]:
-        return super().from_keyword_search(
-            keywords, starting_date, ending_date
-        )
+        """
+        Searches news in CM's website by keywords in a date range.
+        """
+        # Create news URL list
+        collected_news_urls = []
+
+        # Format dates
+        starting_date = starting_date.strftime("%d/%m/%Y")
+        ending_date = ending_date.strftime("%d/%m/%Y")
+
+        # Iterate over the keywords
+        for keyword in keywords:
+            # Normalize keyword
+            keyword = keyword.lower().replace(" ", "-")
+            # Start position number
+            index = 0
+
+            while (
+                response := requests.get(
+                    f"https://www.cmjornal.pt/pesquisa/loadmore/?Query={keyword}&FirstPosition={index}&LastPosition={index+9}&Sort=Date&RangeType=Date&FromStr={starting_date}&ToStr={ending_date}&ContentType=All&X-Requested-With=XMLHttpRequest"
+                ).text
+            ) != "\r\n":
+
+                tree = html.fromstring(response)
+                for article in tree.xpath("//article"):
+                    url = article.xpath(".//h2/a")[0].attrib["data-name"]
+                    # Make sure URL is correct. Check if it's not a href
+                    url = (
+                        "https://www.cmjornal.pt" + url
+                        if url[0] == "/"
+                        else url
+                    )
+
+                    # Discard url junk
+                    url = url.split("?ref")[0]
+                    collected_news_urls.append(url)
+
+                # CM returns news in batches of 9
+                index += 9
+
+            # Remove (possible) duplicates
+            collected_news_urls = list(dict.fromkeys(collected_news_urls))
+
+            # Pass collected URLs to URL Search
+            return cls.from_url_search(collected_news_urls)
 
     @classmethod
     def from_tag_search(

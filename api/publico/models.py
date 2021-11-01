@@ -70,6 +70,9 @@ class PublicoNewsFactory(NewsFactory):
         starting_date: datetime.date,
         ending_date: datetime.date,
     ) -> NewsFactory:
+        """
+        Searches news in Publico's website by tags, in a date range.
+        """
 
         # Create news URL list
         collected_news_urls = []
