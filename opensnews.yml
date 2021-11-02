@@ -33,7 +33,7 @@ services:
 
   # Service for the OpenNews api
   api:
-    build: api
+    image: spamz23/opennews:api
     # Command to start the server at port 8000
     command: gunicorn opennews.wsgi:application -b 0.0.0.0:8000 --workers 2 --threads 4 --worker-class gthread
   
