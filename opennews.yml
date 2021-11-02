@@ -80,8 +80,7 @@ services:
 
   # Celery background worker
   celery:
-    build:
-      context: ./api
+    image: spamz23/opennews:api
     command: celery -A opennews worker -l info
     environment:
       # Use production settings
