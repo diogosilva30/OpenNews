@@ -10,6 +10,7 @@ on:
       - "api/**" # Run on api updates
       - "frontend/**" # Run on frontend updates
       - "docker-compose.yml"
+      - ".github/ci.yml"
   pull_request:
     branches: [master]
   
