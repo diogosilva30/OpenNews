@@ -19,3 +19,4 @@ typeguard==2.13.0
 django-vault-helpers==0.8.1
 boto3
 dj_database_url
+psycopg2
