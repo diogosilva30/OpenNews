@@ -97,13 +97,15 @@ services:
     ports:
       - 8200:8200
     environment:
-      VAULT_ADDR: http://127.0.0.1:8200 # Run on port 8200
-      VAULT_LOCAL_CONFIG: {"backend":{"file":{"path":"vault/file"}},"listener":{"tcp":{"address":"0.0.0.0:8200","tls_disable":1}},"ui":true, "disable_mlock":true}
+      - VAULT_ADDR=http://127.0.0.1:8200 # Run on port 8200
+      - VAULT_API_ADDR=http://127.0.0.1:8200
+      - VAULT_LOCAL_CONFIG={"backend":{"file":{"path":"vault/file"}},"listener":{"tcp":{"address":"0.0.0.0:8200","tls_disable":1}},"ui":true, "disable_mlock":true}
       # Needed for nginx-proxy
-      VIRTUAL_HOST: vault.onews.diogosilva.tech
+      - VIRTUAL_HOST=vault.onews.diogosilva.tech
       # Needed for SSL
-      LETSENCRYPT_HOST: vault.onews.diogosilva.tech
-
+      - LETSENCRYPT_HOST=vault.onews.diogosilva.tech
+    cap_add:
+      - IPC_LOCK
     command: server
     
 

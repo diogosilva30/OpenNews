@@ -11,7 +11,9 @@ drf-yasg[validation]
 # For background work (async work)
 celery==5.1.2
 redis==3.5.3
-
 # ..................................................................
 # For hard type checking
 typeguard==2.13.0
+# ..................................................................
+# For Interaction with Hashicorp Vault
+django-vault-helpers==0.8.1
