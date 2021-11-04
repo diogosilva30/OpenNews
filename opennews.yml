@@ -15,7 +15,6 @@ services:
       - nginx-html:/usr/share/nginx/html
     depends_on:
       - api
-    restart: always
 
   # Automatically generate a SSL certificate (the website gets HTTPS)
   ssl-generator:
@@ -46,7 +45,6 @@ services:
       DJANGO_SETTINGS_MODULE: opennews.settings.production
       VAULT_URL: http://vault:8200/
 
-    restart: always
 
   # # Service for the website frontend
   # frontend:
@@ -66,7 +64,6 @@ services:
   #     VIRTUAL_HOST: aautad.pt
   #     # Needed for SSL
   #     LETSENCRYPT_HOST: aautad.pt
-  #   restart: always
 
 
 
@@ -77,7 +74,6 @@ services:
     image: "redis:alpine"
     volumes:
       - "redis:/data"
-    restart: always
 
   # Celery background worker
   celery:
@@ -85,7 +81,7 @@ services:
     command: celery -A opennews worker -l info
     environment:
       # Use production settings
-      DJANGO_SETTINGS_MODULE: opensnews.settings.production
+      DJANGO_SETTINGS_MODULE: opennews.settings.production
     depends_on:
       - api
       - redis
