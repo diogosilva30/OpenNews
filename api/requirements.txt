@@ -15,8 +15,5 @@ redis==3.5.3
 # For hard type checking
 typeguard==2.13.0
 # ..................................................................
-# For Interaction with Hashicorp Vault
-django-vault-helpers==0.8.1
-boto3
-dj_database_url
-psycopg2
+# For interaction with Hashicorp Vault
+hvac==0.11.2

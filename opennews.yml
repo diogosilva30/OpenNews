@@ -44,6 +44,7 @@ services:
       LETSENCRYPT_HOST: api.onews.diogosilva.tech # API Domain
       # Use production settings
       DJANGO_SETTINGS_MODULE: opennews.settings.production
+      VAULT_URL: http://vault:8200/
 
     restart: always
 

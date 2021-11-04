@@ -305,3 +305,4 @@ npm-debug.log
 
 # and uncomment the following lines
 # .pnp.*
+api/.vault-token.lock

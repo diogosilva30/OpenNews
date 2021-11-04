@@ -1,13 +1,24 @@
 from .base import *
-import vaulthelpers
 
-# Instantiate key getter from HashiCorp Vault
-api_keys = vaulthelpers.EnvironmentConfig(path="kv/api/", kv_version=2)
+from .vault import Vault
+
+unseal_keys = os.environ["VAULT_KEYS_CSV"].split(",")
+
+# Create Vault instance
+VAULT = Vault(
+    vault_url=os.environ["VAULT_URL"],
+    vault_token=os.environ["VAULT_TOKEN"],
+    ensure_unseal=True,
+    unseal_keys=unseal_keys,
+)
 
 
 DEBUG = False
 
-SECRET_KEY = api_keys.get("DJANGO_SECRET_KEY")
+SECRET_KEY = VAULT.get_secret_from_path_and_key(
+    path="api",
+    key="DJANGO_SECRET_KEY",
+)
 
 ALLOWED_HOSTS = ["api.onews.diogosilva.tech", "localhost", "127.0.0.1"]
 
