@@ -88,6 +88,10 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     needs: [api-check-job] # will be fired if and only if api-check-job is passed.
+    # Only trigger a deploy for a PUSH on master branch
+    # https://docs.github.com/pt/actions/reference/context-and-expression-syntax-for-github-actions#github-context
+    # https://docs.github.com/pt/actions/reference/workflow-syntax-for-github-actions
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
