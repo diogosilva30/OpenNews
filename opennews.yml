@@ -2,57 +2,44 @@ version: "3.9"
 
 services:
 
-  # NGINX reverse proxy
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy
+  # Traefik for reverse proxy and load balancing
+  traefik:
+    image: traefik:v2.3
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - nginx-certs:/etc/nginx/certs
-      - nginx-vhost:/etc/nginx/vhost.d
-      - nginx-html:/usr/share/nginx/html
-    depends_on:
-      - api
-
-  # Automatically generate a SSL certificate (the website gets HTTPS)
-  ssl-generator:
-    image: nginxproxy/acme-companion
+        - "80:80"
+    command:
+      - --providers.docker.swarmmode
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager # Deploy Traefik on a manager node
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - nginx-certs:/etc/nginx/certs
-      - nginx-vhost:/etc/nginx/vhost.d
-      - nginx-html:/usr/share/nginx/html
-      - acme:/etc/acme.sh
-    environment:
-      DEFAULT_EMAIL: diogosilv30@gmail.com
-    depends_on:
-      - nginx-proxy
+
 
   # Service for the OpenNews api
   api:
     image: spamz23/opennews:api
+
     # Command to start the server at port 8000
-    command: gunicorn opennews.wsgi:application -b 0.0.0.0:8000 --workers 2 --threads 4 --worker-class gthread
-  
+    command: gunicorn opennews.wsgi:application -b 0.0.0.0:8000
+
+    deploy:
+      labels:
+        - traefik.http.services.en_core_web_sm.loadbalancer.server.port=80
+        - traefik.http.routers.corporate.rule=Host(`api.onews.diogosilva.tech`) # Serve at api.onews.diogosilva.tech
+
     environment:
-      # Needed for nginx-proxy
-      VIRTUAL_HOST: api.onews.diogosilva.tech # API Domain
-      # Needed for SSL
-      LETSENCRYPT_HOST: api.onews.diogosilva.tech # API Domain
       # Use production settings
       DJANGO_SETTINGS_MODULE: opennews.settings.production
       VAULT_URL: http://vault:8200/
       VAULT_TOKEN: /run/secrets/vault_token # --------|
       VAULT_KEYS_CSV: /run/secrets/vault_keys_csv # --|-->File location of Docker secret
+
     # Mount secrets from Swarm Manager
     secrets:
       - vault_token
       - vault_keys_csv
-
-
-
 
 
   # Redis database to serve as a message broker between backend
@@ -61,6 +48,7 @@ services:
     image: "redis:alpine"
     volumes:
       - "redis:/data"
+
 
   # Celery background worker
   celery:
@@ -76,26 +64,26 @@ services:
     secrets:
       - vault_token
       - vault_keys_csv
-      
+
     depends_on:
       - api
       - redis
 
+
   # Hashicorp vault for secret management
   vault:
     image: vault:1.8.4
+
     deploy:
       replicas: 1
-    ports:
-      - 8200:8200
+      labels:
+        - traefik.http.services.en_core_web_sm.loadbalancer.server.port=80
+        - traefik.http.routers.corporate.rule=Host(`vault.onews.diogosilva.tech`) # Serve at vault.onews.diogosilva.tech
+
     environment:
       - VAULT_ADDR=http://127.0.0.1:8200 # Run on port 8200
       - VAULT_API_ADDR=http://127.0.0.1:8200
       - VAULT_LOCAL_CONFIG={"backend":{"file":{"path":"vault/file"}},"listener":{"tcp":{"address":"0.0.0.0:8200","tls_disable":1}},"ui":true, "disable_mlock":true}
-      # Needed for nginx-proxy
-      - VIRTUAL_HOST=vault.onews.diogosilva.tech
-      # Needed for SSL
-      - LETSENCRYPT_HOST=vault.onews.diogosilva.tech
     cap_add:
       - IPC_LOCK
     command: server
@@ -104,10 +92,6 @@ services:
 
 volumes:
   redis:
-  nginx-vhost:
-  nginx-html:
-  nginx-certs:
-  acme:
   vault:
   
 secrets:
