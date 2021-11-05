@@ -51,24 +51,6 @@ services:
       - vault_token
       - vault_keys_csv
 
-  # # Service for the website frontend
-  # frontend:
-  #   build: frontend # The sub-directory
-  #   # Command to start the server
-  #   command: npm run start
-  #   depends_on:
-  #     - api
-  #   environment:
-  #     # API URL for requests in server side
-  #     API_URL: http://backoffice.aautad.pt:8000 # Here we use the name of the backend service "backoffice.aautad.pt" (which matches domain)
-  #     # API URL for request in client side
-  #     API_URL_BROWSER: http://localhost:8000
-  #     # Base website URL
-  #     BASE_URL: "https://aautad.pt"
-  #     # Needed for nginx-proxy
-  #     VIRTUAL_HOST: aautad.pt
-  #     # Needed for SSL
-  #     LETSENCRYPT_HOST: aautad.pt
 
 
 
