@@ -91,7 +91,8 @@ services:
     cap_add:
       - IPC_LOCK
     command: server
-    
+    volumes:
+      - vault:/vault/file
 
 volumes:
   redis:
@@ -99,7 +100,7 @@ volumes:
   nginx-html:
   nginx-certs:
   acme:
-
+  vault:
   
 secrets:
   vault_token:
