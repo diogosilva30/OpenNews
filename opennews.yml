@@ -8,7 +8,8 @@ services:
     ports:
         - "80:80"
     command:
-      - --providers.docker.swarmmode
+      - --providers.docker.swarmmode # Use Traefik with Docker Swarm Integration
+      - --api.dashboard=true # Enable Traefik Dashboard
     deploy:
       placement:
         constraints:
@@ -48,6 +49,9 @@ services:
     image: "redis:alpine"
     volumes:
       - "redis:/data"
+    deploy:
+      labels:
+        - traefik.http.services.en_core_web_sm.loadbalancer.server.port=6379
 
 
   # Celery background worker
