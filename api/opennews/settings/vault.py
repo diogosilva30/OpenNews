@@ -14,7 +14,7 @@ class Vault:
     ) -> None:
         self.client = hvac.Client(url=vault_url, token=vault_token)
 
-        if self.client.is_sealed():
+        if self.client.sys.is_sealed():
             if ensure_unseal:
                 if not unseal_keys:
                     raise AttributeError(
@@ -22,7 +22,7 @@ class Vault:
                     )
                 else:
                     # Unseal with keys
-                    self.client.sys.unseal_multi(unseal_keys)
+                    self.client.sys.submit_unseal_keys(unseal_keys)
 
             else:
                 raise AttributeError(
@@ -34,10 +34,16 @@ class Vault:
                 "Vault authentication failed. Please check credentials"
             )
 
-    def get_secret_from_path_and_key(self, path: str, key: str):
+    def get_secret(self, mount_point: str, path: str, key: str) -> str:
         """
         Returns the secret (defined by a key) located at a given path
         """
+        # Configure mount point
+        self.client.secrets.kv.configure(
+            max_versions=20,
+            mount_point=mount_point,
+        )
+
         read_response = self.client.secrets.kv.read_secret_version(path=path)
 
         return read_response["data"]["data"][key]
