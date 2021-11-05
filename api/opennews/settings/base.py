@@ -9,8 +9,22 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
 import os
+
+
+def get_env(key: str, default: str):
+    """
+    Method that returns a secret from env or from Docker.
+    In case of a Docker secret the env variable must be the file location
+    of the secret.
+    """
+    value = os.getenv(key, default)
+
+    if os.path.isfile(value):
+        with open(value) as f:
+            return f.read()
+
+    return value
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

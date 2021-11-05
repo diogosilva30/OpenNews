@@ -44,7 +44,12 @@ services:
       # Use production settings
       DJANGO_SETTINGS_MODULE: opennews.settings.production
       VAULT_URL: http://vault:8200/
-
+      VAULT_TOKEN: /run/secrets/vault_token # --------|
+      VAULT_KEYS_CSV: /run/secrets/vault_keys_csv # --|-->File location of Docker secret
+    # Mount secrets from Swarm Manager
+    secrets:
+      - vault_token
+      - vault_keys_csv
 
   # # Service for the website frontend
   # frontend:
@@ -112,3 +117,10 @@ volumes:
   nginx-html:
   nginx-certs:
   acme:
+
+  
+secrets:
+  vault_token:
+    external: true
+  vault_keys_csv:
+    external: true

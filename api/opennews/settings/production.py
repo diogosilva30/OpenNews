@@ -2,12 +2,13 @@ from .base import *
 
 from .vault import Vault
 
-unseal_keys = os.environ["VAULT_KEYS_CSV"].split(",")
+unseal_keys = get_env("VAULT_KEYS_CSV").split(",")
+
 
 # Create Vault instance
 VAULT = Vault(
-    vault_url=os.environ["VAULT_URL"],
-    vault_token=os.environ["VAULT_TOKEN"],
+    vault_url=get_env("VAULT_URL"),
+    vault_token=get_env("VAULT_TOKEN"),
     ensure_unseal=True,
     unseal_keys=unseal_keys,
 )
