@@ -87,7 +87,7 @@ services:
     deploy:
       replicas: 1
       labels:
-        - traefik.http.services.vault.loadbalancer.server.port=80
+        - traefik.http.services.vault.loadbalancer.server.port=8200 # Tell Traefik Vault runs at port 8200
         - traefik.http.routers.vault.rule=Host(`vault.onews.diogosilva.tech`) # Serve at vault.onews.diogosilva.tech
 
     environment:
