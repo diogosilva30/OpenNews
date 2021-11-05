@@ -64,7 +64,7 @@ services:
 
     deploy:
       labels:
-        - traefik.http.services.celery.loadbalancer.server.port=6379
+        - traefik.http.services.celery.loadbalancer.server.port=8000 # Tell Traefik Celery runs at port 8000 inside the container
 
     environment:
       # Use production settings
