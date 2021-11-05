@@ -19,17 +19,18 @@ class ResultsView(
         """
         Returns the results of a job
         """
+        # Get job
         job = AsyncResult(job_id)
 
+        # Pass job to serializer
         serializer = self.get_serializer(data=job)
 
-        if serializer.is_valid():
-            return Response(
-                serializer.data,
-                status=status.HTTP_200_OK,
-            )
-        else:
-            return Response(
-                serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # Check for errors (raise 400 bad request if any error)
+        serializer.is_valid(raise_exception=True)
+
+        # If serializer is valid we return a 200 response with the
+        # serializer data
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK,
+        )
