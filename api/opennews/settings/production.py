@@ -16,7 +16,9 @@ VAULT = Vault(
 
 DEBUG = False
 
-SECRET_KEY = VAULT.get_secret(path="api", key="DJANGO_SECRET_KEY")
+SECRET_KEY = VAULT.get_secret(
+    mount_point="secret", path="api", key="DJANGO_SECRET_KEY"
+)
 
 ALLOWED_HOSTS = ["api.onews.diogosilva.tech", "localhost", "127.0.0.1"]
 
