@@ -13,7 +13,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == manager # Deploy Traefik on a manager node
+          - node.role == manager # MANDATORY: Deploy Traefik on a manager node
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
@@ -27,7 +27,7 @@ services:
 
     deploy:
       labels:
-        - traefik.http.services.en_core_web_sm.loadbalancer.server.port=80
+        - traefik.http.services.api.loadbalancer.server.port=8000 # Tell Traefik to listen port 8000 on container
         - traefik.http.routers.api.rule=Host(`api.onews.diogosilva.tech`) # Serve at api.onews.diogosilva.tech
 
     environment:
@@ -58,6 +58,11 @@ services:
   celery:
     image: spamz23/opennews:api
     command: celery -A opennews worker -l info
+
+    deploy:
+      labels:
+        - traefik.http.services.celery.loadbalancer.server.port=6379
+
     environment:
       # Use production settings
       DJANGO_SETTINGS_MODULE: opennews.settings.production
