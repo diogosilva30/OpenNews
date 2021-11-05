@@ -28,7 +28,7 @@ services:
     deploy:
       labels:
         - traefik.http.services.en_core_web_sm.loadbalancer.server.port=80
-        - traefik.http.routers.corporate.rule=Host(`api.onews.diogosilva.tech`) # Serve at api.onews.diogosilva.tech
+        - traefik.http.routers.api.rule=Host(`api.onews.diogosilva.tech`) # Serve at api.onews.diogosilva.tech
 
     environment:
       # Use production settings
@@ -51,7 +51,7 @@ services:
       - "redis:/data"
     deploy:
       labels:
-        - traefik.http.services.en_core_web_sm.loadbalancer.server.port=6379
+        - traefik.http.services.redis.loadbalancer.server.port=6379
 
 
   # Celery background worker
@@ -81,8 +81,8 @@ services:
     deploy:
       replicas: 1
       labels:
-        - traefik.http.services.en_core_web_sm.loadbalancer.server.port=80
-        - traefik.http.routers.corporate.rule=Host(`vault.onews.diogosilva.tech`) # Serve at vault.onews.diogosilva.tech
+        - traefik.http.services.vault.loadbalancer.server.port=80
+        - traefik.http.routers.vault.rule=Host(`vault.onews.diogosilva.tech`) # Serve at vault.onews.diogosilva.tech
 
     environment:
       - VAULT_ADDR=http://127.0.0.1:8200 # Run on port 8200
