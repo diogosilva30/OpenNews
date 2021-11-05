@@ -14,11 +14,6 @@ class Vault:
     ) -> None:
         self.client = hvac.Client(url=vault_url, token=vault_token)
 
-        if not self.client.is_authenticated():
-            raise AttributeError(
-                "Vault authentication failed. Please check credentials"
-            )
-
         if self.client.is_sealed():
             if ensure_unseal:
                 if not unseal_keys:
@@ -33,6 +28,11 @@ class Vault:
                 raise AttributeError(
                     "Vault is sealed, and you passed `ensure_unseal` as False."
                 )
+
+        if not self.client.is_authenticated():
+            raise AttributeError(
+                "Vault authentication failed. Please check credentials"
+            )
 
     def get_secret_from_path_and_key(self, path: str, key: str):
         """
