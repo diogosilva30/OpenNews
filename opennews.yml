@@ -39,6 +39,8 @@ services:
       VAULT_URL: http://vault:8200/
       VAULT_TOKEN: /run/secrets/vault_token # --------|
       VAULT_KEYS_CSV: /run/secrets/vault_keys_csv # --|-->File location of Docker secret
+      CELERY_BROKER_URL: redis://redis:6379/ # -----|
+      CELERY_RESULT_BACKEND: redis://redis:6379/ #--|--> 'redis' (instead of e.g. localhost) because it is the name of the redis service
 
     # Mount secrets from Swarm Manager
     secrets:
