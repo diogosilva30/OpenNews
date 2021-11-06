@@ -14,7 +14,7 @@ VAULT = Vault(
 )
 
 
-DEBUG = VAULT.get_secret(mount_point="secret", path="api", key="DEBUG")
+DEBUG = bool(VAULT.get_secret(mount_point="secret", path="api", key="DEBUG"))
 
 
 SECRET_KEY = VAULT.get_secret(
