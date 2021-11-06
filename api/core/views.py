@@ -54,7 +54,6 @@ class BaseJobCreationView(mixins.CreateModelMixin, generics.GenericAPIView):
         # Create serializer from request data
         serializer = self.get_serializer(data=request.data)
 
-        raise
         # Check for request errors
         # Return a 400 response if the data was invalid.
         serializer.is_valid(raise_exception=True)
