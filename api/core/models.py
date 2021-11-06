@@ -162,11 +162,8 @@ class NewsFactory(ABC):
     def from_html_string(self, html_string: str) -> News:
         """
         Child factories must implement 'from_html_string' to
-        build a news object from a news html page.
+        build a `News` object from a news html page.
         """
-
-    def collect(self, news: News) -> None:
-        self.news.append(news)
 
     @property
     def json(self):

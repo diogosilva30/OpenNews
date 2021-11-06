@@ -34,7 +34,7 @@ class BaseJobCreationView(mixins.CreateModelMixin, generics.GenericAPIView):
     def celery_job(
         news_factory_class: NewsFactory,
         news_factory_method: str,
-        data,
+        **data,
     ):
         """
         Child classes must implement this static method to create
@@ -47,7 +47,7 @@ class BaseJobCreationView(mixins.CreateModelMixin, generics.GenericAPIView):
         factory_method = getattr(factory, news_factory_method)
 
         # Call the method with the data
-        return factory_method(data)
+        return factory_method(**data)
 
     @swagger_auto_schema(responses={201: JobSerializer()})
     def post(self, request, *args, **kwargs):
@@ -62,7 +62,7 @@ class BaseJobCreationView(mixins.CreateModelMixin, generics.GenericAPIView):
         job = self.celery_job.delay(
             self.news_factory_class,
             self.news_factory_method,
-            serializer.data,
+            **serializer.data,  # unpack dict data to factory method
         )
 
         # Create a job serializer

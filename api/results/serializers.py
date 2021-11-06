@@ -1,9 +1,10 @@
 from celery.result import AsyncResult
 from rest_framework import serializers
 from rest_framework.exceptions import NotFound
-
-from core.serializers import NewsSerializer
 from django.utils.timezone import now
+
+from core.models import NewsFactory
+from core.serializers import NewsSerializer
 
 
 class JobResultSerializer(serializers.Serializer):
@@ -13,7 +14,7 @@ class JobResultSerializer(serializers.Serializer):
     """
 
     state = serializers.CharField()
-    date_done = serializers.DateField()
+    date_done = serializers.DateTimeField()
     number_of_news = serializers.SerializerMethodField(read_only=True)
     news = NewsSerializer(many=True)
 
@@ -34,9 +35,16 @@ class JobResultSerializer(serializers.Serializer):
         if job.state == "PENDING":
             raise NotFound({"state": "NOT_FOUND"})
 
-        # Try to get the result. If result is still None,
-        # default to empty list
-        news = job.result if job.result is not None else []
+        # Try to get the news factory.
+        news_factory = job.result
+
+        # If news factory is not actually a news factory instance, we dont have results yet,
+        # so we default the collected news to a empty list.
+        # Otherwise collect news from factory.
+        if isinstance(news_factory, NewsFactory):
+            news = news_factory.news
+        else:
+            news = []
 
         return {
             "state": job.status,
