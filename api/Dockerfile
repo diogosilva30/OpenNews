@@ -1,6 +1,11 @@
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
+# Create a non-root user
+RUN useradd -u 8877 noprivileges
+# Change to non-root privilege
+USER noprivileges
+
 # Set environment varibles
 # Dont store logs in buffers, send to console
 ENV PYTHONUNBUFFERED 1  
@@ -17,6 +22,9 @@ RUN pip install -r /code/requirements.txt
 COPY . /code/
 # Set the working directory to /code/
 WORKDIR /code/
+
+RUN chown nobody:nogroup "celerybeat-schedule"
+USER nobody
 
 RUN python manage.py collectstatic --noinput
 
