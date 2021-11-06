@@ -14,7 +14,8 @@ VAULT = Vault(
 )
 
 
-DEBUG = False
+DEBUG = VAULT.get_secret(mount_point="secret", path="api", key="DEBUG")
+
 
 SECRET_KEY = VAULT.get_secret(
     mount_point="secret", path="api", key="DJANGO_SECRET_KEY"
