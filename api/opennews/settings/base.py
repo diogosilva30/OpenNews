@@ -140,8 +140,10 @@ STATIC_URL = "/static/"
 
 # Celery settings
 
-CELERY_BROKER_URL = "redis://localhost:6379"
-CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_BROKER_URL = get_env("CELERY_BROKER_URL", "redis://localhost:6379")
+CELERY_RESULT_BACKEND = get_env(
+    "CELERY_RESULT_BACKEND", "redis://localhost:6379"
+)
 CELERY_ACCEPT_CONTENT = ["json", "pickle"]
 CELERY_TASK_SERIALIZER = "pickle"
 CELERY_RESULT_SERIALIZER = "pickle"
