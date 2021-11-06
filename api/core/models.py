@@ -120,7 +120,7 @@ class NewsFactory(ABC):
                 response = instance.session.get(url)
                 try:
                     news_obj = instance.from_html_string(response.text)
-                    instance.collect(news_obj)
+                    instance.news.append(news_obj)
                 # Catch unsupported news
                 # Continue
                 except UnsupportedNews:

@@ -34,14 +34,6 @@ urlpatterns = [
         schema_view.with_ui("redoc", cache_timeout=0),
         name="schema-redoc",
     ),
-    path("admin/", admin.site.urls),
-    path(
-        "auth/",
-        include(
-            "rest_framework.urls",
-            namespace="rest",
-        ),
-    ),
     path("publico/", include("publico.urls")),
     path("cm/", include("cm.urls")),
     path("results/", include("results.urls")),
