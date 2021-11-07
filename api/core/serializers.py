@@ -30,10 +30,12 @@ class BaseDateSearchSerializer(serializers.Serializer):
                     "ending_date": "The field 'ending_date' must be greater than the field 'starting_date'"
                 }
             )
-        
+
         # Check if time delta is equal or less than 3 months (90 days)
         if (attrs["ending_date"] - attrs["starting_date"]).days > 90:
-            raise serializers.ValidationError("Please limit your date range to no more than 90 days.")
+            raise serializers.ValidationError(
+                "Please limit your date range to no more than 90 days."
+            )
 
         return super().validate(attrs)
 
@@ -47,6 +49,7 @@ class TagSearchSerializer(BaseDateSearchSerializer):
     tags = serializers.ListField(
         child=serializers.CharField(),
         allow_empty=False,
+        max_length=5,  # Maximum 5 tags
     )
 
 
@@ -59,6 +62,7 @@ class KeywordSearchSerializer(BaseDateSearchSerializer):
     keywords = serializers.ListField(
         child=serializers.CharField(),
         allow_empty=False,
+        max_length=5,  # Maximum 5 Keywords
     )
 
 
