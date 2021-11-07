@@ -75,6 +75,7 @@ class URLSearchSerializer(serializers.Serializer):
     urls = serializers.ListField(
         child=serializers.URLField(),
         allow_empty=False,
+        max_length=200,  # Maximum 200 URLs
     )
 
 
