@@ -36,3 +36,4 @@ class CMKeywordSearchView(BaseKeywordSearchView):
     """
 
     news_factory_class = CMNewsFactory
+
