@@ -8,7 +8,7 @@
 |                   Journal                    |     URL Search     |   Keyword Search   |    Topic Search    |
 | :------------------------------------------: | :----------------: | :----------------: | :----------------: |
 |      [Público](https://www.publico.pt/)      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| [Correio da Manhã](https://www.cmjornal.pt/) | :white_check_mark: |        :x:         |        :x:         |
+| [Correio da Manhã](https://www.cmjornal.pt/) | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 
 # Getting started
