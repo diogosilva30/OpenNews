@@ -5,7 +5,7 @@
 
 # Supported Journals
 
-|                   Journal                    |     URL Search     |   Keyword Search   |    Topic Search    |
+|                   Journal                    |     URL Search     |   Keyword Search   |    Tag Search      |
 | :------------------------------------------: | :----------------: | :----------------: | :----------------: |
 |      [Público](https://www.publico.pt/)      | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | [Correio da Manhã](https://www.cmjornal.pt/) | :white_check_mark: | :white_check_mark: | :white_check_mark: |
