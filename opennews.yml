@@ -82,10 +82,6 @@ services:
       - vault_token
       - vault_keys_csv
 
-    depends_on:
-      - api
-      - redis
-
 
   # Hashicorp vault for secret management
   vault:
