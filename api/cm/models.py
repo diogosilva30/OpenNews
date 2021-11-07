@@ -129,13 +129,13 @@ class CMNewsFactory(NewsFactory):
                 "perguntas",
             ]
         ):
-            raise UnsupportedNews
+            raise UnsupportedNews(url)
 
         try:
             # Get news section from url path and capitalize it
             rubric = urlparse(url).path.split("/")[1].capitalize()
         except IndexError:
-            raise UnsupportedNews
+            raise UnsupportedNews(url)
 
         # Get if news is opinion article from rubric
         is_opinion = rubric == "Opiniao"
@@ -244,4 +244,93 @@ class CMNewsFactory(NewsFactory):
         starting_date: datetime.date,
         ending_date: datetime.date,
     ) -> NewsFactory:
-        return super().from_tag_search(tags, starting_date, ending_date)
+        """
+        Searches news in CM's website by topic.
+        This method is considerable slower than other because there is currently
+        no known way to directly filter dates. So each news must be built from HTML string
+        directly.
+        """
+
+        # Create factory instance
+        instance = cls()
+
+        # Iterate over the tags
+        for tag in tags:
+            # Normalize keyword
+            tag = tag.lower().replace(" ", "-")
+            # Start position number
+            index = 0
+
+            while (
+                response := requests.get(
+                    f"https://www.cmjornal.pt/{tag}/loadmore/?friendlyUrl={tag}&contentStartIndex={index}"
+                ).text
+            ) != "\r\n":
+
+                # Build HTML tree from response
+                tree = html.fromstring(response)
+                # Get urls present in this page
+                urls = [
+                    article.xpath(".//h2/a")[0].attrib["data-name"]
+                    for article in tree.xpath("//article")
+                ]
+
+                # Call the internal method
+                should_continue_search = instance.__single_page_tag_search(
+                    urls,
+                    starting_date,
+                    ending_date,
+                )
+
+                # Check if we should break search (move to next tag)
+                if should_continue_search is False:
+                    break
+
+                # CM tag search returns news in batches of 8
+                index += 8
+
+        return instance
+
+    def __single_page_tag_search(
+        self,
+        urls: list[str],
+        starting_date: datetime.date,
+        ending_date: datetime.date,
+    ) -> bool:
+        """
+        Performs the tag search on a single page. URLs present in the page
+        should be passed as argument.
+
+        Returns
+        -------
+        bool
+            Whether the search should continue to the next page or should be halted.
+        """
+        for url in urls:
+            # Make sure URL is correct. Check if it's not a href
+            url = "https://www.cmjornal.pt" + url if url[0] == "/" else url
+
+            # Get news html
+            news_html = requests.get(url).text
+
+            # Build news object. Since we are not using the default
+            # `from_url_search` we need to catch UnsupportedNews exception.
+            try:
+                news = self.from_html_string(news_html)
+            except UnsupportedNews:
+                # If the news is not supported skip ahead
+                continue
+
+            # Check if we are above date treshold. If so skip ahead
+            if news.published_at.date() > ending_date:
+                continue
+            # Check if we are bellow date treshold.
+            # If so we stop the search by returning "False"
+            if news.published_at.date() < starting_date:
+                return False
+            # If news inside date range we collect it
+            if starting_date <= news.published_at.date() <= ending_date:
+                self.news.append(news)
+
+        # Return True to continue the search to the next page
+        return True

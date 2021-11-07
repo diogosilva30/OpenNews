@@ -77,10 +77,10 @@ class NewsSerializer(serializers.Serializer):
     title = serializers.CharField()
     # Allow Blank Descriptions
     description = serializers.CharField(allow_blank=True)
+    published_at = serializers.DateTimeField()
     url = serializers.URLField()
     rubric = serializers.CharField()
     is_opinion = serializers.BooleanField()
-    published_at = serializers.DateTimeField()
     # Allow blank authors
     authors = serializers.ListField(
         child=serializers.CharField(

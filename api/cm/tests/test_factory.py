@@ -74,3 +74,28 @@ class CMURLSearchAPITest(TestCase):
                 starting_date <= news.published_at.date() <= ending_date,
                 msg="News out of expected date range",
             )
+
+    def test_from_tag_search(self):
+        """
+        Tests the correct scraping of news by tags
+        """
+        today = datetime.datetime.now()
+
+        starting_date = today - datetime.timedelta(days=5)
+        ending_date = starting_date - datetime.timedelta(days=20)
+
+        factory = CMNewsFactory.from_tag_search(
+            ["Economia"],
+            starting_date=starting_date.date(),
+            ending_date=ending_date.date(),
+        )
+
+        # Number of news should be greater than 0
+        self.assertGreater(len(factory.news), 0)
+
+        for news in factory.news:
+            # Check that date is inside bound
+            self.assertTrue(
+                starting_date <= news.published_at.date() <= ending_date,
+                msg="News out of expected date range",
+            )
