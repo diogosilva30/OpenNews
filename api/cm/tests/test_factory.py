@@ -81,8 +81,8 @@ class CMURLSearchAPITest(TestCase):
         """
         today = datetime.datetime.now()
 
-        starting_date = today - datetime.timedelta(days=5)
-        ending_date = starting_date - datetime.timedelta(days=20)
+        ending_date = today - datetime.timedelta(days=5)
+        starting_date = ending_date - datetime.timedelta(days=20)
 
         factory = CMNewsFactory.from_tag_search(
             ["Economia"],
