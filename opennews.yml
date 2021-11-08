@@ -9,15 +9,36 @@ services:
   traefik:
     image: traefik:v2.3
     ports:
-        - "80:80"
+      # Listen on port 80, default for HTTP, necessary to redirect to HTTPS
+      - 80:80
+      # Listen on port 443, default for HTTPS
+      - 443:443
     command:
       - --providers.docker.swarmmode # Use Traefik with Docker Swarm Integration
       - --api.dashboard=true # Enable Traefik Dashboard
+      - --entrypoints.websecure.address=:443
+
+      # Certificates
+      - --certificatesresolvers.myresolver.acme.tlschallenge=true
+      - --certificatesresolvers.myresolver.acme.email=diogosilv30@gmail.com
+      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+
+      # https-redirect middleware to redirect HTTP to HTTPS
+      # It can be re-used by other stacks in other Docker Compose files
+      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+
+      # traefik-https the actual router using HTTPS
+      # Uses the environment variable DOMAIN
+      - traefik.http.routers.traefik-public-https.rule=Host(`traefik.onews.diogosilva.tech`)
+      - traefik.http.routers.traefik-public-https.entrypoints=https
+      - traefik.http.routers.traefik-public-https.tls=true
     deploy:
       placement:
         constraints:
           - node.role == manager # MANDATORY: Deploy Traefik on a manager node
     volumes:
+      - "./letsencrypt:/letsencrypt"
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
 
