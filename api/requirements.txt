@@ -1,4 +1,4 @@
-django-rq==2.4.0
+django-rq==2.4.1
 djangorestframework==3.12.2
 whitenoise==5.3.0
 requests==2.26.0
