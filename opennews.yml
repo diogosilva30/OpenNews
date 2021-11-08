@@ -128,7 +128,7 @@ services:
       - vault:/vault/file
 
 volumes:
-  ./letsencrypt:
+  letsencrypt:
   redis:
   vault:
   
