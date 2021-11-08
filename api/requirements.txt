@@ -1,14 +1,26 @@
-django-rq==2.4.0
-djangorestframework==3.12.2
-whitenoise==5.3.0
-requests==2.26.0
-lxml==4.6.4
-dateparser==1.1.0
-gunicorn==20.0.4
-drf-yasg[validation]
-
 # ..................................................................
-# For background work (async work)
+# API Framework
+djangorestframework==3.12.2
+# ..................................................................
+# Serve static assets in production
+whitenoise==5.3.0
+# ..................................................................
+# To make HTTP requests
+requests==2.26.0
+# ..................................................................
+# To parse HTML tree documents
+lxml==4.6.4
+# ..................................................................
+# For date parsing
+dateparser==1.1.0
+# ..................................................................
+# Production API Server
+gunicorn==20.0.4
+# ..................................................................
+# For creating interactive docs
+drf-yasg[validation]
+# ..................................................................
+# For background work (async work). Redis is the message broker
 celery==5.1.2
 redis==3.5.3
 # ..................................................................

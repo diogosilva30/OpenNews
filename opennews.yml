@@ -16,8 +16,10 @@ services:
     command:
       - --providers.docker.swarmmode # Use Traefik with Docker Swarm Integration
       - --api.dashboard=true # Enable Traefik Dashboard
-      - --entrypoints.websecure.address=:443
-
+      # Create an entrypoint "http" listening on port 80
+      - --entrypoints.http.address=:80
+      # Create an entrypoint "https" listening on port 443
+      - --entrypoints.https.address=:443
       # Certificates
       - --certificatesresolvers.myresolver.acme.tlschallenge=true
       - --certificatesresolvers.myresolver.acme.email=diogosilv30@gmail.com
