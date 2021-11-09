@@ -21,7 +21,7 @@ gunicorn==20.0.4
 drf-yasg[validation]
 # ..................................................................
 # For background work (async work). Redis is the message broker
-celery==5.1.2
+celery==5.2.0
 redis==3.5.3
 # ..................................................................
 # For hard type checking
