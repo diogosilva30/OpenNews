@@ -109,10 +109,10 @@ jobs:
           context: ./api
           push: true
           tags: spamz23/opennews:api
-          
+  
   deploy-job:
     runs-on: self-hosted
-    needs: [push-to-registry] # will be fired if and only if api-check-job is passed.
+    needs: [push-to-registry] # will be fired if and only if push-to-registry is passed.
     # Only trigger a deploy for a PUSH on master branch
     # https://docs.github.com/pt/actions/reference/context-and-expression-syntax-for-github-actions#github-context
     # https://docs.github.com/pt/actions/reference/workflow-syntax-for-github-actions

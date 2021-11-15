@@ -190,8 +190,13 @@ class PublicoNewsFactory(NewsFactory):
         response = requests.get(
             f"https://api.publico.pt/content/summary/scriptor_noticias/{news_id}"
         )
+
         # Load json response
         json_doc = json.loads(response.text)
+
+        # Check if we got any data. If not the news type is not supported
+        if json_doc is None:
+            raise UnsupportedNews(url)
 
         # Delete every key that has 'None' value
         json_doc = {k: v for k, v in json_doc.items() if v is not None}
