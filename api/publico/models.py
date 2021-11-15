@@ -190,7 +190,6 @@ class PublicoNewsFactory(NewsFactory):
         response = requests.get(
             f"https://api.publico.pt/content/summary/scriptor_noticias/{news_id}"
         )
-
         # Load json response
         json_doc = json.loads(response.text)
 
