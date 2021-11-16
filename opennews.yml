@@ -9,6 +9,8 @@ networks:
   # services that need to be publicly available via this Traefik
   traefik-public:
     external: true
+  # Local network
+  opennews:
 
 services:
 
@@ -36,6 +38,7 @@ services:
       # Use the public network created to be shared between Traefik and
       # any other service that needs to be publicly available with HTTPS
       - traefik-public
+      - opennews
 
     environment:
       # Use production settings
@@ -58,10 +61,9 @@ services:
     image: "redis:alpine"
     volumes:
       - "redis:/data"
-    deploy:
-      labels:
-        - traefik.http.services.redis.loadbalancer.server.port=6379
-
+    # Add to local network
+    networks:
+      - opennews
 
   # Celery background worker
   celery:
@@ -76,7 +78,11 @@ services:
       VAULT_KEYS_CSV: /run/secrets/vault_keys_csv # --|-->File location of Docker secret
       CELERY_BROKER_URL: redis://redis:6379/ # -----|
       CELERY_RESULT_BACKEND: redis://redis:6379/ #--|--> 'redis' (instead of e.g. localhost) because it is the name of the redis service
-      
+    
+    # Add to local network
+    networks:
+      - opennews
+
     # Mount secrets from Swarm Manager
     secrets:
       - vault_token
