@@ -79,9 +79,10 @@ services:
       CELERY_BROKER_URL: redis://redis:6379/ # -----|
       CELERY_RESULT_BACKEND: redis://redis:6379/ #--|--> 'redis' (instead of e.g. localhost) because it is the name of the redis service
     
-    # Add to local network
+    # Add to local network and public network
     networks:
       - opennews
+      - traefik-public
 
     # Mount secrets from Swarm Manager
     secrets:
