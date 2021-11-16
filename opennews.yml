@@ -3,7 +3,7 @@
 
 version: "3.9"
 
-
+# Define networks
 networks:
   # Use the external network "traefik-public", shared with other
   # services that need to be publicly available via this Traefik
@@ -11,6 +11,19 @@ networks:
     external: true
   # Local network
   opennews:
+
+# Define volumes
+volumes:
+  redis:
+
+# Use external Docker secrets
+secrets:
+  vault_token:
+    external: true
+  vault_keys_csv:
+    external: true
+
+
 
 services:
 
@@ -28,6 +41,7 @@ services:
         - traefik.docker.network=traefik-public
         # Add required label for traefik (Traefik will only use services with this label)
         - traefik.constraint-label=traefik-public
+        - traefik.http.routers.opennews-api.entrypoints=websecure
         # Add routing for this service
         - traefik.http.routers.opennews-api.rule=Host(`api.onews.dsilva.dev`)
         # Define the port inside of the Docker service to use
@@ -89,11 +103,3 @@ services:
       - vault_keys_csv
 
 
-volumes:
-  redis:
-  
-secrets:
-  vault_token:
-    external: true
-  vault_keys_csv:
-    external: true
