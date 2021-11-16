@@ -12,8 +12,8 @@ from .models import PublicoNewsFactory
 
 class PublicoURLSearchView(BaseURLSearchView):
     """
-    Define the custom Publico URL Search job creation view.
-    We only need to define the concrete news factory.
+    Creates a Publico's URL search job. A
+    list of Publico's news URLs must be provided.
     """
 
     news_factory_class = PublicoNewsFactory
@@ -21,8 +21,8 @@ class PublicoURLSearchView(BaseURLSearchView):
 
 class PublicoTagSearchView(BaseTagSearchView):
     """
-    Define the custom Publico Tag Search job creation view.
-    We only need to define the concrete news factory.
+    Creates a Publico's Tag search job. A list of tags
+    must be provided (e.g. "Política" / "Sociedade" / "Economia" / "Cultura")
     """
 
     news_factory_class = PublicoNewsFactory
@@ -30,8 +30,8 @@ class PublicoTagSearchView(BaseTagSearchView):
 
 class PublicoKeywordSearchView(BaseKeywordSearchView):
     """
-    Define the custom Publico Keyword Search job creation view.
-    We only need to define the concrete news factory.
+    Creates a Publico's Keyword search job. A list of keywords
+    must be provided (e.g. "desporto português")
     """
 
     news_factory_class = PublicoNewsFactory

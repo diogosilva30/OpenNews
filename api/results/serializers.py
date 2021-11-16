@@ -13,7 +13,10 @@ class JobResultSerializer(serializers.Serializer):
     results from a particular job.
     """
 
+    # State of the job
     state = serializers.CharField()
+    # Original job keyword arguments
+    job_arguments = serializers.DictField()
     date_done = serializers.DateTimeField()
     number_of_news = serializers.SerializerMethodField(read_only=True)
     news = NewsSerializer(many=True)
@@ -50,4 +53,5 @@ class JobResultSerializer(serializers.Serializer):
             "state": job.status,
             "news": news,
             "date_done": job.date_done,
+            "job_arguments": job.kwargs,
         }

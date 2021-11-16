@@ -17,10 +17,12 @@ from drf_yasg import openapi
 schema_view = get_schema_view(
     openapi.Info(
         title="OpenNews API",
-        default_version="v2",
-        description="OpenNews is a REST API made in Python to extract news from Portuguese journals. It is intended for academic use.",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="diogosilv30@gmail.com"),
+        default_version="v1",
+        description="""
+        ## OpenNews is a news aggregator from several Portuguese newspapers to democratize access to information.
+
+        DISCLAIMER: This project is as a proof of concept freely distributed. No liabilities are assumed by the author for any possible misuse.""",
+        contact=openapi.Contact(email="email@dsilva.dev"),
         license=openapi.License(name="BSD-3-Clause License"),
     ),
     public=True,

@@ -3,7 +3,7 @@ from django.test import TestCase
 from ..models import CMNewsFactory
 
 
-class CMURLSearchAPITest(TestCase):
+class CMFactoryTest(TestCase):
     def test_from_url_search(self):
         """
         Tests if URL search is correctly scrapping news

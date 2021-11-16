@@ -4,7 +4,7 @@ import datetime
 from ..models import PublicoNewsFactory
 
 
-class CMURLSearchAPITest(TestCase):
+class PublicoFactoryTest(TestCase):
     def test_from_url_search(self):
         """
         Tests if URL search is correctly scrapping news
@@ -80,12 +80,12 @@ class CMURLSearchAPITest(TestCase):
         """
         Tests the correct scraping of news by keywords
         """
-        starting_date = datetime.datetime(2020, 3, 1).date()
-        ending_date = datetime.datetime(2020, 3, 15).date()
+        starting_date = datetime.date(2020, 3, 1)
+        ending_date = datetime.date(2020, 3, 15)
         factory = PublicoNewsFactory.from_keyword_search(
             ["incêndio", "fogo", "queda", "vento"],
-            starting_date=datetime.date(2021, 11, 1),
-            ending_date=datetime.date(2021, 11, 16),
+            starting_date=starting_date,
+            ending_date=ending_date,
         )
 
         # Number of news should be > 0

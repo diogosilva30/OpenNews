@@ -17,7 +17,7 @@ class ResultsView(
 
     def get(self, request, job_id, *args, **kwargs):
         """
-        Returns the results of a job
+        Returns the results of a search job
         """
         # Get job
         job = AsyncResult(job_id)
