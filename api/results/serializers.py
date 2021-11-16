@@ -33,7 +33,7 @@ class JobResultSerializer(serializers.Serializer):
         # Instantiate the superclass normally
         super(JobResultSerializer, self).__init__(*args, **kwargs)
 
-        if self.fields["state"] != "SUCESS":
+        if self.fields["state"] != "SUCCESS":
             allowed = set(["id", "state", "job_arguments"])
             existing = set(self.fields)
             for field_name in existing - allowed:
