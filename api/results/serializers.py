@@ -13,16 +13,31 @@ class JobResultSerializer(serializers.Serializer):
     results from a particular job.
     """
 
+    # Id of job
+    id = serializers.CharField()
     # State of the job
     state = serializers.CharField()
+    date_done = serializers.DateTimeField()
+    expires_at = serializers.DateTimeField()
     # Original job keyword arguments
     job_arguments = serializers.DictField()
-    date_done = serializers.DateTimeField()
     number_of_news = serializers.SerializerMethodField(read_only=True)
     news = NewsSerializer(many=True)
 
-    def get_date(self, obj):
-        return now()
+    def __init__(self, *args, **kwargs):
+        """
+        Override __init__ for dynamic field serialization.
+        When the job state is not "SUCESS" (not done), we only serialize
+        the job `id`, `state` and `job_arguments`
+        """
+        # Instantiate the superclass normally
+        super(JobResultSerializer, self).__init__(*args, **kwargs)
+
+        if self.fields["state"] != "SUCESS":
+            allowed = set(["id", "state", "job_arguments"])
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
 
     def get_number_of_news(self, obj):
         """
@@ -49,9 +64,19 @@ class JobResultSerializer(serializers.Serializer):
         else:
             news = []
 
+        import datetime
+
+        if job.date_done:
+            expires = job.date_done + datetime.timedelta(
+                seconds=job.backend.expires
+            )
+        else:
+            expires = None
         return {
+            "id": job.id,
             "state": job.status,
             "news": news,
             "date_done": job.date_done,
             "job_arguments": job.kwargs,
+            "expires_at": expires,
         }
