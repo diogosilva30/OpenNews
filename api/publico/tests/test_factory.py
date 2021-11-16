@@ -75,3 +75,25 @@ class CMURLSearchAPITest(TestCase):
                 starting_date <= news.published_at.date() <= ending_date,
                 msg="News out of expected date range",
             )
+
+    def test_from_keyword_search(self):
+        """
+        Tests the correct scraping of news by keywords
+        """
+        starting_date = datetime.datetime(2020, 3, 1).date()
+        ending_date = datetime.datetime(2020, 3, 15).date()
+        factory = PublicoNewsFactory.from_keyword_search(
+            ["incêndio", "fogo", "queda", "vento"],
+            starting_date=datetime.date(2021, 11, 1),
+            ending_date=datetime.date(2021, 11, 16),
+        )
+
+        # Number of news should be > 0
+        self.assertGreater(len(factory.news), 0)
+
+        for news in factory.news:
+            # Check that date is inside bound
+            self.assertTrue(
+                starting_date <= news.published_at.date() <= ending_date,
+                msg="News out of expected date range",
+            )

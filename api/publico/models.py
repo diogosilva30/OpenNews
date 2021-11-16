@@ -125,7 +125,7 @@ class PublicoNewsFactory(NewsFactory):
         keywords: list[str],
         starting_date: datetime.date,
         ending_date: datetime.date,
-    ) -> list[News]:
+    ) -> NewsFactory:
 
         # Create news URL list
         collected_news_urls = []
