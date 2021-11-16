@@ -41,10 +41,11 @@ services:
         - traefik.docker.network=traefik-public
         # Add required label for traefik (Traefik will only use services with this label)
         - traefik.constraint-label=traefik-public
+
+        # Routing
+        - traefik.http.routers.opennews-api.tls=true
         - traefik.http.routers.opennews-api.entrypoints=websecure
-        # Add routing for this service
         - traefik.http.routers.opennews-api.rule=Host(`api.onews.dsilva.dev`)
-        # Define the port inside of the Docker service to use
         - traefik.http.services.opennews-api.loadbalancer.server.port=8000
 
     networks:
