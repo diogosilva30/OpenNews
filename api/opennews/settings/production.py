@@ -29,7 +29,7 @@ SECRET_KEY = VAULT.get_secret(
     key="DJANGO_SECRET_KEY",
 )
 
-ALLOWED_HOSTS = ["api.onews.diogosilva.tech", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["api.onews.dsilva.dev", "localhost", "127.0.0.1"]
 
 
 # Database
