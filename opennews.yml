@@ -42,7 +42,7 @@ services:
         # Add required label for traefik (Traefik will only use services with this label)
         - traefik.constraint-label=traefik-public
         # Routing
-        - traefik.http.routers.opennews-api.tls.certresolver=le
+        - traefik.http.routers.opennews-api.tls=true
         - traefik.http.routers.opennews-api.entrypoints=websecure
         - traefik.http.routers.opennews-api.rule=Host(`api.onews.dsilva.dev`)
         - traefik.http.services.opennews-api.loadbalancer.server.port=8000
