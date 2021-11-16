@@ -38,12 +38,9 @@ class Vault:
         """
         Returns the secret (defined by a key) located at a given path
         """
-        # Configure mount point
-        self.client.secrets.kv.configure(
-            max_versions=20,
-            mount_point=mount_point,
-        )
 
-        read_response = self.client.secrets.kv.read_secret_version(path=path)
+        read_response = self.client.secrets.kv.read_secret_version(
+            path=path, mount_point=mount_point
+        )
 
         return read_response["data"]["data"][key]
