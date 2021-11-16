@@ -71,14 +71,11 @@ class BaseJobCreationView(mixins.CreateModelMixin, generics.GenericAPIView):
             context={"request": request},
         )
 
-        # Return the job serializer data
-        if job_serializer.is_valid():
-            return Response(job_serializer.data)
-        else:
-            return Response(
-                job_serializer.errors,
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # Check for errors (return 400 bad request if any error)
+        job_serializer.is_valid(raise_exception=True)
+
+        # Otherwise return 201 with job info
+        return Response(job_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class BaseURLSearchView(BaseJobCreationView):
