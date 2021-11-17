@@ -37,7 +37,8 @@ class JobResultSerializer(serializers.Serializer):
         `obj` is the dict created in `to_internal_value`.
         We acess `news` key.
         """
-        return len(obj["news"])
+        news = obj.get("news", None)
+        return len(news) if news else None
 
     def to_internal_value(self, job: AsyncResult):
 
