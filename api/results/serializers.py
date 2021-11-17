@@ -19,6 +19,8 @@ class JobResultSerializer(serializers.Serializer):
     id = serializers.CharField(required=True)
     # State of the job (always present in deserialization)
     state = serializers.CharField(required=True)
+    # Traceback in case of failed task (only present if task fails)
+    traceback = serializers.CharField(required=False)
     # Timestamp of when the job was completed (might be omitted in deserialization)
     date_done = serializers.DateTimeField(required=False)
     # Timestamp of when the job will expire (might be omitted in deserialization)
