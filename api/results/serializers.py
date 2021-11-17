@@ -1,7 +1,10 @@
+"""
+Module containing the serializer classes for the results endpoint.
+"""
 import datetime
 from celery.result import AsyncResult
 from rest_framework import serializers
-from rest_framework.exceptions import NotFound, APIException
+from rest_framework.exceptions import NotFound
 
 from core.serializers import NewsSerializer
 
