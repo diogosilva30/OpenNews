@@ -33,12 +33,16 @@ class JobResultSerializer(serializers.Serializer):
         # Instantiate the superclass normally
         super(JobResultSerializer, self).__init__(*args, **kwargs)
 
+        # Default is to show all serializer fields
+        allowed = self.fields
+
+        # If state is 'WAITING' only show id and state
         if self.fields["state"] == "WAITING":
             allowed = ["id", "state"]
+
+        # If state is 'STARTED' only show id, state and job_arguments
         if self.fields["state"] == "STARTED":
             allowed = ["id", "state", "job_arguments"]
-        if self.fields["state"] == "SUCCESS":
-            allowed = self.fields
 
         allowed = set(allowed)
         existing = set(self.fields)
