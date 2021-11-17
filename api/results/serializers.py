@@ -45,7 +45,7 @@ class JobResultSerializer(serializers.Serializer):
         # Check if state is 'PENDING'. If so, the task
         # is unknown (does not exist).
         if job.state == "PENDING":
-            raise NotFound({"state": "NOT_FOUND"})
+            raise NotFound({"id": job.id, "state": "NOT_FOUND"})
 
         # If job failed, include the traceback
         if job.state == "FAILURE":
