@@ -1,117 +1,67 @@
 <template>
-  <v-container fluid fill-height class="pa-0">
-    <!-- Left side card -->
-    <v-card tile flat class="d-flex diagonal" height="100%" width="70%">
-      <v-row class="align-self-center" style="z-index: 5" no-gutters>
-        <v-col cols="8" offset="2">
-          <v-img
-            src="/Logos/vector/default-monochrome.svg"
-            alt="OpenNews logo"
-            class="zoomOnHover"
-          >
-          </v-img>
-        </v-col>
-      </v-row>
-      <!-- Particle background effects -->
-      <client-only>
-        <Particles
-          color="#DCBA8F"
-          :particles-number="150"
-          shape-type="circle"
-          :particle-size="2"
-          movement-direction="right"
-          lines-color="#dedede"
-          :line-linked="true"
-          :move-speed="0.75"
-          :hover-effect="true"
-        />
-      </client-only>
-    </v-card>
+  <v-container fill-height class="align-center justify-center">
+    <v-row id="hero" no-gutters align="center" justify="center">
+      <v-img
+        :src="`/default-monochrome-text-${
+          $vuetify.theme.dark ? 'white' : 'black'
+        }.svg`"
+      />
+      <v-container>
+        <v-row align="center" class="white--text mx-auto" justify="center">
+          <v-col class="white--text text-center" cols="12" tag="h1">
+            <span
+              :class="[
+                $vuetify.breakpoint.smAndDown ? 'display-1' : 'display-2'
+              ]"
+              class="font-weight-light"
+            >
+              WELCOME TO
+            </span>
 
-    <!-- Right side -->
-    <v-card
-      class="d-inline-flex align-center flex-column fadeBackground"
-      style="z-index: 0"
-      height="100%"
-      width="30%"
-    >
-      <!-- Place Get started button at bottom with flex auto margin -->
-      <div class="mx-auto mb-10 mt-auto">
-        <v-hover v-slot="{ hover }">
+            <br />
+
+            <span
+              :class="[
+                $vuetify.breakpoint.smAndDown ? 'display-3' : 'display-4'
+              ]"
+              class="font-weight-black"
+            >
+              VUETIFY
+            </span>
+          </v-col>
+
           <v-btn
-            outlined
+            class="align-self-end zoom"
+            color="button"
+            icon
             x-large
-            rounded
-            :class="{ 'mylight--text': hover }"
-            nuxt
-            to="/search"
+            expand-on-hover
+            @click="$vuetify.goTo('#form')"
           >
-            Get started
+            <v-icon>fa-arrow-alt-circle-down</v-icon>
           </v-btn>
-        </v-hover>
-      </div>
-    </v-card>
+        </v-row>
+      </v-container>
+    </v-row>
+    <v-row id="form">dqwd</v-row>
   </v-container>
 </template>
-
 <script>
-import Particles from '~/components/Particles.vue'
-
-export default {
-  components: { Particles },
-  head() {
-    return {
-      title: 'Landing',
-    }
-  },
-}
+export default {}
 </script>
 <style scoped>
-/* Diagonal cards */
-.diagonal {
-  position: relative;
-  width: 120px;
-  padding: 10px 20px 10px 10px;
-  font-size: 20px;
-  position: relative;
-  color: #fff;
-  background: #000000;
-}
-.diagonal::before {
-  content: ' ';
-  position: absolute;
-  display: block;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  background: #000000;
-  /* Transform */
-  transform-origin: bottom left;
-  -ms-transform: skew(-10deg, 0deg);
-  -webkit-transform: skew(-10deg, 0deg);
-  transform: skew(-10deg, 0deg);
+.custom-loader {
+  animation: loader 1s infinite;
+  display: flex;
 }
 
-/* Particles */
-#particles-instance- {
-  height: 100vh !important;
-  position: absolute;
-  top: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  z-index: 1 !important;
-}
-
-/* Logo Zoom on hover */
-.zoomOnHover {
+.zoom {
   transition: transform 0.2s; /* Animation */
 }
-.zoomOnHover:hover {
-  transform: scale(1.1);
+
+.zoom:hover {
+  transform: scale(
+    1.5
+  ); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
 }
 </style>
