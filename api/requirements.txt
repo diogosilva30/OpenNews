@@ -29,3 +29,6 @@ typeguard==2.13.0
 # ..................................................................
 # For interaction with Hashicorp Vault
 hvac==0.11.2
+# ..................................................................
+# For string encoding/decoding
+unidecode==1.3.2
