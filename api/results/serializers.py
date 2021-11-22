@@ -54,8 +54,8 @@ class JobResultSerializer(serializers.Serializer):
         if job.state == "FAILURE":
             data |= {"traceback": job.traceback}
 
-        # If job is 'STARTED' include 'job_arguments'
-        if job.state == "STARTED":
+        # If job is 'STARTED', or 'FAILURE' include 'job_arguments'
+        if job.state in [ "STARTED", "FAILURE"]:
             data |= {"job_arguments": job.kwargs}
 
         # If job is 'SUCCESS' include every field

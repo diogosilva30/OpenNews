@@ -2,7 +2,9 @@
 Contains the core news models
 """
 from __future__ import annotations
+import re
 import datetime
+from urllib.parse import urlparse
 import requests
 import json
 
@@ -115,9 +117,11 @@ class NewsFactory(ABC):
         """
         instance = cls()
         for url in urls:
-            # If valid URL
-            if instance._validate_url(url):
-                response = instance.session.get(url)
+            # Force https schema
+            url = "https://" + re.sub(r"^.*?www", "www", url)
+            # Make GET request
+            response = instance.session.get(url)
+            if response.status_code == 200:
                 try:
                     news_obj = instance.from_html_string(response.text)
                     instance.news.append(news_obj)
@@ -151,12 +155,6 @@ class NewsFactory(ABC):
         Abstract class method that child classes must implement
         to instantiate a factory with news collected from a keyword search.
         """
-
-    def _validate_url(self, url: str) -> bool:
-        """
-        Validates than a given URL returns a 200 status code
-        """
-        return self.session.get(url).status_code == 200
 
     @abstractmethod
     def from_html_string(self, html_string: str) -> News:

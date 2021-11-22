@@ -184,15 +184,20 @@ class PublicoNewsFactory(NewsFactory):
         url = tree.xpath("//meta[@property='og:url']")[0].get("content")
 
         # Extract news id
-        news_id = urlparse(url).path.split("-")[-1]
+        news_part = urlparse(url).path.split("-")
+        news_id = news_part[-1]
 
         # Make GET request to publico news summary API endpoint
         response = requests.get(
             f"https://api.publico.pt/content/summary/scriptor_noticias/{news_id}"
         )
+        print(news_id)
+        print(response.text)
+
+        print("ID OF NEWS ", news_id)
+        print("Rsponse: ", response.text)
         # Load json response
         json_doc = json.loads(response.text)
-
         # Check if we got any data. If not the news type is not supported
         if json_doc is None:
             raise UnsupportedNews(url)

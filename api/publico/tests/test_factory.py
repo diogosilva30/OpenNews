@@ -66,8 +66,8 @@ class PublicoFactoryTest(TestCase):
             ending_date=ending_date,
         )
 
-        # Number of news should be 3
-        self.assertEqual(len(factory.news), 3)
+        # Number of news should be greater than 0
+        self.assertGreater(len(factory.news), 0)
 
         for news in factory.news:
             # Check that date is inside bound

@@ -1,35 +1,17 @@
 <template>
-  <v-container fill-height class="align-center justify-center">
-    <v-row id="hero" no-gutters align="center" justify="center">
-      <v-img
-        :src="`/default-monochrome-text-${
-          $vuetify.theme.dark ? 'white' : 'black'
-        }.svg`"
-      />
-      <v-container>
-        <v-row align="center" class="white--text mx-auto" justify="center">
-          <v-col class="white--text text-center" cols="12" tag="h1">
-            <span
-              :class="[
-                $vuetify.breakpoint.smAndDown ? 'display-1' : 'display-2'
-              ]"
-              class="font-weight-light"
-            >
-              WELCOME TO
-            </span>
-
-            <br />
-
-            <span
-              :class="[
-                $vuetify.breakpoint.smAndDown ? 'display-3' : 'display-4'
-              ]"
-              class="font-weight-black"
-            >
-              VUETIFY
-            </span>
+  <full-page>
+    <section class="section">
+      <v-container fill-height class="align-center justify-center">
+        <v-row id="hero" no-gutters align="center" justify="center">
+          <v-col lg="8">
+            <v-img
+              :src="`/default-monochrome-text-${
+                $vuetify.theme.dark ? 'white' : 'black'
+              }.svg`"
+            />
           </v-col>
-
+        </v-row>
+        <v-row align="center" class="white--text mx-auto" justify="center">
           <v-btn
             class="align-self-end zoom"
             color="button"
@@ -42,19 +24,14 @@
           </v-btn>
         </v-row>
       </v-container>
-    </v-row>
-    <v-row id="form">dqwd</v-row>
-  </v-container>
+      <section class="section">First section ...</section>
+    </section>
+  </full-page>
 </template>
 <script>
 export default {}
 </script>
 <style scoped>
-.custom-loader {
-  animation: loader 1s infinite;
-  display: flex;
-}
-
 .zoom {
   transition: transform 0.2s; /* Animation */
 }

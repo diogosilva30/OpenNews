@@ -311,7 +311,7 @@ class CMNewsFactory(NewsFactory):
             url = "https://www.cmjornal.pt" + url if url[0] == "/" else url
 
             # Get news html
-            news_html = requests.get(url).text
+            news_html = self.session.get(url).text
 
             # Build news object. Since we are not using the default
             # `from_url_search` we need to catch UnsupportedNews exception.
