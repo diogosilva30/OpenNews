@@ -6,6 +6,7 @@ import requests
 import os
 import json
 from urllib.parse import urlparse
+import unidecode
 from lxml import html
 
 from django.utils.dateparse import parse_datetime
@@ -107,6 +108,7 @@ class PublicoNewsFactory(NewsFactory):
 
                     # If news inside the date rage, collect the URL
                     else:
+
                         collected_news_urls.append(item.get("shareUrl"))
                 if stop_entire_search:
                     break
@@ -133,17 +135,20 @@ class PublicoNewsFactory(NewsFactory):
         # Iterate over each keyword
         for keyword in keywords:
             # Normalize keyword
-            keyword = keyword.lower()
+            keyword = keyword.encode("cp1252").decode().lower()
             # Start page number
             page_number = 1
 
             while (
-                response := requests.get(
-                    f"https://www.publico.pt/api/list/search/?query={keyword}&start={starting_date.strftime('%d-%m-%Y')}&end={ending_date.strftime('%d-%m-%Y')}&page={page_number}"
-                ).text
+                url := f"https://www.publico.pt/api/list/search/?query={keyword}&start={starting_date.strftime('%d-%m-%Y')}&end={ending_date.strftime('%d-%m-%Y')}&page={page_number}"
             ) != "[]":
+
                 # Read the json data
-                data = json.loads(response)
+                data = json.loads(requests.get(url).text)
+
+                if not data:
+                    break
+
                 # Get the URLs (this search type needs fullUrl)
                 urls = [d.get("fullUrl") for d in data]
                 # Append URLs to list
@@ -184,18 +189,16 @@ class PublicoNewsFactory(NewsFactory):
         url = tree.xpath("//meta[@property='og:url']")[0].get("content")
 
         # Extract news id
-        news_part = urlparse(url).path.split("-")
-        news_id = news_part[-1]
+        try:
+            news_id = int(urlparse(url).path.split("-")[-1])
+        except ValueError:
+            raise UnsupportedNews(url)
 
         # Make GET request to publico news summary API endpoint
         response = requests.get(
             f"https://api.publico.pt/content/summary/scriptor_noticias/{news_id}"
         )
-        print(news_id)
-        print(response.text)
 
-        print("ID OF NEWS ", news_id)
-        print("Rsponse: ", response.text)
         # Load json response
         json_doc = json.loads(response.text)
         # Check if we got any data. If not the news type is not supported
