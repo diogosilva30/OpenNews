@@ -6,7 +6,6 @@ import requests
 import os
 import json
 from urllib.parse import urlparse
-import unidecode
 from lxml import html
 
 from django.utils.dateparse import parse_datetime
@@ -135,7 +134,7 @@ class PublicoNewsFactory(NewsFactory):
         # Iterate over each keyword
         for keyword in keywords:
             # Normalize keyword
-            keyword = keyword.encode("cp1252").decode().lower()
+            keyword = keyword.lower()
             # Start page number
             page_number = 1
 
@@ -143,6 +142,7 @@ class PublicoNewsFactory(NewsFactory):
                 url := f"https://www.publico.pt/api/list/search/?query={keyword}&start={starting_date.strftime('%d-%m-%Y')}&end={ending_date.strftime('%d-%m-%Y')}&page={page_number}"
             ) != "[]":
 
+                print(url)
                 # Read the json data
                 data = json.loads(requests.get(url).text)
 
