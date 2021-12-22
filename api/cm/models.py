@@ -1,6 +1,7 @@
 """
 Module containg the concrete CMNewsFactory
 """
+import lxml
 import requests
 import datetime
 import os
@@ -267,8 +268,12 @@ class CMNewsFactory(NewsFactory):
                 ).text
             ) != "\r\n":
 
-                # Build HTML tree from response
-                tree = html.fromstring(response)
+                try:
+                    # Build HTML tree from response
+                    tree = html.fromstring(response)
+                except lxml.etree.ParserError:
+                    # In case of any parsing error we stop the search
+                    break
                 # Get urls present in this page
                 urls = [
                     article.xpath(".//h2/a")[0].attrib["data-name"]
