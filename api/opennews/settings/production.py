@@ -47,7 +47,7 @@ SECURE_SSL_REDIRECT = False
 # WHITE NOISE IS FOR SERVING STATIC ASSETS
 # Fore more info, refeer to:
 # http://whitenoise.evans.io/en/latest/
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 COMPRESS_OFFLINE = True
 COMPRESS_CSS_FILTERS = [

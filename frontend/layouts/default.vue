@@ -12,12 +12,7 @@
     <v-footer app inset color="transparent" absolute height="56" class="px-0">
       <div class="boxed-container w-full">
         <div class="mx-6 d-flex justify-space-between">
-          <span>
-            &copy; 2021
-            <a href="utad.pt" class="text-decoration-none" target="_blank"
-              >EDU.IA</a
-            ></span
-          >
+          <span> &copy; 2021 OpenNews </span>
         </div>
       </div>
     </v-footer>

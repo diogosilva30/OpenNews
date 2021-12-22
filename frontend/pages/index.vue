@@ -1,32 +1,10 @@
 <template>
-  <full-page>
-    <section class="section">
-      <v-container fill-height class="align-center justify-center">
-        <v-row id="hero" no-gutters align="center" justify="center">
-          <v-col lg="8">
-            <v-img
-              :src="`/default-monochrome-text-${
-                $vuetify.theme.dark ? 'white' : 'black'
-              }.svg`"
-            />
-          </v-col>
-        </v-row>
-        <v-row align="center" class="white--text mx-auto" justify="center">
-          <v-btn
-            class="align-self-end zoom"
-            color="button"
-            icon
-            x-large
-            expand-on-hover
-            @click="$vuetify.goTo('#form')"
-          >
-            <v-icon>fa-arrow-alt-circle-down</v-icon>
-          </v-btn>
-        </v-row>
-      </v-container>
+  <div>
+    <full-page>
       <section class="section">First section ...</section>
-    </section>
-  </full-page>
+      <section class="section">Second section ...</section>
+    </full-page>
+  </div>
 </template>
 <script>
 export default {}

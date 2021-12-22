@@ -1,12 +1,8 @@
-const username = 'admin'
-const password = 'eduadmin123'
-
-const token = Buffer.from(`${username}:${password}`, 'utf8').toString('base64')
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - frontend',
-    title: 'frontend',
+    titleTemplate: '%s - OpenNews',
+    title: 'OpenNews',
     htmlAttrs: {
       lang: 'en'
     },
@@ -52,12 +48,11 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   // http://localhost:5000/api
   axios: {
-    baseURL: 'https://backend.brunosilva.tech',
+    baseURL: 'https://api.onews.dsilva.dev',
     headers: {
       common: {
         Accept: 'application/json, text/plain, */*'
-      },
-      Authorization: `Basic ${token}`
+      }
     }
   },
 
