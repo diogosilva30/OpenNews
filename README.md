@@ -17,7 +17,7 @@
 
 # Getting started
 ## API REST (For developers)
-Documentation available [here](http://api.onews.diogosilva.tech)
+Documentation available [here](http://api.onews.dsilva.dev)
 
 ## Non-developers
 Web app comming soon.
