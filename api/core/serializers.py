@@ -108,7 +108,7 @@ class JobSerializer(serializers.Serializer):
     job_id = serializers.CharField()
     results_url = serializers.SerializerMethodField()
 
-    def get_results_url(self, obj):
+    def get_results_url(self, obj) -> str:
         # Get request from context
         request = self.context["request"]
         # Return URL

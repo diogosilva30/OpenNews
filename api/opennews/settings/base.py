@@ -41,13 +41,20 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # 3rd party apps
     "rest_framework",
-    "drf_yasg",
+    "drf_spectacular",
     # Project apps
     "core",
     "publico",
     "cm",
     "results",
 ]
+
+REST_FRAMEWORK = {
+    # YOUR SETTINGS
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # There is no authentication
+    "DEFAULT_AUTHENTICATION_CLASSES": [],
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -60,7 +67,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -153,3 +160,12 @@ CELERY_RESULT_EXTENDED = True
 
 # Disable Authentication Section from API Documentation
 SWAGGER_SETTINGS = {"SECURITY_DEFINITIONS": None}
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "OpenNews API",
+    "DESCRIPTION": "OpenNews is a news aggregator from several Portuguese newspapers to democratize access to information. DISCLAIMER: This project is as a proof of concept freely distributed. No liabilities are assumed by the author for any possible misuse.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False
+    # OTHER SETTINGS
+}

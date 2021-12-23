@@ -32,7 +32,7 @@ class JobResultSerializer(serializers.Serializer):
     # The list of found news (might be omitted in deserialization)
     news = NewsSerializer(many=True, required=False, allow_null=True)
 
-    def get_number_of_news(self, obj):
+    def get_number_of_news(self, obj) -> int:
         """
         `obj` is the dict created in `to_internal_value`.
         We acess `news` key.

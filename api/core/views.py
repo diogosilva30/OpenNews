@@ -2,7 +2,7 @@
 Core views
 """
 from celery.app import shared_task
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, generics, status
 from rest_framework.response import Response
 
@@ -49,7 +49,7 @@ class BaseJobCreationView(mixins.CreateModelMixin, generics.GenericAPIView):
         # Call the method with the data
         return factory_method(**data)
 
-    @swagger_auto_schema(responses={201: JobSerializer()})
+    @extend_schema(responses={201: JobSerializer})
     def post(self, request, *args, **kwargs):
         # Create serializer from request data
         serializer = self.get_serializer(data=request.data)
