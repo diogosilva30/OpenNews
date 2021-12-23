@@ -1,7 +1,6 @@
 # ..................................................................
 # API Framework
-djangorestframework==3.13.1
-django>=4.0
+djangorestframework==3.12.2
 # ..................................................................
 # Serve static assets in production
 whitenoise==5.3.0
