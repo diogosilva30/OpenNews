@@ -23,7 +23,7 @@ drf-spectacular==0.21.1
 # ..................................................................
 # For background work (async work). Redis is the message broker
 celery==5.1.2
-redis==4.0.0
+redis==4.1.0
 # ..................................................................
 # For hard type checking
 typeguard==2.13.0
