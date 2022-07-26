@@ -19,7 +19,7 @@ dateparser==1.1.0
 gunicorn==20.0.4
 # ..................................................................
 # For creating interactive docs
-drf-spectacular==0.21.1
+drf-spectacular==0.23.0
 # ..................................................................
 # For background work (async work). Redis is the message broker
 celery==5.1.2
