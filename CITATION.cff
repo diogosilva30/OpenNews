@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Moreira da Silva"
+  given-names: "Diogo Emanuel"
+  orcid: "https://orcid.org/0000-0002-6347-5156"
+title: "OpenNews: A news aggregator from several Portuguese newspapers to democratize access to information."
+url: "https://github.com/diogosilva30/OpenNews"
+license: BSD-3-Clause
