@@ -1,4 +1,4 @@
-black==21.10b0
+black==22.10.0
 coverage==6.2
 flake8==4.0.1
 pytest-django
