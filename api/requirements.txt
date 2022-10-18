@@ -16,7 +16,7 @@ lxml==4.6.4
 dateparser==1.1.0
 # ..................................................................
 # Production API Server
-gunicorn==20.0.4
+gunicorn==20.1.0
 # ..................................................................
 # For creating interactive docs
 drf-spectacular==0.21.1
